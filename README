@@ -1,0 +1,107 @@
+*
+* LESSCPY *
+*
+python LessCss Compiler.
+v0.6
+
+A compiler written in python 3 for the lesscss language. For those of us not willing/able to
+have node.js installed in our environment. Not all features of lesscss are supported (yet).
+Some features wil probably never be supported (JavaScript evaluation). This program uses PLY
+(Python Lex-Yacc) to tokenize/parse the input. 
+
+This is an early version, so you are likly to find bugs.
+
+For more information on lesscss:
+ * http://lesscss.org/
+ * https://github.com/cloudhead/less.js
+ 
+Requirements
+============
+
+* python 3+
+* ply (Python Lex-Yacc) python 3 version
+
+For more information on ply:
+* http://www.dabeaz.com/ply/
+ 
+Installation
+============
+
+python3 setup.py install
+ 
+or simply place the package into your python path.
+
+Compiler script Usage
+=====================
+ 
+usage: lesscpy [-h] [-I INCLUDE] [-x] [-X] [-m] [-D] [-v] [-o OUT] [-S] [-V]
+               [-L] [-N]
+               target
+
+positional arguments:
+  target
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -I INCLUDE, --include INCLUDE
+                        Included less-files (comma separated)
+  -x, --minify          Minify output
+  -X, --xminify         Minify output, no end of block newlines
+  -m, --min-ending      Add '.min' into output filename. eg, name.min.css
+  -D, --dry-run         Dry run, do not write files
+  -v, --verbose         Verbose mode
+  -o OUT, --out OUT     Output directory
+
+Debugging:
+  -S, --scopemap        Scopemap
+  -V, --debug           Debug mode
+  -L, --lex-only        Run lexer on target
+  -N, --no-css          No css output
+
+Supported features
+==================
+* Variables
+* String interpolation
+* Mixins
+* Parametered mixins (class)
+* @arguments
+* Nesting
+* Escapes ~/e()
+* Expressions
+* Color functions:
+** lighten
+** darken
+** saturate
+** desaturate
+** spin
+** hue
+** saturation
+** lightness
+* Other functions:
+** round
+** increment
+** decrement
+** format '%('
+** add
+
+Differences from lessc.js
+=========================
+* All MS filters and other strange vendor constructs must be escaped
+* All colors are auto-formatted to #nnnnnn. eg, #f7e923
+* Does not preserve css comments
+
+Not supported (yet)
+===================
+* Keyframe blocks
+* Parametered mixins (id)
+* mixins (closures)
+* mixins (Nested)
+* Pattern-matching
+* Guard expressions
+* JavaScript evaluation
+
+License
+=======
+See the LICENSE file
+
+<jtm@robot.is>

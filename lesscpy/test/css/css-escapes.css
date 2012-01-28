@@ -1,0 +1,16 @@
+.escape\|random\|char {
+	color: red;
+}
+.mixin\!tUp {
+	font-weight: bold;
+}
+.\34 04 {
+	background: red;
+}
+.\34 04 strong {
+	color: fuchsia;
+	font-weight: bold;
+}
+.trailingTest\+ {
+	color: red;
+}

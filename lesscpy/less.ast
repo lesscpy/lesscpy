@@ -1,0 +1,154 @@
+ unit                 	: statement_list
+        
+ statement_list       	: statement_list statement
+        				| statement
+        
+ statement            	: block_decl
+                        | variable_decl
+                    	| mixin_decl
+        				| css_charset css_string ';'
+                      	| css_namespace css_string ';'
+        				| css_namespace css_ident css_string ';'
+        				| css_import css_string ';'
+        
+ mixin_decl        		: block_open_mixin declaration_list brace_close
+        
+ block_decl         	: block_open declaration_list brace_close
+        				| block_open brace_close
+        
+ block_open_mixin       : css_class t_popen block_mixin_args t_pclose brace_open
+        				| css_class t_popen less_arguments t_pclose brace_open
+        				| css_class t_popen t_pclose brace_open
+        
+ block_mixin_args     	: block_mixin_args ',' block_mixin_arg
+        				| block_mixin_arg
+        
+ block_mixin_arg     	: less_variable ':' block_mixin_factor
+        				| block_mixin_factor
+                    	| less_variable
+        
+ block_mixin_factor  	: css_number
+                     	| css_color
+                 		| css_ident
+                    	| css_string
+        
+ block_open        		: identifier_list brace_open
+        
+ mixin                  : identifier_list ';'
+        
+ identifier_list    	: identifier_group
+                      	| identifier_page
+                       	| css_font_face
+        
+ identifier_page    	: identifier_page dom_filter
+        				| css_page
+        
+ identifier_group   	: identifier_group ',' identifier
+                      	| identifier_group '+' identifier
+        				| identifier_group identifier
+        				| identifier
+        				| css_media
+        
+ identifier    			: css_dom
+                       	| css_id
+                      	| css_class
+                       	| dom_filter
+                       	| css_color
+                       	| less_combine
+                       	| '*'
+                      	| '>'
+        
+ declaration_list    	: declaration_list declaration
+        				| declaration
+        				| property_decl
+        				| block_decl
+                      	| variable_decl
+        
+ variable_decl        	: less_variable ':' style_list ';'
+        
+ property_decl          : identifier_list t_popen argument_list t_pclose ';'
+        				| identifier_list t_popen t_pclose ';'
+        				| property ':' style_list ';'
+                        | property ':' style_list
+       					| property ':' ';'
+       					| mixin
+        
+ property    			: css_property
+                        | css_vendor_property
+                        | css_ident
+        
+ style_list        		: style_group
+        				| less_arguments
+        
+ style_group        	: style_group ',' style
+        				| style_group style
+        				| style
+        
+ style       			: expression
+                        | css_important
+                        | css_string
+                        | istring
+                        | css_vendor_property
+                        | css_property
+                        | css_ident
+        				| '~' istring
+                        | '~' css_string
+        
+ dom_filter    			: css_dom filter_group
+                        | css_id filter_group
+                        | css_class filter_group
+                        | less_combine filter_group
+        
+ filter_group  			: filter filter
+        				| filter
+        
+ filter    				: css_filter
+                      	| ':' css_ident
+                      	| ':' css_filter
+                      	| ':' ':' css_ident
+        
+expression     			: expression '+' expression
+                       	| expression '-' expression
+                       	| expression '*' expression
+                       	| expression '/' expression
+				        | '-' t_popen expression t_pclose
+				        | t_popen expression t_pclose
+				        | factor
+        
+factor           		: color
+                        | number
+                        | variable
+                        | css_dom
+                        | fcall
+        
+ fcall           		: css_ident t_popen argument_list t_pclose
+                        | css_property t_popen argument_list t_pclose
+                        | css_vendor_property t_popen argument_list t_pclose
+        				| less_open_format argument_list t_pclose
+        
+ argument_list    		: argument_list ',' argument
+				        | argument_list argument
+				        | argument
+        
+ argument        		: expression
+                        | css_string
+                        | istring
+                        | css_ident
+                        | css_id
+                        | css_uri
+                        | '='
+        
+ istring         		: less_string
+        
+ variable        		: '-' variable
+				        | t_popen variable t_pclose
+				        | less_variable
+        
+ color            		: css_color
+        
+ number            		: css_number
+                        | css_number_unit
+        
+ brace_open          	: '{'
+        
+ brace_close        	: '}'
