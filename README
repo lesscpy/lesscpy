@@ -40,7 +40,7 @@ usage: lesscpy [-h] [-I INCLUDE] [-x] [-X] [-m] [-D] [-v] [-o OUT] [-S] [-V]
                target
 
 positional arguments:
-  target				less file or directory
+  target                less file or directory
 
 optional arguments:
   -h, --help            show this help message and exit
