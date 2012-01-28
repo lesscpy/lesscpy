@@ -1,9 +1,6 @@
 #! /usr/bin/python3
 """
-    CSS/LESSCSS run script
-
-    http://lesscss.org/#docs
-    
+    Lesscpy run script
     <jtm@robot.is>
 """
 import sys, os
