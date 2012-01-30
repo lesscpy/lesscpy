@@ -48,9 +48,9 @@ class Block(Process):
     def _fullname(self, name):
         """
         """
-        parent = list(utility.flatten([s['current'] 
+        parent = list(utility.flatten([s['__current__'] 
                                        for s in self.scope 
-                                       if 'current' in s]))
+                                       if s['__current__']]))
         if parent: 
             parent.reverse()
             if parent[-1].startswith('@media'):

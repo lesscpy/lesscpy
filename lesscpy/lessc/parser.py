@@ -175,19 +175,19 @@ class LessParser(object):
     def p_block_open_mixin(self, p):
         """ block_open_mixin        : css_class t_popen block_mixin_args t_pclose brace_open
         """
-        self.scope[-1]['current'] = '__mixin__'
+        self.scope[-1]['__current__'] = '__mixin__'
         p[0] = list(p)[1:5]
         
     def p_block_open_mixin_aux(self, p):
         """ block_open_mixin        : css_class t_popen less_arguments t_pclose brace_open
         """
-        self.scope[-1]['current'] = '__mixin__'
+        self.scope[-1]['__current__'] = '__mixin__'
         p[0] = list(p)[1:5]
         
     def p_block_open_mixin_empty(self, p):
         """ block_open_mixin        : css_class t_popen t_pclose brace_open
         """
-        self.scope[-1]['current'] = '__mixin__'
+        self.scope[-1]['__current__'] = '__mixin__'
         p[0] = [p[1]]
         
     def p_block_mixin_args_aux(self, p):
@@ -231,7 +231,7 @@ class LessParser(object):
                 if t in '>+'
                 else t 
                 for t in utility.flatten(p[1])]
-        self.scope[-1]['current'] = ''.join(name).strip()
+        self.scope[-1]['__current__'] = ''.join(name).strip()
         p[0] = p[1]
         
     def p_identifier_list_mixin(self, p):
@@ -328,7 +328,7 @@ class LessParser(object):
         try:
             v = Variable(p)
             v.parse(self.scope)
-            if 'current' in current and current['current'] == '__mixin__':
+            if current['__current__'] == '__mixin__':
                 self.stash[v.name()] = v
             else:
                 current[v.name()] = v
@@ -344,7 +344,7 @@ class LessParser(object):
         """
         n = p[1][0]
         if n in self.scope[0]['__mixins__']:
-            if self.scope[-1]['current'] != '__mixin__':
+            if self.scope[-1]['__current__'] != '__mixin__':
                 try:
                     p[0] = self.scope[0]['__mixins__'][n].call(p[3], self.scope)
                 except SyntaxError as e:
@@ -392,7 +392,7 @@ class LessParser(object):
                                     | property ':' style_list
         """
         p[0] = Property(p)
-        if self.scope[-1]['current'] != '__mixin__':
+        if self.scope[-1]['__current__'] != '__mixin__':
             try:
                 p[0].parse(self.scope)
             except SyntaxError as e:
@@ -538,7 +538,7 @@ class LessParser(object):
                             | css_vendor_property t_popen argument_list t_pclose
         """
         p[0] = Call(p)
-        if self.scope and self.scope[-1]['current'] != '__mixin__':
+        if self.scope[-1]['__current__'] != '__mixin__':
             try:
                 p[0] = p[0].parse(self.scope)
             except SyntaxError as e:
@@ -651,7 +651,7 @@ class LessParser(object):
     def _create_scope(self):
         """ Create a scope.
         """
-        self.scope.append({'__blocks__': [], '__mixins__': {}})
+        self.scope.append({'__blocks__': [], '__mixins__': {}, '__current__': None})
         
     def update_scope(self, scope):
         """
