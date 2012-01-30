@@ -22,8 +22,6 @@ def ldirectory(inpath, outpath, args, scope):
     yacctab = 'yacctab' if args.debug else None
     if not outpath:
         sys.exit("Compile directory option needs -o ...")
-    elif os.path.isdir(outpath) and not os.listdir(outpath) == []: 
-        sys.exit("Output directory not empty...")
     else:
         if not os.path.isdir(outpath):
             if args.verbose:
@@ -36,23 +34,30 @@ def ldirectory(inpath, outpath, args, scope):
         outf = os.path.splitext(os.path.basename(lf))
         minx = '.min' if args.min_ending else ''
         outf = "%s/%s%s.css" % (outpath, outf[0], minx) 
-        if args.verbose: print("%s -> %s" % (lf, outf))
-        p = parser.LessParser(yacc_debug=False,
-                              lex_optimize=True,
-                              yacc_optimize=True,
-                              scope=scope,
-                              yacctab=yacctab,
-                              verbose=args.verbose)
-        p.parse(filename=lf, debuglevel=0)
-        css = f.format(p, args.minify, args.xminify)
-        if not args.dry_run:
-            with open(outf, 'w') as outfile:
-                outfile.write(css)
+        if not args.force and os.path.exists(outf):
+            recompile = os.path.getmtime(outf) < os.path.getmtime(lf)
+        else: 
+            recompile = True
+        if recompile:
+            if args.verbose: print("%s -> %s" % (lf, outf))
+            p = parser.LessParser(yacc_debug=False,
+                                  lex_optimize=True,
+                                  yacc_optimize=True,
+                                  scope=scope,
+                                  yacctab=yacctab,
+                                  verbose=args.verbose)
+            p.parse(filename=lf, debuglevel=0)
+            css = f.format(p, args.minify, args.xminify)
+            if not args.dry_run:
+                with open(outf, 'w') as outfile:
+                    outfile.write(css)
+        elif args.verbose: print('skipping %s, not modified' % lf)
     if args.recurse:
         [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope) 
          for name in os.listdir(inpath) 
          if os.path.isdir(os.path.join(inpath, name))
-         and not name.startswith('.')]
+         and not name.startswith('.')
+         and not name == outpath]
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -64,14 +69,18 @@ def run():
                         default=False, help="Minify output")
     aparse.add_argument('-X', '--xminify', action="store_true", 
                         default=False, help="Minify output, no end of block newlines")
-    aparse.add_argument('-m', '--min-ending', action="store_true", 
-                        default=False, help="Add '.min' into output filename. eg, name.min.css")
-    aparse.add_argument('-D', '--dry-run', action="store_true", 
-                        default=False, help="Dry run, do not write files")
     aparse.add_argument('-v', '--verbose', action="store_true", 
                         default=False, help="Verbose mode")
-    aparse.add_argument('-o', '--out', action="store", help="Output directory")
-    aparse.add_argument('-R', '--recurse', action="store_true", help="Recursive directory mode")
+    dgroup = aparse.add_argument_group('Directory options', 
+                                       'Compiles all *.less files in directory that '
+                                       'have a newer timestamp than it\'s css file.')
+    dgroup.add_argument('-o', '--out', action="store", help="Output directory")
+    dgroup.add_argument('-r', '--recurse', action="store_true", help="Recursive into subdirectorys")
+    dgroup.add_argument('-f', '--force', action="store_true", help="Force recompile on all files")
+    dgroup.add_argument('-m', '--min-ending', action="store_true", 
+                        default=False, help="Add '.min' into output filename. eg, name.min.css")
+    dgroup.add_argument('-D', '--dry-run', action="store_true", 
+                        default=False, help="Dry run, do not write files")
     group = aparse.add_argument_group('Debugging')
     group.add_argument('-S', '--scopemap', action="store_true", 
                         default=False, help="Scopemap")
