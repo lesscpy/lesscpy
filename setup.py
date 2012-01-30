@@ -6,9 +6,10 @@ from distutils.core import setup
 setup(
       name='lesscpy',
       version='0.6',
-      description='LESSCSS compiler.',
+      description='Lesscss compiler.',
       author='Jóhann T Maríusson',
       author_email='jtm@robot.is',
+      keywords = ["lesscss"],
       url='https://github.com/robotis/lesscpy',
       packages=['lesscpy', 
                 'lesscpy/lessc',

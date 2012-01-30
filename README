@@ -16,6 +16,9 @@ For more information on lesscss:
  * http://lesscss.org/
  * https://github.com/cloudhead/less.js
  
+Development files
+ * https://github.com/robotis/Lesscpy
+ 
 Requirements
 ============
 
@@ -40,7 +43,7 @@ usage: lesscpy [-h] [-I INCLUDE] [-x] [-X] [-m] [-D] [-v] [-o OUT] [-S] [-V]
                target
 
 positional arguments:
-  target
+  target                less file or directory
 
 optional arguments:
   -h, --help            show this help message and exit

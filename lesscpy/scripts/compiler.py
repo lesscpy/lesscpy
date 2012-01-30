@@ -42,7 +42,7 @@ def run():
                         default=False, help="Run lexer on target")
     group.add_argument('-N', '--no-css', action="store_true", 
                         default=False, help="No css output")
-    aparse.add_argument('target')
+    aparse.add_argument('target', help="less file or directory")
     args = aparse.parse_args()
     #
     #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
