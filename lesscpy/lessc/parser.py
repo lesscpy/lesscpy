@@ -28,7 +28,8 @@ class LessParser(object):
             yacc_debug=False,
             scope=None,
             outputdir='/tmp',
-            importlvl=0):
+            importlvl=0,
+            verbose=False):
         """ Parser object
             @param bool: Optimized lexer
             @param bool: Optimized parser
@@ -36,6 +37,7 @@ class LessParser(object):
             @param bool: Debug mode
             @param dict: Included scope
         """
+        self.verbose = verbose
         self.importlvl = importlvl
         self.lex = lexer.LessLexer()
         if not yacctab:
@@ -331,7 +333,7 @@ class LessParser(object):
             else:
                 current[v.name()] = v
         except SyntaxError as e:
-            print(e)
+            self.handle_error(e, p)
         p[0] = None
         
 #
@@ -500,11 +502,7 @@ class LessParser(object):
                           | expression '*' expression
                           | expression '/' expression
         '''
-        try:
-            p[0] = Expression(p)
-        except SyntaxError as e:
-            print(e)
-            p[0] = None
+        p[0] = Expression(p)
         
     def p_expression_p_neg(self, p):
         """ expression    : '-' t_popen expression t_pclose
@@ -667,8 +665,9 @@ class LessParser(object):
         """ Internal error handler
             @param Lex token: Error token 
         """
-        if t: print("E: line: %d, Syntax Error, token: `%s`, `%s`" 
-                    % (t.lineno, t.type, t.value))
+        if t and self.verbose: 
+            print("E: line: %d, Syntax Error, token: `%s`, `%s`" 
+                  % (t.lineno, t.type, t.value))
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -686,6 +685,7 @@ class LessParser(object):
         """
         l = [n for n in [p.lineno(i) for i in range(len(p))] if n]
         l = l[0] if l else -1
-        print("%s: line: %d: " % (t, l), end='')
-        print(e)
+        if self.verbose:
+            print("%s: line: %d: " % (t, l), end='')
+            print(e)
         

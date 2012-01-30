@@ -68,7 +68,8 @@ def run():
                                   yacc_debug=False,
                                   lex_optimize=True,
                                   yacc_optimize=True,
-                                  yacctab=yacctab)
+                                  yacctab=yacctab,
+                                  verbose=args.verbose)
             p.parse(filename=u, debuglevel=0)
             if not scope:
                 scope = p.scope
@@ -102,7 +103,8 @@ def run():
                                   lex_optimize=True,
                                   yacc_optimize=True,
                                   scope=scope,
-                                  yacctab=yacctab)
+                                  yacctab=yacctab,
+                                  verbose=args.verbose)
             p.parse(filename=lf, debuglevel=0)
             css = f.format(p, args.minify, args.xminify)
             if not args.dry_run:
@@ -116,7 +118,8 @@ def run():
         p = parser.LessParser(yacc_debug=(args.debug),
                               lex_optimize=True,
                               yacc_optimize=(not args.debug),
-                              scope=scope)
+                              scope=scope,
+                              verbose=args.verbose)
         p.parse(filename=args.target, debuglevel=0)
         if args.scopemap:
             args.no_css = True
