@@ -538,7 +538,7 @@ class LessParser(object):
                             | css_vendor_property t_popen argument_list t_pclose
         """
         p[0] = Call(p)
-        if self.scope[-1]['current'] != '__mixin__':
+        if self.scope and self.scope[-1]['current'] != '__mixin__':
             try:
                 p[0] = p[0].parse(self.scope)
             except SyntaxError as e:
