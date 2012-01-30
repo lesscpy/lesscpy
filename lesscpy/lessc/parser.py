@@ -666,8 +666,8 @@ class LessParser(object):
             @param Lex token: Error token 
         """
         if t and self.verbose: 
-            print("E: line: %d, Syntax Error, token: `%s`, `%s`" 
-                  % (t.lineno, t.type, t.value))
+            print("E: %s line: %d, Syntax Error, token: `%s`, `%s`" 
+                  % (self.target, t.lineno, t.type, t.value))
         while True:
             t = self.lex.token()
             if not t or t.value == '}':

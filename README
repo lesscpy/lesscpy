@@ -55,6 +55,7 @@ optional arguments:
   -D, --dry-run         Dry run, do not write files
   -v, --verbose         Verbose mode
   -o OUT, --out OUT     Output directory
+  -R, --recurse         Recursive directory mode
 
 Debugging:
   -S, --scopemap        Scopemap

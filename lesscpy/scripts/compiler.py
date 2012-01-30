@@ -15,6 +15,44 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from lesscpy.lessc import parser
 from lesscpy.lessc import lexer
 from lesscpy.lessc import formatter
+
+def ldirectory(inpath, outpath, args, scope):
+    """
+    """
+    yacctab = 'yacctab' if args.debug else None
+    if not outpath:
+        sys.exit("Compile directory option needs -o ...")
+    elif os.path.isdir(outpath) and not os.listdir(outpath) == []: 
+        sys.exit("Output directory not empty...")
+    else:
+        if not os.path.isdir(outpath):
+            if args.verbose:
+                print("Creating '%s'" % outpath)
+            if not args.dry_run:
+                os.mkdir(outpath)
+    less = glob.glob(os.path.join(inpath, '*.less'))
+    f = formatter.Formatter()
+    for lf in less:
+        outf = os.path.splitext(os.path.basename(lf))
+        minx = '.min' if args.min_ending else ''
+        outf = "%s/%s%s.css" % (outpath, outf[0], minx) 
+        if args.verbose: print("%s -> %s" % (lf, outf))
+        p = parser.LessParser(yacc_debug=False,
+                              lex_optimize=True,
+                              yacc_optimize=True,
+                              scope=scope,
+                              yacctab=yacctab,
+                              verbose=args.verbose)
+        p.parse(filename=lf, debuglevel=0)
+        css = f.format(p, args.minify, args.xminify)
+        if not args.dry_run:
+            with open(outf, 'w') as outfile:
+                outfile.write(css)
+    if args.recurse:
+        [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope) 
+         for name in os.listdir(inpath) 
+         if os.path.isdir(os.path.join(inpath, name))
+         and not name.startswith('.')]
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -33,6 +71,7 @@ def run():
     aparse.add_argument('-v', '--verbose', action="store_true", 
                         default=False, help="Verbose mode")
     aparse.add_argument('-o', '--out', action="store", help="Output directory")
+    aparse.add_argument('-R', '--recurse', action="store_true", help="Recursive directory mode")
     group = aparse.add_argument_group('Debugging')
     group.add_argument('-S', '--scopemap', action="store_true", 
                         default=False, help="Scopemap")
@@ -82,37 +121,9 @@ def run():
     if not os.path.exists(args.target):
         sys.exit("Target not found '%s' ..." % args.target)
     if os.path.isdir(args.target):
-        if not args.out:
-            sys.exit("Compile directory option needs -o ...")
-        elif os.path.isdir(args.out) and not os.listdir(args.out) == []: 
-            sys.exit("Output directory not empty...")
-        else:
-            if not os.path.isdir(args.out):
-                if args.verbose:
-                    print("Creating '%s'" % args.out)
-                if not args.dry_run:
-                    os.mkdir(args.out)
-        less = glob.glob(os.path.join(args.target, '*.less'))
-        for lf in less:
-            outf = os.path.splitext(os.path.basename(lf))
-            min = '.min' if args.min_ending else ''
-            outf = "%s/%s%s.css" % (args.out, outf[0], min) 
-            if args.verbose: print("%s -> %s" % (lf, outf))
-            
-            p = parser.LessParser(yacc_debug=False,
-                                  lex_optimize=True,
-                                  yacc_optimize=True,
-                                  scope=scope,
-                                  yacctab=yacctab,
-                                  verbose=args.verbose)
-            p.parse(filename=lf, debuglevel=0)
-            css = f.format(p, args.minify, args.xminify)
-            if not args.dry_run:
-                with open(outf, 'w') as outfile:
-                    outfile.write(css)
+        ldirectory(args.target, args.out, args, scope)     
         if args.dry_run:
-            print('Dry run, nothing done.')
-            
+            print('Dry run, nothing done.')  
     else:
         if args.verbose: print("compiling target: %s" % args.target)
         p = parser.LessParser(yacc_debug=(args.debug),
