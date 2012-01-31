@@ -23,7 +23,9 @@ def create_test (args):
             i = 0
             with open(cssf) as cssf:
                 for line in cssf.readlines():
-                    self.assertEqual(line.rstrip(), pout[i], '%s: Line %d' % (cssf, i+1))
+                    line = line.rstrip()
+                    if not line: continue
+                    self.assertEqual(line, pout[i], '%s: Line %d' % (cssf, i+1))
                     i += 1
         else:
             self.fail("%s not found..." % cssf)

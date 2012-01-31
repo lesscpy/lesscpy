@@ -17,6 +17,7 @@ class Formatter(object):
         if xminify:
             eb = ''
             minify = True
+        self.minify = minify
         self.items = {}
         if minify:
             self.items.update({
@@ -36,7 +37,7 @@ class Formatter(object):
         if parse.result:
             for u in parse.result:
                 self.out.extend(self.fprint(u))
-        return ''.join(self.out)
+        return ''.join(self.out).strip()
                 
     def fprint(self, node):
         """ Format node.
@@ -73,7 +74,9 @@ class Formatter(object):
             if self.items['tab']:
                 sub = '\t'+''.join(sub)
                 sub = sub.replace('\n', '\n\t').rstrip('\t')
-            node.parsed['proplist'] = sub  
+            if self.minify:
+                sub = sub.strip()
+            node.parsed['proplist'] = sub
             return self.sprintf(node.format, node.parsed)
         return ''
                 
