@@ -99,6 +99,7 @@ class LessLexer:
             t.type = 'css_dom'
             t.value = t.value
         elif c == '@':
+            v = v.lower()
             if v in LessLexer.reserved:
                 t.type = LessLexer.reserved[v]
             else:

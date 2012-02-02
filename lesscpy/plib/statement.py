@@ -8,7 +8,7 @@
 from .process import Process
 
 class Statement(Process):
-    format = "%(identifier)s%(ws)s%(value)s;%(nl)s"
+    format = "%(identifier)s %(value)s;%(nl)s"
     
     def parse(self, scope):
         """ Parse Node
