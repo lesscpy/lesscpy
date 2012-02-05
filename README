@@ -69,12 +69,6 @@ Debugging:
   -L, --lex-only        Run lexer on target
   -N, --no-css          No css output
 
-Debugging:
-  -S, --scopemap        Scopemap
-  -V, --debug           Debug mode
-  -L, --lex-only        Run lexer on target
-  -N, --no-css          No css output
-
 Supported features
 ==================
 * Variables
