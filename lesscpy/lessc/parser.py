@@ -688,4 +688,10 @@ class LessParser(object):
         if self.verbose:
             print("%s: line: %d: " % (t, l), end='')
             print(e)
+            
+    def in_mixin(self):
+        """
+        """
+        return any([s for s in self.scope 
+                    if s['current'] == '__mixin__'])
         
