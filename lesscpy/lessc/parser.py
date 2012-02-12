@@ -157,7 +157,7 @@ class LessParser(object):
         """
         try:
             block = Block(p)
-            if not self.in_mixin():
+            if not self.scope.in_mixin():
                 block.parse(self.scope)
             self.scope[-1]['__blocks__'].append(block)
             p[0] = block
@@ -177,19 +177,19 @@ class LessParser(object):
     def p_block_open_mixin(self, p):
         """ block_open_mixin        : css_class t_popen block_mixin_args t_pclose brace_open
         """
-        self.scope[-1]['__current__'] = '__mixin__'
+        self.scope.current = '__mixin__'
         p[0] = list(p)[1:5]
         
     def p_block_open_mixin_aux(self, p):
         """ block_open_mixin        : css_class t_popen less_arguments t_pclose brace_open
         """
-        self.scope[-1]['__current__'] = '__mixin__'
+        self.scope.current = '__mixin__'
         p[0] = list(p)[1:5]
         
     def p_block_open_mixin_empty(self, p):
         """ block_open_mixin        : css_class t_popen t_pclose brace_open
         """
-        self.scope[-1]['__current__'] = '__mixin__'
+        self.scope.current = '__mixin__'
         p[0] = [p[1]]
         
     def p_block_mixin_args_aux(self, p):
@@ -233,7 +233,7 @@ class LessParser(object):
                 if t in '>+'
                 else t 
                 for t in utility.flatten(p[1])]
-        self.scope[-1]['__current__'] = ''.join(name).strip()
+        self.scope.current = ''.join(name).strip()
         p[0] = p[1]
         
     def p_identifier_list_mixin(self, p):
@@ -326,14 +326,13 @@ class LessParser(object):
     def p_variable_decl(self, p):
         """ variable_decl        : less_variable ':' style_list ';'
         """
-        current = self.scope[-1]
         try:
             v = Variable(p)
             v.parse(self.scope)
-            if current['__current__'] == '__mixin__':
+            if self.scope.current == '__mixin__':
                 self.stash[v.name()] = v
             else:
-                current[v.name()] = v
+                self.scope[-1][v.name()] = v
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None
@@ -347,7 +346,7 @@ class LessParser(object):
         n = p[1][0]
         mixin = self.scope.mixin(n)
         if mixin:
-            if not self.in_mixin():
+            if not self.scope.in_mixin():
                 try:
                     p[0] = mixin.call(p[3], self.scope)
                 except SyntaxError as e:
@@ -397,7 +396,7 @@ class LessParser(object):
                                     | property ':' style_list
         """
         p[0] = Property(p)
-        if not self.in_mixin():
+        if not self.scope.in_mixin():
             try:
                 p[0].parse(self.scope)
             except SyntaxError as e:
@@ -667,9 +666,3 @@ class LessParser(object):
             print("%s: line: %d: " % (t, l), end='')
             print(e)
             
-    def in_mixin(self):
-        """
-        """
-        return any([s for s in self.scope 
-                    if s['__current__'] == '__mixin__'])
-        
