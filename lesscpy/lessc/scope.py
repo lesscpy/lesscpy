@@ -1,11 +1,14 @@
 """
 """
 class Scope(list):
-    def __init__(self):
+    def __init__(self, init=False):
         super().__init__()
         self._mixins = {}
+        if init: self.push()
         
     def push(self):
+        """
+        """
         self.append({
             '__variables__' : {},
             '__blocks__': [], 
@@ -29,6 +32,21 @@ class Scope(list):
         """
         """
         self._mixins[mixin.name()] = mixin
+        
+    def add_variable(self, variable):
+        """
+        """
+        self[-1]['__variables__'][variable.name()] = variable
+        
+    def variables(self, name):
+        """
+        """
+        i = len(self)
+        while i >= 0:
+            i -= 1
+            if name in self[i]['__variables__']:
+                return self[i]['__variables__'][name]
+        return False
     
     def mixins(self, name):
         """
@@ -46,9 +64,7 @@ class Scope(list):
     def update(self, scope):
         """
         """
-        blocks = [b for b in self[0]['__blocks__']]
-        blocks.extend([b for b in scope[0]['__blocks__']])
         self._mixins.update(scope._mixins)
-        self[0].update(scope[0])
-        self[0]['__blocks__'] = blocks
+        self[0]['__variables__'].update(scope[0]['__variables__'])
+        self[0]['__blocks__'].extend([b for b in scope[0]['__blocks__']])
         

@@ -59,14 +59,11 @@ class Process(Node):
             pre = '-'
         r = var.startswith('@@')
         t = ''.join(var[1:]) if r else var
-        i = len(self.scope)
-        while i >=0:
-            i -= 1
-            if t in self.scope[i]:
-                f = self.scope[i][t].value()
-                if r:
-                    return self.swap("%s@%s%s" % (pre, f[0].strip('"\''), pad))
-                return self.ftok(f, pre, pad)
+        variable = self.scope.variables(t)
+        if variable:
+            f = variable.value()
+            if r: return self.swap("%s@%s%s" % (pre, f[0].strip('"\''), pad))
+            return self.ftok(f, pre, pad)
         raise SyntaxError("Unknown variable ´%s´" % var)
     
     def ftok(self, t, pre, pad):

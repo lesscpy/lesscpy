@@ -159,7 +159,7 @@ class LessParser(object):
             block = Block(p)
             if not self.scope.in_mixin():
                 block.parse(self.scope)
-            self.scope[-1]['__blocks__'].append(block)
+            self.scope.add_block(block)
             p[0] = block
         except SyntaxError as e:
             self.handle_error(e, p)
@@ -332,7 +332,7 @@ class LessParser(object):
             if self.scope.current == '__mixin__':
                 self.stash[v.name()] = v
             else:
-                self.scope[-1][v.name()] = v
+                self.scope.add_variable(v)
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None

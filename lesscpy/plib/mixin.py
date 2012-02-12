@@ -7,6 +7,7 @@
 """
 from collections import deque
 import lesscpy.lessc.utility as utility
+from lesscpy.lessc.scope import Scope
 import copy
 from .process import Process
 from .node import Node
@@ -34,7 +35,7 @@ class Mixin(Process):
             self.argc = 0
         self.prop = self._p[2]
     
-    def call(self, args, scope=[{}]):
+    def call(self, args, scope=None):
         """ Call mixin function.
             @param list: Arguments passed to mixin
             @return: Property list
@@ -43,8 +44,8 @@ class Mixin(Process):
             return [self.replace_arguments(copy.copy(p), args).parse(self.scope) 
                     for p in self.prop 
                     if p]
-        self.scope = scope 
-        self.scope[0].update(self.stash)  
+        self.scope = scope if scope else Scope(True)
+        self.scope[0]['__variables__'].update(self.stash)  
         prop = [copy.copy(p) for p in self.prop if p]
         prop = utility.flatten([p.call(args, self.scope) 
                                 if type(p) is Mixin else p 
@@ -84,7 +85,7 @@ class Mixin(Process):
         assert(len(l) == 2)
         var = Node()
         var._name, var._value = l
-        self.scope[0][var._name] = var
+        self.scope.add_variable(var)
         
     def replace_arguments(self, p, args):
         """ Replace the special @arguments variable
