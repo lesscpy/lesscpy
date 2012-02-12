@@ -93,6 +93,7 @@ class Mixin(Process):
             @param list: Replacement list
             @return: Property object
         """
+        assert(len(p._p) > 3)
         p._p[3] = args
         return p
     
