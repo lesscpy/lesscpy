@@ -20,8 +20,6 @@ class Block(Process):
         self._blocktype = None
         self.scope = scope
         self._proplist()
-        self.parsed['inner'] = [p for p in self._p[2] 
-                                if type(p) is type(self)]
         self._pname()
         if self._name.startswith('@media'):
             self._blocktype = 'inner'
@@ -73,9 +71,13 @@ class Block(Process):
             Multiple porperties of the same type overwrite, 
             so we can safely take only the last.
         """
-        proplist = [p for p in utility.flatten(self._p[2]) 
-                    if p and type(p) != type(self)]
         store = OrderedDict()
-        for p in proplist:
-            store[p.parsed['property']] = p
-        self.parsed['proplist'] = store.values()
+        self.parsed['inner'] = []
+        for p in utility.flatten(self._p[2]):
+            if not p: continue
+            if not p.parsed: p.parse(self.scope)
+            if type(p) is type(self):
+                self.parsed['inner'].append(p)
+            elif 'property' in p.parsed:
+                store[p.parsed['property']] = p
+        self.parsed['proplist'] = list(store.values())

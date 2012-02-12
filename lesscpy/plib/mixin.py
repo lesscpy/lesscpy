@@ -46,7 +46,7 @@ class Mixin(Process):
                     if p]
         self.scope = scope if scope else Scope(True)
         self.scope[0]['__variables__'].update(self.stash)  
-        prop = [copy.copy(p) for p in self.prop if p]
+        prop = [copy.deepcopy(p) for p in self.prop if p]
         prop = utility.flatten([p.call(args, self.scope) 
                                 if type(p) is Mixin else p 
                                 for p in prop])
