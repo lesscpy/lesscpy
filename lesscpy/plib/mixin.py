@@ -19,7 +19,7 @@ class Mixin(Process):
             @param list: current scope
         """
         self.stash = stash
-        self.name = self._p[1][0]
+        self._name = self._p[1][0].strip()
         if len(self._p[1]) > 1:
             if type(self._p[1][2]) is list:
                 self.argv = [[u[0], u[2]] if type(u) is list

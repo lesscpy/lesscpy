@@ -128,7 +128,7 @@ class LessParser(object):
                 if os.path.exists(filename):
                     recurse = LessParser(importlvl=self.importlvl+1)
                     recurse.parse(filename=filename, debuglevel=0)
-                    self.update_scope(recurse.scope)
+                    self.scope.update(recurse.scope)
                 else:
                     err = "Cannot import '%s', file not found" % filename
                     self.handle_error(err, p, 'W')
@@ -147,7 +147,7 @@ class LessParser(object):
         try:
             mixin = Mixin(p)
             mixin.parse(self.scope, self.stash)
-            self.scope[-1]['__mixins__'][mixin.name.strip()] = mixin
+            self.scope.add_mixin(mixin)
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None   
@@ -344,7 +344,7 @@ class LessParser(object):
         """ property_decl           : identifier_list t_popen argument_list t_pclose ';'
         """
         n = p[1][0]
-        mixin = self.scope.mixin(n)
+        mixin = self.scope.mixins(n)
         if mixin:
             if not self.scope.in_mixin():
                 try:
@@ -363,7 +363,7 @@ class LessParser(object):
         """ property_decl           : identifier_list t_popen t_pclose ';'
         """
         n = p[1][0]
-        mixin = self.scope.mixin(n)
+        mixin = self.scope.mixins(n)
         if mixin:
             try:
                 p[0] = mixin.call(None)
@@ -378,7 +378,7 @@ class LessParser(object):
         """
         m = ''.join([u.strip() for u in p[1]])
         l = utility.block_search(m, self.scope)
-        mixin = self.scope.mixin(m)
+        mixin = self.scope.mixins(m)
         if l:
             p[0] = [b.parsed['proplist'] for b in l]
         elif mixin:
@@ -629,14 +629,6 @@ class LessParser(object):
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
-
-    def update_scope(self, scope):
-        """
-        """
-        blocks = [b for b in self.scope[0]['__blocks__']]
-        blocks.extend([b for b in scope[0]['__blocks__']])
-        self.scope[0].update(scope[0])
-        self.scope[0]['__blocks__'] = blocks
 
     def p_error(self, t):
         """ Internal error handler
