@@ -13,6 +13,7 @@ import os
 import ply.yacc
 from . import lexer
 from . import utility
+from .scope import Scope
 from .color import LessColor
 from lesscpy.plib import *
     
@@ -56,7 +57,7 @@ class LessParser(object):
             tabmodule=yacctab,
             outputdir=outputdir
         )
-        self.scope = scope if scope else []
+        self.scope = scope if scope else Scope()
         self.stash = {}
         self.result = None
         self.target = None
@@ -66,7 +67,7 @@ class LessParser(object):
             @param string: Filename
             @param int: Debuglevel
         """
-        self._create_scope()
+        self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
             
@@ -344,15 +345,16 @@ class LessParser(object):
         """ property_decl           : identifier_list t_popen argument_list t_pclose ';'
         """
         n = p[1][0]
-        if n in self.scope[0]['__mixins__']:
+        mixin = self.scope.mixin(n)
+        if mixin:
             if not self.in_mixin():
                 try:
-                    p[0] = self.scope[0]['__mixins__'][n].call(p[3], self.scope)
+                    p[0] = mixin.call(p[3], self.scope)
                 except SyntaxError as e:
                     self.handle_error(e, p)
                     p[0] = None
             else:
-                p[0] = self.scope[0]['__mixins__'][n] 
+                p[0] = mixin
         else:
             self.handle_error('Mixin not found in scope: ´%s´' % n, p)
             p[0] = None
@@ -362,9 +364,10 @@ class LessParser(object):
         """ property_decl           : identifier_list t_popen t_pclose ';'
         """
         n = p[1][0]
-        if n in self.scope[0]['__mixins__']:
+        mixin = self.scope.mixin(n)
+        if mixin:
             try:
-                p[0] = self.scope[0]['__mixins__'][n].call(None)
+                p[0] = mixin.call(None)
             except SyntaxError as e:
                 self.handle_error(e, p)
                 p[0] = None
@@ -376,11 +379,12 @@ class LessParser(object):
         """
         m = ''.join([u.strip() for u in p[1]])
         l = utility.block_search(m, self.scope)
+        mixin = self.scope.mixin(m)
         if l:
             p[0] = [b.parsed['proplist'] for b in l]
-        elif m in self.scope[0]['__mixins__']:
+        elif mixin:
             try:
-                p[0] = self.scope[0]['__mixins__'][m].call(None)
+                p[0] = mixin.call(None)
             except SyntaxError as e:
                 self.handle_error(e, p)
                 p[0] = None
@@ -614,7 +618,7 @@ class LessParser(object):
     def p_scope_open(self, p):
         """ brace_open          : '{'
         """
-        self._create_scope()
+        self.scope.push()
         p[0] = p[1]
         
     def p_scope_close(self, p):
@@ -627,15 +631,6 @@ class LessParser(object):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
 
-    def _create_scope(self):
-        """ Create a scope.
-        """
-        self.scope.append({
-            '__blocks__': [], 
-            '__mixins__': {}, 
-            '__current__': None
-        })
-        
     def update_scope(self, scope):
         """
         """
