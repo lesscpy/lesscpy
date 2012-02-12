@@ -1,4 +1,6 @@
 import unittest
+if __name__ == '__main__':
+    import bootstrap
 from lesscpy.plib.expression import Expression
 from mockp import Mockp
 

@@ -1,5 +1,7 @@
 
 import unittest
+if __name__ == '__main__':
+    import bootstrap
 import lesscpy.lessc.utility as utility
 
 class TestUtility(unittest.TestCase):  
