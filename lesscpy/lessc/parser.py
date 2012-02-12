@@ -156,7 +156,8 @@ class LessParser(object):
         """
         try:
             block = Block(p)
-            block.parse(self.scope)
+            if not self.in_mixin():
+                block.parse(self.scope)
             self.scope[-1]['__blocks__'].append(block)
             p[0] = block
         except SyntaxError as e:
@@ -392,7 +393,7 @@ class LessParser(object):
                                     | property ':' style_list
         """
         p[0] = Property(p)
-        if self.scope[-1]['__current__'] != '__mixin__':
+        if not self.in_mixin():
             try:
                 p[0].parse(self.scope)
             except SyntaxError as e:
@@ -456,11 +457,7 @@ class LessParser(object):
         """ style       : '~' istring
                         | '~' css_string
         """
-        try:
-            p[0] = Call(p)#.parse(self.scope)
-        except SyntaxError as e:
-            self.handle_error(e, p)
-            p[0] = None
+        p[0] = Call(p)
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -536,24 +533,10 @@ class LessParser(object):
         """ fcall           : css_ident t_popen argument_list t_pclose
                             | css_property t_popen argument_list t_pclose
                             | css_vendor_property t_popen argument_list t_pclose
+                            | less_open_format argument_list t_pclose
         """
         p[0] = Call(p)
-        if self.scope[-1]['__current__'] != '__mixin__':
-            try:
-                p[0] = p[0].parse(self.scope)
-            except SyntaxError as e:
-                self.handle_error(e, p)
-                p[0] = None
         
-    def p_fcall_format(self, p):
-        """ fcall            : less_open_format argument_list t_pclose
-        """
-        try:
-            p[0] = Call(p).parse(self.scope)
-        except SyntaxError as e:
-            self.handle_error(e, p)
-            p[0] = None
-            
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
@@ -592,11 +575,7 @@ class LessParser(object):
     def p_interpolated_str(self, p):
         """ istring         : less_string
         """
-        try:
-            p[0] = String(p)#.parse(self.scope)
-        except SyntaxError as e:
-            self.handle_error(e, p, 'W')
-            p[0] = p[1]
+        p[0] = String(p)
         
     def p_variable_neg(self, p):
         """ variable        : '-' variable
@@ -651,7 +630,11 @@ class LessParser(object):
     def _create_scope(self):
         """ Create a scope.
         """
-        self.scope.append({'__blocks__': [], '__mixins__': {}, '__current__': None})
+        self.scope.append({
+            '__blocks__': [], 
+            '__mixins__': {}, 
+            '__current__': None
+        })
         
     def update_scope(self, scope):
         """
@@ -693,5 +676,5 @@ class LessParser(object):
         """
         """
         return any([s for s in self.scope 
-                    if s['current'] == '__mixin__'])
+                    if s['__current__'] == '__mixin__'])
         

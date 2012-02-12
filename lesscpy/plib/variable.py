@@ -15,4 +15,4 @@ class Variable(Process):
         return self._p[3]
         
     def parse(self, scope):
-        return ''
+        return None
