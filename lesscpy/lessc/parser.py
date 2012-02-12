@@ -345,7 +345,7 @@ class LessParser(object):
         """
         n = p[1][0]
         if n in self.scope[0]['__mixins__']:
-            if self.scope[-1]['__current__'] != '__mixin__':
+            if not self.in_mixin():
                 try:
                     p[0] = self.scope[0]['__mixins__'][n].call(p[3], self.scope)
                 except SyntaxError as e:
