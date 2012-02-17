@@ -2,7 +2,7 @@
     LessCss tests
 """
 import unittest
-import sys, os
+import os
 import re
 
 import bootstrap
@@ -12,7 +12,7 @@ def find():
     test = re.compile('test.+\.py$')
     skip = re.compile('testissues.*')
     alltests = unittest.TestSuite()
-    for path, dirs, files in os.walk(bootstrap.here):
+    for path, _, files in os.walk(bootstrap.here):
         if svn.search(path):
             continue
         for f in files:
