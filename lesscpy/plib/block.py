@@ -19,8 +19,9 @@ class Block(Process):
         """
         self._blocktype = None
         self.scope = scope
-        self._proplist()
+#        self._proplist()
         self._pname()
+        self._proplist()
         if self._name.startswith('@media'):
             self._blocktype = 'inner'
         self.parsed['identifier'] = self._ident.strip()
@@ -75,7 +76,10 @@ class Block(Process):
         self.parsed['inner'] = []
         for p in utility.flatten(self._p[2]):
             if not p: continue
-            if not p.parsed: p.parse(self.scope)
+            if not p.parsed: 
+                if type(p) is type(self):
+                    self.scope.current = self._ident
+                p.parse(self.scope)
             if type(p) is type(self):
                 self.parsed['inner'].append(p)
             elif 'property' in p.parsed:

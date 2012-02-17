@@ -1,0 +1,6 @@
+.content{width:600px;}
+.content .column{margin:600px;}
+.content .column.blue{color:blue;}
+.content-em{width:200px;}
+.content-em .column{margin:200px;}
+.content-em .column.blue{color:blue;}

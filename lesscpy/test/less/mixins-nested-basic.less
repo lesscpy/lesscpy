@@ -1,0 +1,15 @@
+.nested-ruleset (@width: 200px) {
+    width: @width;
+    .column { 
+    	margin: @width; 
+    	&.blue {
+    		color: blue;
+    	}
+    }
+}
+.content {
+    .nested-ruleset(600px);
+} 
+.content-em {
+    .nested-ruleset();
+}

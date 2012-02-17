@@ -33,7 +33,7 @@ class Mixin(Process):
         else:
             self.argv = []
             self.argc = 0
-        self.prop = self._p[2]
+        self.nodes = self._p[2]
     
     def call(self, args, scope=None):
         """ Call mixin function.
@@ -46,12 +46,12 @@ class Mixin(Process):
                     if p]
         self.scope = scope if scope else Scope(True)
         self.scope[0]['__variables__'].update(self.stash)  
-        prop = [copy.deepcopy(p) for p in self.prop if p]
-        prop = utility.flatten([p.call(args, self.scope) 
-                                if type(p) is Mixin else p 
-                                for p in prop])
+        nodes = [copy.deepcopy(p) for p in self.nodes if p]
+        nodes = utility.flatten([p.call(args, self.scope) 
+                                 if type(p) is Mixin else p 
+                                 for p in nodes])
         self._process_args(args)
-        return [p.parse(self.scope) for p in prop]
+        return [p.parse(self.scope) for p in nodes]
     
     def _process_args(self, args):
         """ Process arguments to mixin call.

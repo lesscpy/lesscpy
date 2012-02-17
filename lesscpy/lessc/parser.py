@@ -366,7 +366,7 @@ class LessParser(object):
         mixin = self.scope.mixins(n)
         if mixin:
             try:
-                p[0] = mixin.call(None)
+                p[0] = mixin.call(None, self.scope)
             except SyntaxError as e:
                 self.handle_error(e, p)
                 p[0] = None
@@ -383,7 +383,7 @@ class LessParser(object):
             p[0] = [b.parsed['proplist'] for b in l]
         elif mixin:
             try:
-                p[0] = mixin.call(None)
+                p[0] = mixin.call(None, self.scope)
             except SyntaxError as e:
                 self.handle_error(e, p)
                 p[0] = None
