@@ -1,11 +1,3 @@
-.nested-ruleset (@width: 200px) {
-    width: @width;
-    .column { margin: @width; }
-}
-.content {
-    .nested-ruleset(600px);
-}
-
 .mix-inner (@var) {
   border-width: @var;
 }
@@ -20,11 +12,14 @@
     }  
   }
 }
-
 .class {
-  .mix(30);
+  .mix();
 }
 
 .class2 {
+  .mix(30);
+}
+
+.class3 {
   .mix(60);
 }

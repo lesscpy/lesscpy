@@ -1,0 +1,22 @@
+.class .inner {
+	height: 100;
+}
+.class .inner .innest {
+	width: 10;
+	border-width: 20;
+}
+.class2 .inner {
+	height: 300;
+}
+.class2 .inner .innest {
+	width: 30;
+	border-width: 60;
+}
+.class3 .inner {
+	height: 600;
+}
+.class3 .inner .innest {
+	width: 60;
+	border-width: 120;
+}
+
