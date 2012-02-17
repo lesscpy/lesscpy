@@ -36,7 +36,7 @@ class Block(Process):
         """ Parse block name and identifier
         """
         name = ["%s " % t
-                if t in '>+'
+                if t in '>+*'
                 else t 
                 for t in utility.flatten(self._p[1])]
         self._name = ''.join(name)

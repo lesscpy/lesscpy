@@ -1,6 +1,7 @@
 @charset "utf-8";@CHARSET "utf-8";div{color:black;}
 div{width:99%;}
 *{min-width:45em;}
+* html .div{min-width:45em;}
 h1, h2 > a > p, h3{color:none;}
 div.class{color:blue;}
 div#id{color:green;}
