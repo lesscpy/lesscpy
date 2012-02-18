@@ -108,3 +108,16 @@ body {
 .arguments2 {
     .mixin-arguments();
 }
+//
+// Variable argument
+//
+@var: #aaa;
+.var-arg(@color: @var) {
+  color: @color;
+}
+.div-a {
+	.var-arg(#fff);
+}
+.div-ax {
+	.var-arg();
+}

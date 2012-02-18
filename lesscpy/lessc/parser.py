@@ -205,6 +205,7 @@ class LessParser(object):
         
     def p_block_mixin_arg_def(self, p):
         """ block_mixin_arg     : less_variable ':' block_mixin_factor
+                                | less_variable ':' less_variable
         """
         p[0] = list(p)[1:4]
         
