@@ -408,6 +408,11 @@ class LessParser(object):
         """
         p[0] = None
         
+    def p_property_ie_hack(self, p):
+        """ property    : '*' property
+        """
+        p[0] = "%s%s" % (p[1], p[2])
+        
     def p_property(self, p):
         """ property    : css_property
                         | css_vendor_property
