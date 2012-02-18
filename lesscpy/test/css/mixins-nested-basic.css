@@ -22,3 +22,9 @@
 .content-em .column.blue .deep {
 	padding: 200px;
 }
+.div :-moz-placeholder {
+	color: #ffffff;
+}
+.div::-webkit-input-placeholder {
+	color: #ffffff;
+}

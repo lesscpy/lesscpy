@@ -6,3 +6,5 @@
 .content-em .column{margin:200px;}
 .content-em .column.blue{color:blue;}
 .content-em .column.blue .deep{padding:200px;}
+.div :-moz-placeholder{color:#ffffff;}
+.div::-webkit-input-placeholder{color:#ffffff;}

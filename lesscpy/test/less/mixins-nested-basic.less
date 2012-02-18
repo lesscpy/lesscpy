@@ -16,3 +16,18 @@
 .content-em {
     .nested-ruleset();
 }
+//
+// filter mixins
+//
+.placeholder(@color: #000) {
+  :-moz-placeholder {
+    color: @color;
+  }
+  &::-webkit-input-placeholder {
+    color: @color;
+  }
+}
+
+.div {
+	.placeholder(#fff);
+}

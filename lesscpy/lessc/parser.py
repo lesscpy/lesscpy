@@ -290,6 +290,7 @@ class LessParser(object):
                           | css_id
                           | css_class
                           | dom_filter
+                          | filter_group
                           | css_color
                           | less_combine
                           | '*'
@@ -479,6 +480,7 @@ class LessParser(object):
         """
         p[0] = [p[1], p[2]]
         
+        
     def p_filter_group_aux(self, p):
         """ filter_group  : filter filter
         """
@@ -493,8 +495,10 @@ class LessParser(object):
     def p_filter(self, p):
         """ filter    : css_filter
                       | ':' css_ident
+                      | ':' css_vendor_property
                       | ':' css_filter
                       | ':' ':' css_ident
+                      | ':' ':' css_vendor_property
         """
         p[0] = list(p)[1:]
         
