@@ -1,5 +1,6 @@
 """
-    LESSCSS Parser.
+.. module:: parser
+    :synopsis: Lesscss parser.
 
     http://www.dabeaz.com/ply/ply.html
     http://www.w3.org/TR/CSS21/grammar.html#scanner
@@ -7,7 +8,7 @@
     
     Copyright (c)
     See LICENSE for details.
-    <jtm@robot.is>
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import os
 import ply.yacc
@@ -25,36 +26,41 @@ class LessParser(object):
     def __init__(self, 
             lex_optimize=True,
             yacc_optimize=True,
-            yacctab='yacctab',
+            tabfile='yacctab',
             yacc_debug=False,
             scope=None,
             outputdir='/tmp',
             importlvl=0,
             verbose=False):
         """ Parser object
-            @param bool: Optimized lexer
-            @param bool: Optimized parser
-            @param string: Yacc tables file
-            @param bool: Debug mode
-            @param dict: Included scope
+            
+            Kwargs:
+                lex_optimize (bool): Optimize lexer
+                yacc_optimize (bool): Optimize parser
+                tabfile (str): Yacc tab filename
+                yacc_debug (bool): yacc debug mode
+                scope (Scope): Inherited scope
+                outputdir (str): Output (debugging)
+                importlvl (int): Import depth
+                verbose (bool): Verbose mode
         """
         self.verbose = verbose
         self.importlvl = importlvl
         self.lex = lexer.LessLexer()
-        if not yacctab:
-            yacctab = 'yacctab'
+        if not tabfile:
+            tabfile = 'yacctab'
             
-        self.ignored = ('t_ws', 'css_comment', 'less_comment',
+        self.ignored = ('css_comment', 'less_comment',
                         'css_vendor_hack', 'css_keyframes')
         
         self.tokens = [t for t in self.lex.tokens 
                        if t not in self.ignored]
         self.parser = ply.yacc.yacc(
             module=self, 
-            start='unit',
+            start='tunit',
             debug=yacc_debug,
             optimize=yacc_optimize,
-            tabmodule=yacctab,
+            tabmodule=tabfile,
             outputdir=outputdir
         )
         self.scope = scope if scope else Scope()
@@ -76,49 +82,55 @@ class LessParser(object):
         """
         if self.result:
             utility.print_recursive(self.result)
-            
+    
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#            
+
+    def p_tunit(self, p):
+        """ tunit                    : unit_list
+        """
+        p[0] = p[1]
+        
+    def p_unit_list(self, p):
+        """ unit_list                : unit_list unit
+                                     | unit
+        """
+        if len(p) == 3:
+            p[1].append(p[2])
+        p[0] = p[1]
+        
     def p_unit(self, p):
-        """ unit                 : statement_list
-        """
-        p[0] = p[1]
-        
-    def p_statement_list_aux(self, p):
-        """ statement_list       : statement_list statement
-        """
-        p[1].extend([p[2]])
-        p[0] = p[1]
-        
-    def p_statement_list(self, p):
-        """ statement_list       : statement
+        """ unit                     : statement
+                                     | variable_decl
+                                     | block_decl
+                                     | mixin_decl
         """
         p[0] = [p[1]]
         
-    def p_statement(self, p):
-        """ statement            : block_decl
-                                 | variable_decl
-                                 | mixin_decl
-        """
-        p[0] = p[1]
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#    
         
     def p_statement_aux(self, p):
-        """ statement            : css_charset css_string ';'
-                                 | css_namespace css_string ';'
+        """ statement            : css_charset t_ws css_string ';'
+                                 | css_namespace t_ws css_string ';'
         """
-        p[0] = Statement(p)
+        p[0] = Statement(list(p)[1:])
         p[0].parse(None)
         
     def p_statement_namespace(self, p):
-        """ statement            : css_namespace css_ident css_string ';'
+        """ statement            : css_namespace t_ws word css_string ';'
         """
-        p[0] = Statement(p)
+        p[0] = Statement(list(p)[1:])
         p[0].parse(None)
         
     def p_statement_import(self, p):
-        """ statement            : css_import css_string ';'
+        """ statement            : css_import t_ws css_string ';'
         """
         if self.importlvl > 8:
             raise ImportError('Recrusive import level too deep > 8 (circular import ?)')
-        ipath = utility.destring(p[2])
+        ipath = utility.destring(p[3])
         fn, fe = os.path.splitext(ipath)
         if not fe or fe.lower() == '.less':
             try:
@@ -126,7 +138,7 @@ class LessParser(object):
                 if not fe: ipath += '.less'
                 filename = "%s%s%s" % (cpath, os.sep, ipath)
                 if os.path.exists(filename):
-                    recurse = LessParser(importlvl=self.importlvl+1)
+                    recurse = LessParser(importlvl=self.importlvl+1, verbose=self.verbose)
                     recurse.parse(filename=filename, debuglevel=0)
                     self.scope.update(recurse.scope)
                 else:
@@ -138,25 +150,16 @@ class LessParser(object):
         else:
             p[0] = Statement(p)
             p[0].parse(None)
+        
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#              
-    def p_mixin_decl(self, p):
-        """ mixin_decl        : block_open_mixin declaration_list brace_close
-        """
-        try:
-            mixin = Mixin(p)
-            mixin.parse(self.scope, self.stash)
-            self.scope.add_mixin(mixin)
-        except SyntaxError as e:
-            self.handle_error(e, p)
-        p[0] = None   
+# 
 
-    def p_block_decl(self, p):
-        """ block_decl         : block_open declaration_list brace_close
+    def p_block(self, p):
+        """ block_decl               : block_open declaration_list brace_close
         """
         try:
-            block = Block(p)
+            block = Block(list(p)[1:-1])
             if not self.scope.in_mixin():
                 block.parse(self.scope)
             self.scope.add_block(block)
@@ -165,176 +168,102 @@ class LessParser(object):
             self.handle_error(e, p)
             p[0] = None
             
-    def p_block_empty(self, p):
-        """ block_decl        : block_open brace_close
+    def p_block_replace(self, p):
+        """ block_decl               : identifier ';'
         """
         p[0] = None
         
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
-        
-    def p_block_open_mixin(self, p):
-        """ block_open_mixin        : css_class t_popen block_mixin_args t_pclose brace_open
-        """
-        self.scope.current = '__mixin__'
-        p[0] = list(p)[1:5]
-        
-    def p_block_open_mixin_aux(self, p):
-        """ block_open_mixin        : css_class t_popen less_arguments t_pclose brace_open
-        """
-        self.scope.current = '__mixin__'
-        p[0] = list(p)[1:5]
-        
-    def p_block_open_mixin_empty(self, p):
-        """ block_open_mixin        : css_class t_popen t_pclose brace_open
-        """
-        self.scope.current = '__mixin__'
-        p[0] = [p[1]]
-        
-    def p_block_mixin_args_aux(self, p):
-        """ block_mixin_args     : block_mixin_args ',' block_mixin_arg
-        """
-        p[1].extend([p[2], p[3]])
-        p[0] = p[1]
-        
-    def p_block_mixin_args(self, p):
-        """ block_mixin_args     : block_mixin_arg
-        """
-        p[0] = [p[1]]
-        
-    def p_block_mixin_arg_def(self, p):
-        """ block_mixin_arg     : less_variable ':' block_mixin_factor
-                                | less_variable ':' less_variable
-        """
-        p[0] = list(p)[1:4]
-        
-    def p_block_mixin_arg(self, p):
-        """ block_mixin_arg     : block_mixin_factor
-                                | less_variable
-        """
-        p[0] = p[1]
-        
-    def p_block_mixin_factor(self, p):
-        """ block_mixin_factor  : css_number
-                                | css_color
-                                | css_ident
-                                | css_string
-        """
-        p[0] = p[1]
-        
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
-
     def p_block_open(self, p):
-        """ block_open        : identifier_list brace_open
+        """ block_open                : identifier brace_open
         """
-        name = ["%s " % t
-                if t in '>+'
-                else t 
-                for t in utility.flatten(p[1])]
-        self.scope.current = ''.join(name).strip()
         p[0] = p[1]
         
-    def p_identifier_list_mixin(self, p):
-        """ mixin                  : identifier_list ';'
+    def p_media_open(self, p):
+        """ block_open                : css_media t_ws identifier brace_open
+        """
+        p[0] = [p[1], p[3]]
+        
+    def p_font_face_open(self, p):
+        """ block_open                : css_font_face t_ws brace_open
         """
         p[0] = p[1]
 
-    def p_identifier_list(self, p):
-        """ identifier_list    : identifier_group
-                               | identifier_page
-                               | css_font_face
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+    def p_mixin(self, p):
+        """ mixin_decl                : open_mixin declaration_list brace_close
         """
-        if type(p[1]) is list:
-            p[0] = p[1]
-        else:
-            p[0] = [p[1]]
-            
-    def p_identifier_page_aux(self, p):
-        """ identifier_page    : identifier_page dom_filter
+        p[0] = None
+
+    def p_open_mixin(self, p):
+        """ open_mixin                : class t_popen mixin_args t_pclose brace_open
+                                      | id t_popen mixin_args t_pclose brace_open
         """
-        p[1].extend(p[2])
-        p[0] = p[1]
-            
-    def p_identifier_page(self, p):
-        """ identifier_page    : css_page
-        """
-        p[0] = [p[1]]
+        p[0] = None
         
-    def p_identifier_group_op(self, p):
-        """ identifier_group   : identifier_group ',' identifier
-                               | identifier_group '+' identifier
+    def p_call_mixin(self, p):
+        """ call_mixin                : class t_popen mixin_args t_pclose ';'
+                                      | id t_popen mixin_args t_pclose ';'
         """
-        p[1].extend([p[2], p[3]])
+        p[0] = None
+
+    def p_mixin_args_aux(self, p):
+        """ mixin_args                : mixin_args ',' argument
+                                      | mixin_args ',' mixin_kwarg
+        """
+        p[1].append(p[2])
+        p[1].append(p[3])
         p[0] = p[1]
 
-    def p_identifier_group_aux(self, p):
-        """ identifier_group    : identifier_group identifier
-        """
-        p[1].extend([p[2]])
-        p[0] = p[1]
-        
-    def p_identifier_group(self, p):
-        """ identifier_group    : identifier
+    def p_mixin_args(self, p):
+        """ mixin_args                : argument
+                                      | mixin_kwarg
+                                      | empty
         """
         p[0] = [p[1]]
         
-    def p_identifier_group_media(self, p):
-        """ identifier_group    : css_media
+    def p_mixin_kwarg(self, p):
+        """ mixin_kwarg                : variable ':' argument
         """
-        p[0] = [p[1]]
-        
-    def p_identifier(self, p):
-        """ identifier    : css_dom
-                          | css_id
-                          | css_class
-                          | dom_filter
-                          | filter_group
-                          | css_color
-                          | less_combine
-                          | '*'
-                          | '>'
-        """
-        p[0] = p[1]
+        p[0] = list(p)[1:]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
-        
-    def p_declaration_list_aux(self, p):
-        """ declaration_list    : declaration_list declaration
+# 
+
+    def p_declaration_list(self, p):
+        """ declaration_list           : declaration_list declaration
+                                       | declaration
+                                       | empty
         """
-        p[1].extend([p[2]])
+        if len(p) > 2:
+            p[1].extend(p[2])
         p[0] = p[1]
         
-    def p_declaration_list(self, p):
-        """ declaration_list    : declaration
+    def p_declaration(self, p):
+        """ declaration                : variable_decl
+                                       | property_decl
+                                       | block_decl
+                                       | mixin_decl
+                                       | call_mixin
         """
         p[0] = [p[1]]
+        
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
 
-    def p_declaration(self, p):
-        """ declaration         : property_decl
-        """
-        p[0] = p[1]
-        
-    def p_declaration_block(self, p):
-        """ declaration         : block_decl
-                                | variable_decl
-        """
-        p[0] = p[1]
-        
     def p_variable_decl(self, p):
-        """ variable_decl        : less_variable ':' style_list ';'
+        """ variable_decl            : variable ':' style_list ';'
         """
         try:
             v = Variable(p)
-            v.parse(self.scope)
-            if self.scope.current == '__mixin__':
-                self.stash[v.name()] = v
-            else:
-                self.scope.add_variable(v)
+#            v.parse(self.scope)
+#            if self.scope.current == '__mixin__':
+#                self.stash[v.name()] = v
+#            else:
+#                self.scope.add_variable(v)
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None
@@ -342,62 +271,13 @@ class LessParser(object):
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
-    def p_property_mixin_call(self, p):
-        """ property_decl           : identifier_list t_popen argument_list t_pclose ';'
-        """
-        n = p[1][0]
-        mixin = self.scope.mixins(n)
-        if mixin:
-            if not self.scope.in_mixin():
-                try:
-                    p[0] = mixin.call(p[3], self.scope)
-                except SyntaxError as e:
-                    self.handle_error(e, p)
-                    p[0] = None
-            else:
-                p[0] = mixin
-        else:
-            self.handle_error('Mixin not found in scope: ´%s´' % n, p)
-            p[0] = None
-                
-        
-    def p_property_mixin_call_empty(self, p):
-        """ property_decl           : identifier_list t_popen t_pclose ';'
-        """
-        n = p[1][0]
-        mixin = self.scope.mixins(n)
-        if mixin:
-            try:
-                p[0] = mixin.call(None, self.scope)
-            except SyntaxError as e:
-                self.handle_error(e, p)
-                p[0] = None
-        else:
-            p[0] = None
 
-    def p_property_mixin(self, p):
-        """ property_decl           : mixin
-        """
-        m = ''.join([u.strip() for u in p[1]])
-        l = utility.block_search(m, self.scope)
-        mixin = self.scope.mixins(m)
-        if l:
-            p[0] = [b.parsed['proplist'] for b in l]
-        elif mixin:
-            try:
-                p[0] = mixin.call(None, self.scope)
-            except SyntaxError as e:
-                self.handle_error(e, p)
-                p[0] = None
-        else:
-            p[0] = []
-            
-        
     def p_property_decl(self, p):
-        """ property_decl           : property ':' style_list ';'
-                                    | property ':' style_list
+        """ property_decl           : prop_open style_list ';'
+                                    | prop_open empty ';'
+                                    | prop_open less_arguments ';'
         """
-        p[0] = Property(p)
+        p[0] = Property(list(p)[1:-1])
         if not self.scope.in_mixin():
             try:
                 p[0].parse(self.scope)
@@ -405,165 +285,158 @@ class LessParser(object):
                 self.handle_error(e, p)
                 p[0] = None
         
-    def p_prop_decl_bad(self, p):
-        """ property_decl           : property ':' ';'
-        """
-        p[0] = None
-        
-    def p_property_ie_hack(self, p):
-        """ property    : '*' property
-        """
-        p[0] = "%s%s" % (p[1], p[2])
-        
-    def p_property(self, p):
-        """ property    : css_property
-                        | css_vendor_property
-                        | css_ident
+    def p_prop_open(self, p):
+        """ prop_open               : property ':'
+                                    | vendor_property ':'
+                                    | word ':'
         """
         p[0] = p[1]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
+    
+    def p_style_list_aux(self, p):
+        """ style_list              : style_list style
+                                    | style_list ',' style
+                                    | style_list css_important
+        """
+        p[1].extend(list(p)[2:])
+        p[0] = p[1]
+        
     def p_style_list(self, p):
-        """ style_list        : style_group
-        """
-        p[0] = p[1]
-        
-    def p_less_style_list(self, p):
-        """ style_list        : less_arguments
-        """
-        p[0] = p[1]
-        
-    def p_style_group_sep(self, p):
-        """ style_group        : style_group ',' style
-        """
-        p[1].extend([p[2], p[3]])
-        p[0] = p[1]
-        
-    def p_style_group_aux(self, p):
-        """ style_group        : style_group style
-        """
-        p[1].extend([p[2]])
-        p[0] = p[1]
-        
-    def p_style_group(self, p):
-        """ style_group        : style
+        """ style_list              : style
         """
         p[0] = [p[1]]
         
     def p_style(self, p):
-        """ style       : expression
-                        | css_important
-                        | css_string
-                        | istring
-                        | css_vendor_property
-                        | css_property
-                        | css_ident
+        """ style                   : expression
+                                    | css_string
+                                    | word
+                                    | property
+                                    | vendor_property
+                                    | istring
+                                    | fcall
         """
         p[0] = p[1]
         
-    def p_style_escape(self, p):
-        """ style       : '~' istring
-                        | '~' css_string
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#    
+    def p_identifier(self, p):
+        """ identifier                : identifier_list
         """
-        p[0] = Call(p)
+        p[0] = Identifier(p[1])
+
+    def p_identifier_list_aux(self, p):
+        """ identifier_list           : identifier_list ',' identifier_group
+        """
+        p[1].extend([p[2]])
+        p[1].extend(p[3])
+        p[0] = p[1]
+        
+    def p_identifier_list(self, p):
+        """ identifier_list           : identifier_group
+        """
+        p[0] = p[1]
+        
+    def p_identifier_group_op(self, p):
+        """ identifier_group          : identifier_group child_selector ident_parts
+                                      | identifier_group '+' ident_parts
+        """
+        p[1].extend([p[2]])
+        p[1].extend(p[3])
+        p[0] = p[1]
+        
+    def p_identifier_group(self, p):
+        """ identifier_group          : ident_parts
+        """
+        p[0] = p[1]
+        
+    def p_ident_parts_aux(self, p):
+        """ ident_parts               : ident_parts ident_part
+                                      | ident_parts filter_group
+        """
+        if type(p[2]) is list:
+            p[1].extend(p[2])
+        else: p[1].append(p[2])
+        p[0] = p[1]
+        
+    def p_ident_parts(self, p):
+        """ ident_parts               : ident_part
+                                      | selector
+                                      | filter_group
+        """
+        if type(p[1]) is not list:
+            p[1] = [p[1]]
+        p[0] = p[1]
+        
+    def p_selector(self, p):
+        """ selector                  : child_selector ident_part
+                                      | '+' ident_part
+                                      | '*' ident_part
+        """
+        p[0] = [p[1], p[2]]
+        
+    def p_selector_comb(self, p):
+        """ selector                  : combinator
+                                      | '*'
+        """
+        p[0] = p[1]
+        
+    def p_ident_part(self, p):
+        """ ident_part                : class
+                                      | id
+                                      | dom
+        """
+        p[0] = p[1]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
 
-    def p_dom_filter(self, p):
-        """ dom_filter    : css_dom filter_group
-                          | css_id filter_group
-                          | css_class filter_group
-                          | less_combine filter_group
-        """
-        p[0] = [p[1], p[2]]
-        
-        
     def p_filter_group_aux(self, p):
-        """ filter_group  : filter filter
+        """ filter_group              : filter_group filter
         """
-        p[1].extend([p[2]])
+        p[1].extend(p[2])
         p[0] = p[1]
         
     def p_filter_group(self, p):
-        """ filter_group  : filter
+        """ filter_group              : filter
         """
-        p[0] = [p[1]]
-        
+        p[0] = p[1]
+
     def p_filter(self, p):
-        """ filter    : css_filter
-                      | ':' css_ident
-                      | ':' css_vendor_property
-                      | ':' css_filter
-                      | ':' ':' css_ident
-                      | ':' ':' css_vendor_property
+        """ filter                    : css_filter
+                                      | ':' word
+                                      | ':' vendor_property
+                                      | ':' css_filter
+                                      | ':' ':' word
+                                      | ':' ':' vendor_property
         """
         p[0] = list(p)[1:]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
-    def p_expression_aux(self, p):
-        '''expression     : expression '+' expression
-                          | expression '-' expression
-                          | expression '*' expression
-                          | expression '/' expression
-        '''
-        p[0] = Expression(p)
-        
-    def p_expression_p_neg(self, p):
-        """ expression    : '-' t_popen expression t_pclose
-        """
-        p[0] = [p[1], p[3]]
-        
-    def p_expression_p(self, p):
-        """ expression    : t_popen expression t_pclose
-        """
-        p[0] = p[2]
-        
-    def p_expression(self, p):
-        """ expression       : factor
-        """
-        p[0] = p[1]
-        
-    def p_factor(self, p):     
-        """factor           : color
-                            | number
-                            | variable
-                            | css_dom
-                            | fcall
-        """
-        p[0] = p[1]
-        
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
+# 
         
     def p_fcall(self, p):
-        """ fcall           : css_ident t_popen argument_list t_pclose
-                            | css_property t_popen argument_list t_pclose
-                            | css_vendor_property t_popen argument_list t_pclose
+        """ fcall           : word t_popen argument_list t_pclose
+                            | property t_popen argument_list t_pclose
+                            | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
         """
-        p[0] = Call(p)
+        p[0] = Call(list(p)[1:])
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
         
-    def p_argument_list_aux_1(self, p):
-        """ argument_list    : argument_list ',' argument
-        """
-        p[1].extend([p[2], p[3]])
-        p[0] = p[1]
-        
     def p_argument_list_aux(self, p):
-        """ argument_list    : argument_list argument
+        """ argument_list       : argument_list argument
+                                | argument_list ',' argument
         """
-        p[1].extend([p[2]])
+        p[1].extend(list(p)[2:])
         p[0] = p[1]
         
     def p_argument_list(self, p):
@@ -575,66 +448,154 @@ class LessParser(object):
         """ argument        : expression
                             | css_string
                             | istring
-                            | css_ident
-                            | css_id
+                            | word
+                            | id
                             | css_uri
                             | '='
+                            | fcall
         """
         p[0] = p[1]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
+
+    def p_expression_aux(self, p):
+        """ expression             : expression operator expression
+        """
+        p[0] = Expression(list(p)[1:])
+        
+    def p_expression_p_neg(self, p):
+        """ expression             : '-' t_popen expression t_pclose
+        """
+        p[0] = [p[1], p[3]]
+        
+    def p_expression_p(self, p):
+        """ expression             : t_popen expression t_pclose
+        """
+        p[0] = p[2]
+        
+    def p_expression(self, p):
+        """ expression              : factor
+        """
+        p[0] = p[1]
+        
+    def p_factor(self, p):     
+        """ factor                  : color
+                                    | number
+                                    | variable
+                                    | css_dom
+        """
+        p[0] = p[1]
+        
+    def p_operator(self, p):
+        """ operator                : operator t_ws
+                                    | '+'
+                                    | '-'
+                                    | '*'
+                                    | '/'
+        """
+        p[0] = tuple(list(p)[1:])
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  
+
     def p_interpolated_str(self, p):
-        """ istring         : less_string
+        """ istring                 : less_string
         """
         p[0] = String(p)
         
     def p_variable_neg(self, p):
-        """ variable        : '-' variable
+        """ variable                : '-' variable
         """
         p[0] = '-' + p[2] 
         
     def p_variable_strange(self, p):
-        """ variable        : t_popen variable t_pclose
+        """ variable                : t_popen variable t_pclose
         """
         p[0] = p[2]
         
     def p_variable(self, p):
-        """ variable        : less_variable
+        """ variable                : less_variable
+                                    | less_variable t_ws
         """
         p[0] = p[1] 
-        
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
-        
+
     def p_color(self, p):
-        """ color            : css_color
+        """ color                    : css_color
         """
         p[0] = LessColor().format(p[1]) 
-            
-    def p_number(self, p):
-        """ number            : css_number
-                              | css_number_unit
-        """ 
-        p[0] = p[1] 
         
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  
+    def p_number(self, p):
+        """ number                    : css_number
+                                      | css_number t_ws
+        """ 
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_dom(self, p):
+        """ dom                       : css_dom
+                                      | css_dom t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_word(self, p):
+        """ word                      : css_ident
+                                      | css_ident t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_class(self, p):
+        """ class                     : css_class
+                                      | css_class t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_id(self, p):
+        """ id                        : css_id
+                                      | css_id t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_property(self, p):
+        """ property                  : css_property
+                                      | css_property t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_vendor_property(self, p):
+        """ vendor_property           : css_vendor_property
+                                      | css_vendor_property t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_combinator(self, p):
+        """ combinator                : '&' t_ws
+                                      | '&'
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_child_selector(self, p):
+        """ child_selector            : '>' t_ws
+                                      | '>'
+        """
+        p[0] = tuple(list(p)[1:]) 
         
     def p_scope_open(self, p):
-        """ brace_open          : '{'
+        """ brace_open              : '{'
         """
         self.scope.push()
         p[0] = p[1]
         
     def p_scope_close(self, p):
-        """ brace_close        : '}'
+        """ brace_close            : '}'
         """
         self.scope.pop()
         p[0] = p[1]
+        
+    def p_empty(self, p):
+        'empty                     :'
+        pass
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

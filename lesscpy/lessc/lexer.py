@@ -19,7 +19,7 @@ class LessLexer:
     states = (
       ('parn', 'inclusive'),
     )
-    literals = ',{}>=%!/*-+:;()~';
+    literals = ',>{}=%!/*-+:;~&';
     tokens = [
         'css_ident',
         'css_dom',
@@ -32,7 +32,6 @@ class LessLexer:
         'css_color',
         'css_filter',
         'css_number',
-        'css_number_unit',
         'css_important',
         'css_vendor_hack',
         'css_uri',
@@ -41,7 +40,6 @@ class LessLexer:
         'less_comment',
         'less_string',
         'less_open_format',
-        'less_combine',
         
         't_ws',
         't_popen',
@@ -60,10 +58,23 @@ class LessLexer:
         
         '@arguments': 'less_arguments',
     }
-    tokens = tokens + list(set(reserved.values()))
+    tokens += list(set(reserved.values()))
+    significant_ws = [
+        'css_class', 
+        'css_id', 
+        'css_dom',
+        'css_property',
+        'css_vendor_property',
+        'css_ident',
+        'css_number',
+        '>',
+        '&',
+    ]
+    significant_ws += list(set(reserved.values()))
     
     def __init__(self):
         self.build(reflags=re.UNICODE|re.IGNORECASE)
+        self.last = None
         
     def t_css_filter(self, t):
         (r'\[[^\]]*\]'
@@ -76,11 +87,11 @@ class LessLexer:
          '|@[@\-]?)'
          '([_a-z]'
          '|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}([ \t\f])?'
-         '|\\\[^\s\r\n0-9a-f])'
+         '|\\\[0-9a-f]{1,6}'
+         '|\\\[^\s\r\n0-9a-f])[ \t\f\v]?'
          '([_a-z0-9\-]|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}([ \t\f])?'
-         '|\\\[^\s\r\n0-9a-f])*[ \t]?')
+         '|\\\[0-9a-f]{1,6}'
+         '|\\\[^\s\r\n0-9a-f])*')
         v = t.value.strip()
         c = v[0]
         if c == '.':
@@ -97,7 +108,6 @@ class LessLexer:
             t.value = t.value.strip()
         elif v.lower() in dom.html:
             t.type = 'css_dom'
-            t.value = t.value
         elif c == '@':
             v = v.lower()
             if v in LessLexer.reserved:
@@ -106,6 +116,7 @@ class LessLexer:
                 t.type = 'less_variable'
         elif c == '-':
             t.type = 'css_vendor_property'
+        t.value = t.value.strip()
         return t
     
     def t_css_color(self, t):
@@ -125,10 +136,10 @@ class LessLexer:
     def t_parn_css_ident(self, t):
         (r'(([_a-z]'
          '|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}([ \t\f])?'
+         '|\\\[0-9a-f]{1,6}'
          '|\\\[^\r\n\s0-9a-f])'
          '([_a-z0-9\-]|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}([ \t\f])?'
+         '|\\\[0-9a-f]{1,6}'
          '|\\\[^\r\n\s0-9a-f])*)')
         return t
     
@@ -137,11 +148,11 @@ class LessLexer:
         return t
     
     def t_newline(self, t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
+        r'[\n\r]+'
+        t.lexer.lineno += t.value.count('\n')
         
     def t_css_comment(self, t):
-        r'(/\*(.|\n)*?\*/)'
+        r'(/\*(.|\n|\r)*?\*/)'
         t.lexer.lineno += t.value.count('\n')
         pass
 
@@ -155,8 +166,8 @@ class LessLexer:
         return t
     
     def t_t_ws(self, t):
-        r'[ \t]+'
-        pass
+        r'[ \t\f\v]+'
+        return t
 
     def t_t_popen(self, t):
         r'\('
@@ -173,13 +184,16 @@ class LessLexer:
         t.lexer.pop_state()
         return t
     
-    def t_less_combine(self, t):
-        r'&[ \t]?'
+    def t_less_string(self, t):
+        (r'"([^"@]*@\{[^"\}]+\}[^"]*)+"'
+        '|\'([^\'@]*@\{[^\'\}]+\}[^\']*)+\'')
+        t.lexer.lineno += t.value.count('\n')
         return t
     
-    t_less_string   = (r'"([^"@]*@\{[^"\}]+\}[^"]*)+"'
-                       '|\'([^\'@]*@\{[^\'\}]+\}[^\']*)+\'')
-    t_css_string    = r'"[^"]*"|\'[^\']*\''
+    def t_css_string(self, t):
+        r'"[^"]*"|\'[^\']*\''
+        t.lexer.lineno += t.value.count('\n')
+        return t
     
     # Error handling rule
     def t_error(self, t):
@@ -193,11 +207,18 @@ class LessLexer:
     def file(self, filename):
         with open(filename) as f:
             self.lexer.input(f.read())
-        return self.lexer
+        return self
     
     def input(self, filename):
         with open(filename) as f:
             self.lexer.input(f.read())
             
     def token(self):
-        return self.lexer.token()
+        while True:
+            t = self.lexer.token()
+            if not t: return t
+            if t.type == 't_ws' and self.last and self.last.type not in self.significant_ws:
+                continue
+            self.last = t
+            break
+        return t

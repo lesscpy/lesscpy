@@ -129,26 +129,25 @@ def is_variable(v):
     if type(v) is str:
         return (v.startswith('@') or v.startswith('-@'))
     return False
-            
+
 def print_recursive(ll, lvl=0):
     """ Scopemap printer
         @param list: parser result
         @param int: depth
     """
-    if not ll: return
-    pad = ''.join(['. '] * lvl)
-    if type(ll) is list:
-        ll = flatten(ll)
-        for l in ll:
-            t = type(l)
-            if t == str:
-                print(pad + l)
-            else:
-                print_recursive(l, lvl+1)
+    pad = ''.join(['.'] * lvl)
+    t = type(ll)
+    if t is list:
+        for l in ll: print_recursive(l, lvl+1)
     elif hasattr(ll, '_p'):
-        print(pad + str(type(ll)))
-        print_recursive(ll._p, lvl+1)
+        print(pad, type(ll))
+        print(pad, '[')
+        print_recursive(list(flatten(ll._p)), lvl+1)
+        print(pad, ']')
+    elif t is str:
+        print("%s '%s'" % (pad, ll))
     else:
-        print(pad + ll)
+        print("%s %s" % (pad, ll))
+
         
             
