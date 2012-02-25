@@ -11,6 +11,7 @@
 .. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import os
+import copy
 import ply.yacc
 from . import lexer
 from . import utility
@@ -188,7 +189,12 @@ class LessParser(object):
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
         """
-        p[0] = None
+        m = p[1].parse(None)
+        block = self.scope.blocks(m)
+        if block:
+            p[0] = copy.deepcopy(block)
+        else:
+            p[0] = None
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
@@ -207,6 +213,7 @@ class LessParser(object):
         """ block_open                : css_font_face t_ws brace_open
         """
         p[0] = Identifier([p[1], p[2]])
+        
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

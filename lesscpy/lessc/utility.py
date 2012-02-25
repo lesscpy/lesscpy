@@ -20,45 +20,6 @@ def flatten(l):
                 yield sub
         else:
             yield el
-            
-def block_search(name, scope):
-    """ Search scope blocks for name
-        @param str: name
-        @param list: scope
-        @return: list
-    """
-    def search(m, l):
-        """
-        """
-        prop = []
-        for b in l:
-            n = b._cident
-            if m == n:
-                prop.append(b)
-            elif m in b._parts:
-                prop.append(b)
-            elif m.startswith(n):
-                r = search(m, b.parsed['inner'])
-                if r: prop.extend(r)
-        return prop
-    l = len(scope)
-    i = 1
-    prop = []
-    while (l-i) >= 0:
-        if scope[-i]['__blocks__']:
-            b = search(name, scope[-i]['__blocks__'])
-            if b: prop.extend(b)
-        i += 1 
-    # HACK
-    if '>' in name:
-        name = ''.join([c for c in name if c != '>'])
-        i = 0
-        while (l-i) >= 0:
-            if scope[-i]['__blocks__']:
-                b = search(name, scope[-i]['__blocks__'])
-                if b: prop.extend(b)
-            i += 1 
-    return prop
 
 def destring(v):
     """ Strip quotes
