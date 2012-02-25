@@ -7,6 +7,35 @@
 """
 class Formatter(object):
     def format(self, parse, minify=False, xminify=False):
+        """
+        """
+        eb = '\n' 
+        if xminify:
+            eb = ''
+            minify = True
+        self.minify = minify
+        self.items = {}
+        if minify:
+            self.items.update({
+                'nl': '',
+                'tab': '',
+                'ws': '',
+                'endblock': eb
+            })
+        else:
+            self.items.update({
+                'nl': '\n',
+                'tab': '\t',
+                'ws': ' ',
+                'endblock': eb
+            })
+        self.out = [u.format(self.items) 
+                    for u in parse.result 
+                    if u]
+        return ''.join(self.out).strip()
+        
+        
+    def xformat(self, parse, minify=False, xminify=False):
         """ Format css output from parser
             @param Parse-result object: Parse-result object
             @param bool: Minify flag

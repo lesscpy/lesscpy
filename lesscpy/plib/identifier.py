@@ -1,5 +1,9 @@
 """
 """
 from .node import Node
+from lesscpy.lessc import utility
 class Identifier(Node):
-    pass
+    def parse(self, scope):
+        """
+        """
+        return ''.join(utility.flatten(self.tokens)).strip()

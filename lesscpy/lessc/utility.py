@@ -6,6 +6,7 @@
     <jtm@robot.is>
 """
 import collections
+import re
 
 def flatten(l):
     """
@@ -69,41 +70,36 @@ def destring(v):
 def analyze_number(var, err=''):
     """ Analyse number for type and split from unit
         @param str: value
+        @raises: SyntaxError
         @return: tuple (number, unit)
     """
-    u = None
+    n, u = split_unit(var)
     if type(var) is not str:
         return (var, u)
     if is_color(var):
         return (var, 'color')
-    var = var.strip()
-    n = var
-    if not '.' in var:
-        try:
-            n = int(var)
-            return (n, u)
-        except (ValueError, TypeError):
-            pass
-    try:
-        n = float(var)
-    except (ValueError, TypeError):
-        try:
-            n = ''.join([c for c in var if c in '0123456789.-'])
-            n = float(n) if '.' in n else int(n)
-            u = ''.join([c for c in var if c not in '0123456789.-'])
-        except ValueError:
-            raise SyntaxError('%s ´%s´' % (err, var))
+    if is_int(n):
+        n = int(n)
+    elif is_float(n):
+        n = float(n)
+    else:
+        raise SyntaxError('%s ´%s´' % (err, var))
     return (n, u)
 
-def with_unit(n, u):
+def with_unit(n, u=None):
     """ Return number with unit
         @param int/float: value
         @param str: unit
         @return: mixed
     """
+    if type(n) is tuple:
+        n, u = n
     if n == 0: return 0
     if u:
-        return "%s%s" % (str(n), u)
+        n = str(n)
+        if n.startswith('.'):
+            n = '0' + n 
+        return "%s%s" % (n, u)
     return n
             
 def is_color(v):
@@ -130,24 +126,32 @@ def is_variable(v):
         return (v.startswith('@') or v.startswith('-@'))
     return False
 
-def print_recursive(ll, lvl=0):
-    """ Scopemap printer
-        @param list: parser result
-        @param int: depth
+def is_int(v):
     """
-    pad = ''.join(['.'] * lvl)
-    t = type(ll)
-    if t is list:
-        for l in ll: print_recursive(l, lvl+1)
-    elif hasattr(ll, '_p'):
-        print(pad, type(ll))
-        print(pad, '[')
-        print_recursive(list(flatten(ll._p)), lvl+1)
-        print(pad, ']')
-    elif t is str:
-        print("%s '%s'" % (pad, ll))
-    else:
-        print("%s %s" % (pad, ll))
+    """
+    try:
+        int(str(v))
+        return True
+    except (ValueError, TypeError):
+        pass
+    return False
 
-        
+def is_float(v):
+    """
+    """
+    if not is_int(v):
+        try:
+            float(str(v))
+            return True
+        except (ValueError, TypeError):
+            pass
+    return False
+
+def split_unit(v):
+    """
+    """
+    r = re.search('^(\-?[\d\.]+)(.*)$', str(v))
+    return r.groups() if r else ('','')
+    
+    
             

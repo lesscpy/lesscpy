@@ -4,6 +4,7 @@ __all__ = [
    'Expression', 
    'Identifier',
    'Mixin',
+   'Node',
    'Property',
    'Statement',
    'String',
@@ -14,6 +15,7 @@ from .call import Call
 from .expression import Expression
 from .identifier import Identifier
 from .mixin import Mixin
+from .node import Node
 from .property import Property
 from .statement import Statement
 from .string import String

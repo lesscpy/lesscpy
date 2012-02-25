@@ -76,12 +76,27 @@ class LessParser(object):
         self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
+#        [print(r) for r in self.result]
             
     def scopemap(self):
         """ Output scopemap.
         """
         if self.result:
-            utility.print_recursive(self.result)
+#            utility.print_recursive(self.result)
+            self._scopemap_aux(self.result)
+            
+    def _scopemap_aux(self, ll, lvl=0):
+        pad = ''.join(['\t.'] * lvl)
+        t = type(ll)
+        if t is list:
+            for p in ll:
+                self._scopemap_aux(p, lvl)
+        elif hasattr(ll, 'tokens'):
+            print(pad, t) 
+            self._scopemap_aux(list(utility.flatten(ll.tokens)), lvl+1)
+#        else:
+#            print(pad, t)
+            
     
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,6 +113,8 @@ class LessParser(object):
         """
         if len(p) == 3:
             p[1].append(p[2])
+        else:
+            p[1] = [p[1]] 
         p[0] = p[1]
         
     def p_unit(self, p):
@@ -106,7 +123,7 @@ class LessParser(object):
                                      | block_decl
                                      | mixin_decl
         """
-        p[0] = [p[1]]
+        p[0] = p[1]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,12 +198,15 @@ class LessParser(object):
     def p_media_open(self, p):
         """ block_open                : css_media t_ws identifier brace_open
         """
-        p[0] = [p[1], p[3]]
+        ident = [p[1], p[2]]
+        ident.extend(p[3].tokens)
+        p[3].tokens = ident
+        p[0] = p[3]
         
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
         """
-        p[0] = p[1]
+        p[0] = Identifier([p[1], p[2]])
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -258,12 +278,12 @@ class LessParser(object):
         """ variable_decl            : variable ':' style_list ';'
         """
         try:
-            v = Variable(p)
-#            v.parse(self.scope)
-#            if self.scope.current == '__mixin__':
-#                self.stash[v.name()] = v
-#            else:
-#                self.scope.add_variable(v)
+            v = Variable(list(p)[1:])
+            v.parse(self.scope)
+            if self.scope.in_mixin():
+                self.stash[v.name] = v
+            else:
+                self.scope.add_variable(v)
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None
@@ -278,12 +298,6 @@ class LessParser(object):
                                     | prop_open less_arguments ';'
         """
         p[0] = Property(list(p)[1:-1])
-        if not self.scope.in_mixin():
-            try:
-                p[0].parse(self.scope)
-            except SyntaxError as e:
-                self.handle_error(e, p)
-                p[0] = None
         
     def p_prop_open(self, p):
         """ prop_open               : property ':'

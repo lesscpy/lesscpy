@@ -2,9 +2,10 @@
 """
 class Node(object):
     def __init__(self, p):
-        self._p = p
+        self.tokens = p
     
     def parse(self, scope):
-        pass
-#        print(type(self), list(self._p))
-#        print()
+        return self
+
+    def format(self, fills):
+        return str(type(self))

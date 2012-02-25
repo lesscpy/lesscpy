@@ -36,7 +36,7 @@ class Scope(list):
     def add_variable(self, variable):
         """
         """
-        self[-1]['__variables__'][variable.name()] = variable
+        self[-1]['__variables__'][variable.name] = variable
         
     def variables(self, name):
         """
