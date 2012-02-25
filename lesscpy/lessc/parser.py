@@ -582,19 +582,19 @@ class LessParser(object):
         p[0] = tuple(list(p)[1:]) 
         
     def p_scope_open(self, p):
-        """ brace_open              : '{'
+        """ brace_open                : '{'
         """
         self.scope.push()
         p[0] = p[1]
         
     def p_scope_close(self, p):
-        """ brace_close            : '}'
+        """ brace_close               : '}'
         """
         self.scope.pop()
         p[0] = p[1]
         
     def p_empty(self, p):
-        'empty                     :'
+        'empty                        :'
         pass
         
 #
