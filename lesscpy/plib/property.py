@@ -25,7 +25,7 @@ class Property(Node):
             'property': self.property,
             'style': ''.join([p.format(fills) 
                               if hasattr(p, 'format') 
-                              else p 
+                              else str(p)
                               for p in self.parsed]),
         })
         return f % fills

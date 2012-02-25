@@ -2,6 +2,7 @@
 """
 from .node import Node
 from lesscpy.lessc import utility
+from lesscpy.lessc import color
 
 class Expression(Node):
     def parse(self, scope):
@@ -17,12 +18,15 @@ class Expression(Node):
                    if type(e) is tuple 
                    else e 
                    for e in expr]
-        a, ua = utility.analyze_number(A, 'Illegal element in expression')
-        b, ub = utility.analyze_number(B, 'Illegal element in expression')
+        try:
+            a, ua = utility.analyze_number(A, 'Illegal element in expression')
+            b, ub = utility.analyze_number(B, 'Illegal element in expression')
+        except SyntaxError:
+            return ' '.join([str(A), str(O), str(B)])
         if(a is False or b is False):
-            return ''.join([A, O, B])
+            return ' '.join([str(A), str(O), str(B)])
         if ua == 'color' or ub == 'color':
-            return color.LessColor().process(expression)
+            return color.LessColor().process((A, O, B))
         out = self.operate(a, b, O)
         if type(a) is int and type(b) is int:
             out = int(out)
@@ -43,16 +47,17 @@ class Expression(Node):
     def with_units(self, v, ua, ub):
         """
         """
-        if v == 0: return v;
-        if ua and ub:
-            if ua == ub:
+        if not v: return v
+        if ua or ub:
+            if ua and ub:
+                if ua == ub:
+                    return str(v) + ua
+                else:
+                    raise SyntaxError("Error in expression %s != %s" % (ua, ub))
+            elif ua:
                 return str(v) + ua
-            else:
-                raise SyntaxError("Error in expression %s != %s" % (ua, ub))
-        elif ua:
-            return str(v) + ua
-        elif ub:
-            return str(v) + ub
+            elif ub:
+                return str(v) + ub
         return v
     
     def operate(self, a, b, o):
