@@ -405,8 +405,7 @@ class LessParser(object):
         p[0] = p[1]
         
     def p_selector(self, p):
-        """ selector                  : combinator
-                                      | '*'
+        """ selector                  : '*'
                                       | '+'
                                       | child_selector
                                       | general_sibling_selector
@@ -417,6 +416,7 @@ class LessParser(object):
         """ ident_part                : class
                                       | id
                                       | dom
+                                      | combinator
         """
         p[0] = p[1]
         

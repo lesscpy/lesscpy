@@ -1,0 +1,88 @@
+/*
+	Simple nesting
+*/
+.div {
+	color: blue;
+	.nest {
+		&.deep {
+			color: yellow;
+			.deeper {
+				color: angry;
+				.deepest {
+					color: purple;
+					.hidden {}
+				}
+			}
+		}
+		color: red;
+	}
+}
+/*
+	& combinator
+*/
+h1, h2, h3 {
+	a, p {
+    	&:hover {
+      		color: red;
+    	}
+  	}
+}
+a {
+  	color: red;
+  	&:hover { color: blue; }
+  	div & { color: green; }
+  	p & span { color: yellow; }
+}
+.foo {
+	.bar, .baz {
+	    & .qux {
+	      	display: block;
+	    }
+	    .qux & {
+	      	display: inline;
+	    }
+	    .qux & .biz {
+	      	display: none;
+	    }
+  	}
+}
+/*
+	@_o
+*/
+#first > .one {
+	> #second .two > #deux {
+    	width: 50%;
+    	#third {
+      		&:focus {
+        		color: black;
+        		#fifth {
+          			> #sixth {
+            			.seventh #eighth {
+                			color: purple;
+                			+ .sibling_selector {
+                				color: angry;
+                			}
+            			}
+          			}
+          			&:hover {
+          				// empty
+          			}
+        		}
+      		}
+      		~ p.general_sibling_selector {
+      			color: unused;
+      		}
+      		height: 100%;
+    	}
+    	#fourth, #five, #six {
+      		color: #110000;
+      		.seven, .eight > #nine {
+        		border: 1px solid black;
+      		}
+      		#ten {
+        		color: red;
+      		}
+    	}
+  	}
+  	font-size: 2em;
+}
