@@ -1,6 +1,6 @@
 p{color:red;}
 *{min-width:45em;}
-* html .div{height:12px !important;}
+* html .div{height:12px;}
 h1,h2>a>p,h3{color:none;}
 div.class{color:blue;}
 div#id{color:green;}

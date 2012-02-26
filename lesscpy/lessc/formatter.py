@@ -9,6 +9,8 @@ class Formatter(object):
     def format(self, parse, minify=False, xminify=False):
         """
         """
+        if not parse.result:
+            return ''
         eb = '\n' 
         if xminify:
             eb = ''

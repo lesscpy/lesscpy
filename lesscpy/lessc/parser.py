@@ -484,6 +484,7 @@ class LessParser(object):
                                    | expression oper_sub expression
                                    | expression oper_mul expression
                                    | expression oper_div expression
+                                   | word oper_div expression
         """
         p[0] = Expression(list(p)[1:])
         

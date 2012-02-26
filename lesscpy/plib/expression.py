@@ -73,3 +73,8 @@ class Expression(Node):
         if v is NotImplemented:
             v = getattr(b, operation)(a)
         return v
+    
+    def expression(self):
+        """
+        """
+        return utility.flatten(self.tokens)

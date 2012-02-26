@@ -15,12 +15,24 @@ class Property(Node):
         self.property = property[0]
         self.parsed = []
         if style:
+            style = self.preprocess(style)
             self.parsed = [p.parse(scope) 
                            if hasattr(p, 'parse')
                            else p
                            for p in utility.flatten(style)]
             self.parsed = [p for p in self.parsed if p]
         return self
+    
+    def preprocess(self, style):
+        """
+        Hackish preprocessing from font shorthand tags.
+        """
+        if self.property == 'font':
+            style = [''.join(u.expression()) 
+                     if hasattr(u, 'expression')
+                     else u
+                     for u in style]
+        return style
         
     def format(self, fills):
         """
