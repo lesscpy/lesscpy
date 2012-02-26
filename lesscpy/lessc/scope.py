@@ -11,7 +11,8 @@ class Scope(list):
         """
         self.append({
             '__variables__' : {},
-            '__blocks__': {}, 
+            '__blocks__': [], 
+            '__names__': [],
             '__current__': None
         })
         
@@ -30,7 +31,8 @@ class Scope(list):
     def add_block(self, block):
         """
         """
-        self[-1]['__blocks__'][block.name] = block
+        self[-1]['__blocks__'].append(block)
+        self[-1]['__names__'].append(block.name.strip())
         
     def add_mixin(self, mixin):
         """
@@ -65,8 +67,10 @@ class Scope(list):
         i = len(self)
         while i >= 0:
             i -= 1
-            if name in self[i]['__blocks__']:
-                return self[i]['__blocks__'][name]
+            if name in self[i]['__names__']:
+                for b in self[i]['__blocks__']:
+                    if b.name.strip() == name:
+                        return b
         return False
         
     def in_mixin(self):
@@ -80,5 +84,6 @@ class Scope(list):
         """
         self._mixins.update(scope._mixins)
         self[0]['__variables__'].update(scope[0]['__variables__'])
-        self[0]['__blocks__'].update(scope[0]['__blocks__'])
+        self[0]['__blocks__'].extend(scope[0]['__blocks__'])
+        self[0]['__names__'].extend(scope[0]['__names__'])
         

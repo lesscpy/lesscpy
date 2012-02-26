@@ -111,7 +111,6 @@ def run():
     scope = None
     if args.include:
         for u in args.include.split(','):
-            if args.debug: print("compiling include: %s" % u)
             p = parser.LessParser(
                                   yacc_debug=False,
                                   lex_optimize=True,
@@ -134,7 +133,6 @@ def run():
         if args.dry_run:
             print('Dry run, nothing done.')  
     else:
-        if args.verbose: print("compiling target: %s" % args.target)
         p = parser.LessParser(yacc_debug=(args.debug),
                               lex_optimize=True,
                               yacc_optimize=(not args.debug),

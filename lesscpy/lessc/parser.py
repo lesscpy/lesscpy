@@ -75,10 +75,10 @@ class LessParser(object):
             @param string: Filename
             @param int: Debuglevel
         """
+        if self.verbose: print('Compiling target: %s' % filename)
         self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
-#        [print(r) for r in self.result]
             
     def scopemap(self):
         """ Output scopemap.
