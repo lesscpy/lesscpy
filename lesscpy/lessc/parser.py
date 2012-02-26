@@ -202,7 +202,8 @@ class LessParser(object):
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
         """
-        p[0] = p[1]
+        p[0] = p[1].parse(self.scope)
+        self.scope.current = p[1].real
         
     def p_media_open(self, p):
         """ block_open                : css_media t_ws identifier brace_open

@@ -6,15 +6,11 @@ class Identifier(Node):
     def parse(self, scope):
         """
         """
-        scopename = []
-        if scope:
-            scopename.extend(scope.scopename)
-        scopename = ''.join(scopename)
+        scopename = scope.scopename if scope else []
         name = ''.join([t + ' '
                         if t in '*>~+'
                         else t 
                         for t in utility.flatten(self.tokens)])
-        if name.startswith('&'):
-            scopename = scopename.strip()
-            name = name[1:]
-        return scopename + name
+        self.real = name
+        scopename.append(name)
+        return ''.join(scopename).replace(' &', '')

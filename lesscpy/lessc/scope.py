@@ -28,7 +28,12 @@ class Scope(list):
         
     @property
     def scopename(self):
-        return [r['__current__'] for r in self if r['__current__']]
+        """
+        """
+        return [r['__current__'] 
+                for r in self 
+                if r['__current__']]
+
         
     def add_block(self, block):
         """

@@ -29,14 +29,14 @@
 	color: blue;
 	border-color: black;
 }
-.scope2 {
+.scope1 .scope2 {
 	color: blue;
 }
-.scope3 {
+.scope1 .scope2 .scope3 {
 	color: red;
 	border-color: black;
 	background-color: white;
 }
-.scope4 {
+.scope1 .scope2 .scope3 .scope4 {
 	color: black;
 }

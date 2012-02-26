@@ -16,7 +16,7 @@ class Expression(Node):
                    if type(e) is tuple 
                    else e 
                    for e in expr
-                   if e != ' ']
+                   if str(e).strip()]
         try:
             a, ua = utility.analyze_number(A, 'Illegal element in expression')
             b, ub = utility.analyze_number(B, 'Illegal element in expression')

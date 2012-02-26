@@ -6,6 +6,6 @@
 .alpha{filter:alpha(opacity=42);}
 .lazy-eval{width:100%;}
 .scope1{color:blue;border-color:black;}
-.scope2{color:blue;}
-.scope3{color:red;border-color:black;background-color:white;}
-.scope4{color:black;}
+.scope1 .scope2{color:blue;}
+.scope1 .scope2 .scope3{color:red;border-color:black;background-color:white;}
+.scope1 .scope2 .scope3 .scope4{color:black;}
