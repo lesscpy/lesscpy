@@ -4,6 +4,9 @@
 p {
 	color: red;
 }
+p span {
+	display: inline;
+}
 * {
 	min-width: 45em;
 }
@@ -38,7 +41,7 @@ p ~ h1 {
   color: yellow;
 }
 /**
-	Filters
+	Selectors
 */
 p, p:first-child {
   text-transform: none;
@@ -80,6 +83,12 @@ form[data-disabled] {
 }
 p::before {
   color: black;
+}
+:lang(en-us)>q {
+  	quotes: "\201c" "\201d" "\2018" "\2019";
+}
+:lang(en-gb)>q {
+	quotes: "\2018" "\2019" "\201c" "\201d";
 }
 /*
 	Lists

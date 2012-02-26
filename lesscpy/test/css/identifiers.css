@@ -1,6 +1,9 @@
 p {
 	color: red;
 }
+p span {
+	display: inline;
+}
 * {
 	min-width: 45em;
 }
@@ -72,6 +75,12 @@ form[data-disabled] {
 }
 p::before {
 	color: black;
+}
+:lang(en-us)> q {
+	quotes: "\201c""\201d""\2018""\2019";
+}
+:lang(en-gb)> q {
+	quotes: "\2018""\2019""\201c""\201d";
 }
 a.one, a.two, a.three, a.four, a.five, a.six, a.seven, a.eight, a.nine, a.ten {
 	max-width: 12px;
