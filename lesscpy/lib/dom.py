@@ -102,9 +102,6 @@ html4 = [
     'screen',
     'all',
     'projection',
-    
-#    'focus',
-#    'hover',
 ]
 html5 = [
     'article',

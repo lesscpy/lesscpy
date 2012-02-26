@@ -1,6 +1,6 @@
 """
 """
-import copy
+import copy, re
 from .node import Node
 from lesscpy.lessc import utility
 class Block(Node):
@@ -27,9 +27,17 @@ class Block(Node):
         """
         out = []
         if self.parsed:
-            f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(nl)s"
+            f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
+            name = self.name.strip()
+            if fills['nl']:
+                if len(name) > 80 and name.count(',') > 5:
+                    name = name.replace(',', ',%s' % fills['nl'])
+                else:
+                    name = name.replace(',', ',%s' % fills['ws'])
+            else:
+                name = re.sub(' ([\+\>~]) ', '\\1', name)
             fills.update({
-                'identifier': self.name.strip(),
+                'identifier': name,
                 'proplist': ''.join([p.format(fills) for p in self.parsed]),
             })
             out.append(f % fills)

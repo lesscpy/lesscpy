@@ -6,7 +6,12 @@ class Property(Node):
     pass 
 
     def parse(self, scope):
-        property, style = self.tokens
+        if len(self.tokens) > 2:
+            property, style, _ = self.tokens
+            self.important = True
+        else:
+            property, style = self.tokens
+            self.important = False
         self.property = property[0]
         self.parsed = []
         if style:
@@ -20,12 +25,14 @@ class Property(Node):
     def format(self, fills):
         """
         """
-        f = "%(tab)s%(property)s:%(ws)s%(style)s;%(nl)s"
+        f = "%(tab)s%(property)s:%(ws)s%(style)s%(important)s;%(nl)s"
+        imp = ' !important' if self.important else ''
         fills.update({
             'property': self.property,
             'style': ''.join([p.format(fills) 
                               if hasattr(p, 'format') 
                               else str(p)
                               for p in self.parsed]),
+            'important': imp
         })
         return f % fills

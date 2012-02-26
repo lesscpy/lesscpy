@@ -52,7 +52,8 @@ class LessParser(object):
             tabfile = 'yacctab'
             
         self.ignored = ('css_comment', 'less_comment',
-                        'css_vendor_hack', 'css_keyframes')
+                        'css_vendor_hack', 'css_keyframes',
+                        'css_page')
         
         self.tokens = [t for t in self.lex.tokens 
                        if t not in self.ignored]
@@ -301,6 +302,7 @@ class LessParser(object):
 
     def p_property_decl(self, p):
         """ property_decl           : prop_open style_list ';'
+                                    | prop_open style_list css_important ';'
                                     | prop_open empty ';'
                                     | prop_open less_arguments ';'
         """
@@ -320,7 +322,6 @@ class LessParser(object):
     def p_style_list_aux(self, p):
         """ style_list              : style_list style
                                     | style_list ',' style
-                                    | style_list css_important
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
@@ -363,7 +364,8 @@ class LessParser(object):
         
     def p_identifier_group_op(self, p):
         """ identifier_group          : identifier_group child_selector ident_parts
-                                      | identifier_group '+' ident_parts
+                                      | identifier_group oper_add ident_parts
+                                      | identifier_group general_sibling_selector ident_parts
         """
         p[1].extend([p[2]])
         p[1].extend(p[3])
@@ -393,15 +395,11 @@ class LessParser(object):
         p[0] = p[1]
         
     def p_selector(self, p):
-        """ selector                  : child_selector ident_part
-                                      | '+' ident_part
-                                      | '*' ident_part
-        """
-        p[0] = [p[1], p[2]]
-        
-    def p_selector_comb(self, p):
         """ selector                  : combinator
-                                      | '*'
+                                      | oper_mul
+                                      | oper_add
+                                      | child_selector
+                                      | general_sibling_selector
         """
         p[0] = p[1]
         
@@ -482,12 +480,15 @@ class LessParser(object):
 #  
 
     def p_expression_aux(self, p):
-        """ expression             : expression operator expression
+        """ expression             : expression oper_add expression
+                                   | expression oper_sub expression
+                                   | expression oper_mul expression
+                                   | expression oper_div expression
         """
         p[0] = Expression(list(p)[1:])
         
     def p_expression_p_neg(self, p):
-        """ expression             : '-' t_popen expression t_pclose
+        """ expression             : oper_sub t_popen expression t_pclose
         """
         p[0] = [p[1], p[3]]
         
@@ -509,15 +510,6 @@ class LessParser(object):
         """
         p[0] = p[1]
         
-    def p_operator(self, p):
-        """ operator                : operator t_ws
-                                    | '+'
-                                    | '-'
-                                    | '*'
-                                    | '/'
-        """
-        p[0] = tuple(list(p)[1:])
-
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
@@ -528,7 +520,7 @@ class LessParser(object):
         p[0] = String(p)
         
     def p_variable_neg(self, p):
-        """ variable                : '-' variable
+        """ variable                : oper_sub variable
         """
         p[0] = '-' + p[2] 
         
@@ -596,9 +588,39 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:]) 
         
+    def p_oper_add(self, p):
+        """ oper_add                  : '+' t_ws
+                                      | '+'
+        """
+        p[0] = tuple(list(p)[1:]) 
+    
+    def p_oper_sub(self, p):
+        """ oper_sub                  : '-' t_ws
+                                      | '-'
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_oper_mul(self, p):
+        """ oper_mul                  : '*' t_ws
+                                      | '*'
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_oper_div(self, p):
+        """ oper_div                  : '/' t_ws
+                                      | '/'
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
     def p_child_selector(self, p):
         """ child_selector            : '>' t_ws
                                       | '>'
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_general_sibling_selector(self, p):
+        """ general_sibling_selector  : '~' t_ws
+                                      | '~'
         """
         p[0] = tuple(list(p)[1:]) 
         

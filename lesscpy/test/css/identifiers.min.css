@@ -1,0 +1,29 @@
+p{color:red;}
+*{min-width:45em;}
+* html .div{height:12px !important;}
+h1,h2>a>p,h3{color:none;}
+div.class{color:blue;}
+div#id{color:green;}
+.class#id{color:purple;}
+.one.two.three{color:grey;}
+.one .two .three{color:grey;}
+a:hover,a:link{color:#999999;}
+p+h1{font-size:2.2em;}
+p~h1{color:yellow;}
+p,p:first-child{text-transform:none;}
+q:lang(no){quotes:none;}
+p:not([class*="lead"]){color:black;}
+input[type="text"].class#id[attr=32]:not(1){color:white;}
+div#id.class[a=1][b=2].class:not(1){color:white;}
+ul.comma>li:not(:only-child)::after{color:white;}
+ol.comma>li:nth-last-child(2)::after{color:white;}
+li:nth-child(4n+1),li:nth-child(-5n),li:nth-child(-n+2){color:white;}
+a[href^="http://"]{color:black;}
+a[href$="http://"]{color:black;}
+a[href^="http://"]{color:black;}
+form[data-disabled]{color:black;}
+p::before{color:black;}
+a.one,a.two,a.three,a.four,a.five,a.six,a.seven,a.eight,a.nine,a.ten{max-width:12px;}
+a.longclassname.one,a.longclassname.two,a.longclassname.three,a.longclassname.four,a.longclassname.five,a.longclassname.six,a.longclassname.seven,a.longclassname.eight,a.longclassname.nine,a.longclassname.ten{max-height:12px;}
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{padding:0;}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{padding:0;}

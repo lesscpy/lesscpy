@@ -69,6 +69,11 @@ class LessLexer:
         'css_number',
         '>',
         '&',
+        '*',
+        '+',
+        '-',
+        '/',
+        '~',
     ]
     significant_ws += list(set(reserved.values()))
     
@@ -88,8 +93,9 @@ class LessLexer:
          '([_a-z]'
          '|[\200-\377]'
          '|\\\[0-9a-f]{1,6}'
-         '|\\\[^\s\r\n0-9a-f])[ \t\f\v]?'
-         '([_a-z0-9\-]|[\200-\377]'
+         '|\\\[^\s\r\n0-9a-f])'
+         '([ \t\f\v]?[_a-z0-9\-]'
+         '|[\200-\377]'
          '|\\\[0-9a-f]{1,6}'
          '|\\\[^\s\r\n0-9a-f])*')
         v = t.value.strip()
@@ -214,6 +220,8 @@ class LessLexer:
             self.lexer.input(f.read())
             
     def token(self):
+        """
+        """
         while True:
             t = self.lexer.token()
             if not t: return t
