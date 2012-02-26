@@ -18,7 +18,7 @@
 	}
 }
 /*
-	& combinator
+	& combinator and placements
 */
 h1, h2, h3 {
 	a, p {
@@ -85,4 +85,17 @@ a {
     	}
   	}
   	font-size: 2em;
+}
+/*
+	Multiples
+	expands to 160 identifiers
+*/
+h1, h2, h3, h4, h5 {
+	a, p, div, span {	
+		.one, .two, .three, .four {
+			&:hover, &:focus {	
+				display: block;
+			}
+		}
+	}
 }
