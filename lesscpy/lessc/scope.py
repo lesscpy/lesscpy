@@ -1,5 +1,7 @@
 """
 """
+from . import utility
+
 class Scope(list):
     def __init__(self, init=False):
         super().__init__()
@@ -86,4 +88,15 @@ class Scope(list):
         self[0]['__variables__'].update(scope[0]['__variables__'])
         self[0]['__blocks__'].extend(scope[0]['__blocks__'])
         self[0]['__names__'].extend(scope[0]['__names__'])
+        
+    def swap(self, name):
+        """
+        """
+        if name.startswith('@@'):
+            var = self.variables(name[1:])
+            if var is False: raise SyntaxError('Unknown variable %s' % name)
+            name = '@' + utility.destring(var.value[0])
+        var = self.variables(name)
+        if var is False: raise SyntaxError('Unknown variable %s' % name)
+        return var.value
         

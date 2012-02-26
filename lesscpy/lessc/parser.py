@@ -179,7 +179,7 @@ class LessParser(object):
         """ block_decl               : block_open declaration_list brace_close
         """
         try:
-            block = Block(list(p)[1:-1])
+            block = Block(list(p)[1:-1], p.lineno(3))
             if not self.scope.in_mixin():
                 block.parse(self.scope)
             self.scope.add_block(block)
@@ -187,6 +187,7 @@ class LessParser(object):
         except SyntaxError as e:
             self.handle_error(e, p)
             p[0] = None
+        self.scope.pop()
             
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
@@ -224,6 +225,7 @@ class LessParser(object):
         """ mixin_decl                : open_mixin declaration_list brace_close
         """
         p[0] = None
+        self.scope.pop()
 
     def p_open_mixin(self, p):
         """ open_mixin                : class t_popen mixin_args t_pclose brace_open
@@ -287,7 +289,7 @@ class LessParser(object):
         """ variable_decl            : variable ':' style_list ';'
         """
         try:
-            v = Variable(list(p)[1:])
+            v = Variable(list(p)[1:], p.lineno(4))
             v.parse(self.scope)
             if self.scope.in_mixin():
                 self.stash[v.name] = v
@@ -307,10 +309,11 @@ class LessParser(object):
                                     | prop_open empty ';'
                                     | prop_open less_arguments ';'
         """
-        p[0] = Property(list(p)[1:-1])
+        l = len(p)
+        p[0] = Property(list(p)[1:-1], p.lineno(l-1))
         
     def p_prop_open_ie_hack(self, p):
-        """ prop_open               : oper_mul prop_open
+        """ prop_open               : '*' prop_open
         """
         p[0] = (p[1][0], p[2][0])
         
@@ -354,7 +357,7 @@ class LessParser(object):
     def p_identifier(self, p):
         """ identifier                : identifier_list
         """
-        p[0] = Identifier(p[1])
+        p[0] = Identifier(p[1], 0)
 
     def p_identifier_list_aux(self, p):
         """ identifier_list           : identifier_list ',' identifier_group
@@ -370,7 +373,7 @@ class LessParser(object):
         
     def p_identifier_group_op(self, p):
         """ identifier_group          : identifier_group child_selector ident_parts
-                                      | identifier_group oper_add ident_parts
+                                      | identifier_group '+' ident_parts
                                       | identifier_group general_sibling_selector ident_parts
         """
         p[1].extend([p[2]])
@@ -402,8 +405,8 @@ class LessParser(object):
         
     def p_selector(self, p):
         """ selector                  : combinator
-                                      | oper_mul
-                                      | oper_add
+                                      | '*'
+                                      | '+'
                                       | child_selector
                                       | general_sibling_selector
         """
@@ -453,7 +456,7 @@ class LessParser(object):
                             | '~' istring
                             | '~' css_string
         """
-        p[0] = Call(list(p)[1:])
+        p[0] = Call(list(p)[1:], 0)
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -488,16 +491,16 @@ class LessParser(object):
 #  
 
     def p_expression_aux(self, p):
-        """ expression             : expression oper_add expression
-                                   | expression oper_sub expression
-                                   | expression oper_mul expression
-                                   | expression oper_div expression
-                                   | word oper_div expression
+        """ expression             : expression '+' expression
+                                   | expression '-' expression
+                                   | expression '/' expression
+                                   | expression '*' expression
+                                   | word '/' expression
         """
-        p[0] = Expression(list(p)[1:])
+        p[0] = Expression(list(p)[1:], 0)
         
     def p_expression_p_neg(self, p):
-        """ expression             : oper_sub t_popen expression t_pclose
+        """ expression             : '-' t_popen expression t_pclose
         """
         p[0] = [p[1], p[3]]
         
@@ -529,7 +532,7 @@ class LessParser(object):
         p[0] = String(p)
         
     def p_variable_neg(self, p):
-        """ variable                : oper_sub variable
+        """ variable                : '-' variable
         """
         p[0] = '-' + p[2] 
         
@@ -597,29 +600,6 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:]) 
         
-    def p_oper_add(self, p):
-        """ oper_add                  : '+' t_ws
-                                      | '+'
-        """
-        p[0] = tuple(list(p)[1:]) 
-    
-    def p_oper_sub(self, p):
-        """ oper_sub                  : '-' t_ws
-                                      | '-'
-        """
-        p[0] = tuple(list(p)[1:]) 
-        
-    def p_oper_mul(self, p):
-        """ oper_mul                  : '*' t_ws
-                                      | '*'
-        """
-        p[0] = tuple(list(p)[1:]) 
-        
-    def p_oper_div(self, p):
-        """ oper_div                  : '/' t_ws
-                                      | '/'
-        """
-        p[0] = tuple(list(p)[1:]) 
         
     def p_child_selector(self, p):
         """ child_selector            : '>' t_ws
@@ -642,7 +622,6 @@ class LessParser(object):
     def p_scope_close(self, p):
         """ brace_close               : '}'
         """
-        self.scope.pop()
         p[0] = p[1]
         
     def p_empty(self, p):

@@ -15,12 +15,14 @@ class Property(Node):
         self.property = ''.join(property)
         self.parsed = []
         if style:
-            style = self.preprocess(style)
-            self.parsed = [p.parse(scope) 
-                           if hasattr(p, 'parse')
-                           else p
-                           for p in utility.flatten(style)]
-            self.parsed = [p for p in self.parsed if p]
+            self.parsed = self.process(style, scope)
+#            style = self.replace_variables(style, scope)
+#            style = self.preprocess(style)
+#            self.parsed = [p.parse(scope) 
+#                           if hasattr(p, 'parse')
+#                           else p
+#                           for p in style]
+#            self.parsed = [p for p in self.parsed if p]
         return self
     
     def preprocess(self, style):

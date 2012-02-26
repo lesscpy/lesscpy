@@ -10,7 +10,10 @@ class Identifier(Node):
         if scope:
             scopename.extend(scope.scopename)
         scopename = ''.join(scopename)
-        name = ''.join(utility.flatten(self.tokens))
+        name = ''.join([t + ' '
+                        if t in '*>~+'
+                        else t 
+                        for t in utility.flatten(self.tokens)])
         if name.startswith('&'):
             scopename = scopename.strip()
             name = name[1:]

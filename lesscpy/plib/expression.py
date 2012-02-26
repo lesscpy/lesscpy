@@ -10,14 +10,13 @@ class Expression(Node):
             @param list: current scope
         """
         assert(len(self.tokens) == 3)
-        expr = [t.parse(scope) if hasattr(t, 'parse') 
-                else t
-                for t in self.tokens]
+        expr = self.process(self.tokens, scope)
         expr = [self.neg(t, scope) for t in expr]
         A, O, B = [e[0] 
                    if type(e) is tuple 
                    else e 
-                   for e in expr]
+                   for e in expr
+                   if e != ' ']
         try:
             a, ua = utility.analyze_number(A, 'Illegal element in expression')
             b, ub = utility.analyze_number(B, 'Illegal element in expression')
@@ -68,7 +67,7 @@ class Expression(Node):
             '-': '__sub__',
             '*': '__mul__',
             '/': '__truediv__'
-        }.get(o[0])
+        }.get(o)
         v = getattr(a, operation)(b)
         if v is NotImplemented:
             v = getattr(b, operation)(a)
