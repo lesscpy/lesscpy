@@ -9,17 +9,21 @@ class Block(Node):
     def parse(self, scope):
         """
         """
-        scope = copy.deepcopy(scope)
         ident, inner = self.tokens
         self.name = ident.parse(scope)
         if not inner: inner = []
         self.parsed = [p.parse(scope) 
                        for p in inner
                        if p and type(p) is not type(self)]
-        scope.current = self.name
-        self.inner = [p.parse(scope)
-                      for p in inner
-                      if p and type(p) is type(self)]
+        if not inner: 
+            self.inner = []
+        else:
+           self. inner = [p for p in inner 
+                     if p and type(p) is type(self)]
+        if self.inner:
+            scope = copy.deepcopy(scope)
+            scope.current = self.name
+            self.inner = [p.parse(scope) for p in self.inner]
         return self
     
     def format(self, fills):

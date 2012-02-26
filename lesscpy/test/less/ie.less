@@ -1,0 +1,26 @@
+@fat: 0;
+@cloudhead: "#000000";
+//
+// IE Filters
+//
+.nav {
+	filter: ~'progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333", endColorstr="@{cloudhead}", GradientType=@{fat})';
+}
+.nav1 {
+	filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{fat})";
+}
+.nav2 {
+	filter: ~'progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333", endColorstr="@{cloudhead}", GradientType=@{fat})';
+}
+//
+// IE Hacks
+//
+body {
+	*zoom: 1px;
+}
+>body {
+	*zoom: 1px;
+}
+html * {
+  	height: 12px;
+}

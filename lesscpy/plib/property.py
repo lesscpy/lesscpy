@@ -12,7 +12,7 @@ class Property(Node):
         else:
             property, style = self.tokens
             self.important = False
-        self.property = property[0]
+        self.property = ''.join(property)
         self.parsed = []
         if style:
             style = self.preprocess(style)

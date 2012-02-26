@@ -146,6 +146,7 @@ class LessParser(object):
         
     def p_statement_import(self, p):
         """ statement            : css_import t_ws css_string ';'
+                                 | css_import t_ws css_string dom ';'
         """
         if self.importlvl > 8:
             raise ImportError('Recrusive import level too deep > 8 (circular import ?)')
@@ -167,7 +168,7 @@ class LessParser(object):
             except ImportError as e:
                 self.handle_error(e, p)
         else:
-            p[0] = Statement(p)
+            p[0] = Statement(list(p)[1:])
             p[0].parse(None)
         
 #
@@ -308,12 +309,17 @@ class LessParser(object):
         """
         p[0] = Property(list(p)[1:-1])
         
+    def p_prop_open_ie_hack(self, p):
+        """ prop_open               : oper_mul prop_open
+        """
+        p[0] = (p[1][0], p[2][0])
+        
     def p_prop_open(self, p):
         """ prop_open               : property ':'
                                     | vendor_property ':'
                                     | word ':'
         """
-        p[0] = p[1]
+        p[0] = (p[1][0], '')
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -444,6 +450,8 @@ class LessParser(object):
                             | property t_popen argument_list t_pclose
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
+                            | '~' istring
+                            | '~' css_string
         """
         p[0] = Call(list(p)[1:])
         
