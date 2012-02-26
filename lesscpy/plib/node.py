@@ -5,6 +5,7 @@ class Node(object):
     def __init__(self, p, ln):
         self.tokens = p
         self.lineno = ln
+        self.parsed = False
     
     def parse(self, scope):
         return self
