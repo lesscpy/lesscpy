@@ -10,7 +10,7 @@ class Identifier(Node):
                         if t in '*>~+'
                         else t 
                         for t in utility.flatten(self.tokens)])
-        names = self.root(scope, name)
+        names = self.root(scope, name) if scope else [name]
         self.real = name
         return ','.join(names)
     

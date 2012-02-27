@@ -1,0 +1,13 @@
+/*
+	Mixins
+*/
+.mixin {
+	direction: rtl;
+}
+#mixin {
+	unicode-bidi: embed;
+}
+.bible-quote {
+	.mixin;
+	#mixin;
+}
