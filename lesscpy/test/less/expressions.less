@@ -1,42 +1,80 @@
+/*
+	Expressions
+*/
 #operations {
-  color: #110000 + #000011 + #001100; // #111111
-  height: 10px / 2px + 6px - 1px * 2; // 9px
-  width: 2 * 4 - 5em; // 3em
-  text-shadow: -1px -1px 1px red, 6px 5px 5px yellow;
-  .spacing {
-    height: 10px / 2px+6px- 1px*2;
-    width: 2  * 4 - 5em;
-  }
-  substraction: 20 - 10 - 5 - 5; // 0
-  division: 20 / 5 / 4; // 1
+  	color: #110000 + #000011 + #001100; // #111111
+  	// No space
+  	color: #110000+#000011+#001100;
+  	height: 10px / 2px + 6px - 1px * 2; // 9px
+  	width: 2 * 4 - 5em; // 3em
+  	text-shadow: -1px -1px 1px red, 6px 5px 5px yellow;
+  	.spacing {
+    	height: 10px / 2px+6px- 1px*2;
+    	width: 2  * 4 - 5em;
+  	}
+  	substraction: 20 - 10 - 5 - 5; // 0
+  	division: 20 / 5 / 4; // 1
 }
-
+/*
+	Variables
+*/
 @x: 4;
 @y: 12em;
-
 .with-variables {
-  height: @x + @y; // 16em
-  width: 12 + @y; // 24em
-  size: 5cm - @x; // 1cm
+  	height: @x + @y; // 16em
+  	width: 12 + @y; // 24em
+  	size: 5cm - @x; // 1cm
 }
-
 @z: -2;
-
 .negative {
-  height: 2px + @z; // 0px
-  width: 2px - @z; // 4px
+  	height: 2px + @z; // 0px
+  	width: 2px - @z; // 4px
 }
-
+@m: ((8 * (@z + 5) - 12) * (5 + -1));
+a {
+	width: (@m)px; // 48px
+}
+/*
+	
+*/
 .shorthands {
-  padding: -1px 2px 0 -4px; //
+  	padding: -1px 2px 0 -4px; //
 }
-
+/*
+	Colors
+*/
 .colors {
-  color: #123; // #112233
-  border-color: #234 + #111111; // #334455
-  background-color: #222222 - #fff; // #000000
-  .other {
-    color: 2 * #111; // #222222
-    border-color: #333333 / 3 + #111; // #222222
-  }
+  	color: #123; // #112233
+ 	border-color: #234 + #111111; // #334455
+  	background-color: #222222 - #fff; // #000000
+  	.other {
+    	color: 2 * #111; // #222222
+    	border-color: #333333 / 3 + #111; // #222222
+  	}
+}
+/*
+	Parentheses
+*/
+.parens {
+  	@var: 1px;
+ 	border: (@var * 2) solid black;
+  	margin: (@var * 1) (@var + 2) (4 * 4) 3;
+  	width: (6 * 6);
+  	padding: 2px (6px * 6px);
+}
+.more-parens {
+  	@var: (2 * 2);
+  	padding: (2 * @var) 4 4 (@var * 1px);
+  	width: (@var * @var) * 6;
+  	height: (7 * 7) + (8 * 8);
+  	margin: 4 * (5 + 5) / 2 - (@var * 2);
+  	margin: (6 * 6)px;
+}
+.nested-parens {
+  	width: 2 * (4 * (2 + (1 + 6))) - 1;
+  	height: ((2+3)*(2+3) / (9 - 4)) + 1;
+}
+.mixed-units {
+	margin: 2px 4em 1 5pc;
+	padding: (2px + 4px) 1em 2px 2;
 }

@@ -1,0 +1,58 @@
+#operations {
+	color: #111111;
+	color: #111111;
+	height: 9px;
+	width: 3em;
+	text-shadow: -1px -1px 1px red, 6px 5px 5px yellow;
+	substraction: 0;
+	division: 1;
+}
+#operations .spacing {
+	height: 9px;
+	width: 3em;
+}
+.with-variables {
+	height: 16em;
+	width: 24em;
+	size: 1cm;
+}
+.negative {
+	height: 0;
+	width: 4px;
+}
+a {
+	width: 48px;
+}
+.shorthands {
+	padding: -1px 2px 0 -4px;
+}
+.colors {
+	color: #112233;
+	border-color: #334455;
+	background-color: #000000;
+}
+.colors .other {
+	color: #222222;
+	border-color: #222222;
+}
+.parens {
+	border: 2px solid black;
+	margin: 1px 3px 16 3;
+	width: 36;
+	padding: 2px 36px;
+}
+.more-parens {
+	padding: 8 4 4 4px;
+	width: 96;
+	height: 113;
+	margin: 12;
+	margin: 36 px;
+}
+.nested-parens {
+	width: 71;
+	height: 6;
+}
+.mixed-units {
+	margin: 2px 4em 1 5pc;
+	padding: 6px 1em 2px 2;
+}

@@ -2,6 +2,7 @@
 """
 from .node import Node
 from lesscpy.lessc import utility
+
 class Property(Node):
     def parse(self, scope):
         """
@@ -29,6 +30,11 @@ class Property(Node):
                      if hasattr(u, 'expression')
                      else u
                      for u in style]
+        else:
+            style = [(u, ' ')
+                     if hasattr(u, 'expression')
+                     else u
+                     for u in style]
         return style
         
     def format(self, fills):
@@ -47,7 +53,7 @@ class Property(Node):
                          for p in self.parsed])
         fills.update({
             'property': self.property,
-            'style': style,
+            'style': style.strip(),
             'important': imp
         })
         return f % fills
