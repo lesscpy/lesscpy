@@ -1,0 +1,3 @@
+#comments{color:red;background-color:orange;font-size:12px;content:"content";border:1px solid black;padding:0;margin:2em;}
+.selector,.lots,.comments{color:grey,orange;-webkit-border-radius:2px ;-moz-border-radius:8px;}
+#last{color:blue;}

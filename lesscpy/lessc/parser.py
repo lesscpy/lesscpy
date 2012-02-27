@@ -205,13 +205,14 @@ class LessParser(object):
         p[0] = p[1].parse(self.scope)
         self.scope.current = p[1].real
         
-    def p_media_open(self, p):
-        """ block_open                : css_media t_ws identifier brace_open
-        """
-        ident = [p[1], p[2]]
-        ident.extend(p[3].tokens)
-        p[3].tokens = ident
-        p[0] = p[3]
+#    def p_media_open(self, p):
+#        """ block_open                : css_media t_ws identifier brace_open
+#        """
+#        identifier = [p[1], p[2]]
+#        identifier.extend(p[3].tokens)
+#        p[3].tokens = identifier
+#        p[0] = p[3].parse(self.scope)
+#        self.scope.current = p[3].real
         
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
@@ -354,7 +355,8 @@ class LessParser(object):
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#    
+#  
+
     def p_identifier(self, p):
         """ identifier                : identifier_list
         """
@@ -404,6 +406,11 @@ class LessParser(object):
             p[1] = [p[1]]
         p[0] = p[1]
         
+    def p_ident_media(self, p):
+        """ ident_parts               : css_media t_ws
+        """
+        p[0] = list(p)[1:]
+        
     def p_selector(self, p):
         """ selector                  : '*'
                                       | '+'
@@ -417,6 +424,7 @@ class LessParser(object):
                                       | id
                                       | dom
                                       | combinator
+                                      | color
         """
         p[0] = p[1]
         

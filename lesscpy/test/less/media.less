@@ -1,0 +1,38 @@
+/*
+	CSS media groups
+*/
+@media screen, projection {
+  html {
+    background: #fffef0;
+    color: #300;
+  }
+  body {
+    max-width: 35em;
+    margin: 0 auto;
+  }
+}
+/*
+	Variables
+*/
+@media print {
+	@var: 42;
+    .class {
+        color: blue;    
+        .sub {
+            width: @var;
+        }
+    }
+    .top, header > h1 {
+        color: #222 * 2;
+    }
+}
+@media screen {
+    @base: 8;
+    body { max-width: @base * 60; }
+}
+/*
+	pseudo
+*/
+@media all and (orientation:portrait) {
+    aside { float: none; }
+}
