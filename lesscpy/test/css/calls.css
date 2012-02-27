@@ -1,0 +1,20 @@
+#standard {
+	width: 16;
+	height: undefined("self");
+	border-width: 5;
+	variable: 11;
+	decrement: 9;
+	rounded: 10;
+	roundedpx: 3px;
+}
+#escapes {
+	escaped: -Some::weird(#thing, y);
+	escaped1: -Some::weird(#thing, z);
+	eformat: rgb(32, 128, 64);
+}
+#format {
+	format: "rgb(32, 128, 64)";
+	format-string: "hello world";
+	format-multiple: "hello earth 2";
+	format-url-encode: 'red is %23ff0000';
+}

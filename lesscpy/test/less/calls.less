@@ -1,0 +1,25 @@
+/*
+	Built in functions
+*/
+@r: 32;
+#standard {
+  	@var: 10;
+  	width: increment(15);
+  	height: undefined("self");
+  	border-width: add(2, 3);
+  	variable: increment(@var);
+  	decrement: decrement(@var);
+  	rounded: round(@r/3);
+  	roundedpx: round(10px / 3);
+}
+#escapes {
+  	escaped: e("-Some::weird(#thing, y)");
+  	escaped1: ~"-Some::weird(#thing, z)";
+  	eformat: e(%("rgb(%d, %d, %d)", @r, 128, 64));
+}
+#format {
+	format: %("rgb(%d, %d, %d)", @r, 128, 64);
+  	format-string: %("hello %s", "world");
+  	format-multiple: %("hello %s %d", "earth", 2);
+  	format-url-encode: %('red is %A', #ff0000);
+}
