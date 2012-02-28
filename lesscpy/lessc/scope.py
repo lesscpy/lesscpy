@@ -78,8 +78,14 @@ class Scope(list):
                 for b in self[i]['__blocks__']:
                     if b.name.strip() == name:
                         return b
+            else:
+                # deep search
+                for b in self[i]['__blocks__']:
+                    if name.startswith(b.name):
+                        b = utility.blocksearch(b, name)
+                        if b: return b
         return False
-        
+    
     def in_mixin(self):
         """
         """

@@ -44,6 +44,9 @@ div.nest {
 .nest_deep {
 	div.nest;
 }
+.nest_inner {
+	div.nest a:hover;
+}
 /*
 
 */

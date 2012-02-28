@@ -34,6 +34,18 @@ def rename(ll, fr, to):
                                for n in parts])
             p.name = p.name.replace(' , ', ',')
             if p.inner: rename(p.inner, fr, to)
+            
+def blocksearch(block, name):
+    """
+    """
+    print('blocksearch', name)
+    for b in block.inner:
+        print('cmp', b.name, name)
+        if b.name == name:
+            return b
+        else:#if name.startswith(b.name):
+            return blocksearch(b, name)
+    return False
 
 def destring(v):
     """ Strip quotes
