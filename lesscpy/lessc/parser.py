@@ -182,12 +182,12 @@ class LessParser(object):
             block = Block(list(p)[1:-1], p.lineno(3))
             if not self.scope.in_mixin():
                 block.parse(self.scope)
-            self.scope.add_block(block)
             p[0] = block
         except SyntaxError as e:
             self.handle_error(e, p)
             p[0] = None
         self.scope.pop()
+        self.scope.add_block(block)
             
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
@@ -195,24 +195,16 @@ class LessParser(object):
         m = p[1].parse(None)
         block = self.scope.blocks(m)
         if block:
-            p[0] = copy.deepcopy(block)
+            p[0] = block.copy(self.scope.current)
         else:
             p[0] = None
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
         """
-        p[0] = p[1].parse(self.scope)
+        name = p[1].parse(self.scope)
+        p[0] = p[1]
         self.scope.current = p[1].real
-        
-#    def p_media_open(self, p):
-#        """ block_open                : css_media t_ws identifier brace_open
-#        """
-#        identifier = [p[1], p[2]]
-#        identifier.extend(p[3].tokens)
-#        p[3].tokens = identifier
-#        p[0] = p[3].parse(self.scope)
-#        self.scope.current = p[3].real
         
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
@@ -281,7 +273,7 @@ class LessParser(object):
                                        | mixin_decl
                                        | call_mixin
         """
-        p[0] = [p[1]]
+        p[0] = p[1] if type(p[1]) is list else [p[1]]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

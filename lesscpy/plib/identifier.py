@@ -19,7 +19,7 @@ class Identifier(Node):
         """
         names = [p.strip()
                  for p in name.split(',')]
-        parent = scope.scopename
+        parent = scope.scopename[:-1]
         if parent: 
             parent.reverse()
             for p in parent:

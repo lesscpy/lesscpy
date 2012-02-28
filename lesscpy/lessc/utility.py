@@ -20,6 +20,20 @@ def flatten(l):
                 yield sub
         else:
             yield el
+            
+def rename(ll, fr, to):
+    """ Rename all sub-blocks moved under another 
+        block. (mixins)
+    """
+    for p in ll:
+        if hasattr(p, 'inner'):
+            parts = p.name.replace(',', ' , ').split(' ')
+            p.name = ' '.join([to.strip() 
+                               if n == fr 
+                               else n 
+                               for n in parts])
+            p.name = p.name.replace(' , ', ',')
+            if p.inner: rename(p.inner, fr, to)
 
 def destring(v):
     """ Strip quotes

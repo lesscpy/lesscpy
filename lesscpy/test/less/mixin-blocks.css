@@ -11,3 +11,39 @@
 	.mixin;
 	#mixin;
 }
+/*
+	Nested
+*/
+.nested_mixin_1 {
+	letter-spacing: -1px;
+	#mixin {
+		white-space: pre;
+	}
+}
+.nested {
+	.nested_mixin_1;
+}
+#nested_mixin_1 {
+	color: red;
+	.mixin {
+		color: yellow;
+	}
+}
+pre {
+	#nested_mixin_1;
+}
+div.nest {
+	a {
+		&:hover, &:focus {
+			.deep p {
+				widows: 3;
+			}
+		}
+	}
+}
+.nest_deep {
+	div.nest;
+}
+/*
+
+*/

@@ -1,6 +1,6 @@
 """
 """
-import re
+import re, copy
 from .node import Node
 from lesscpy.lessc import utility
 class Block(Node):
@@ -10,7 +10,8 @@ class Block(Node):
         """
         """
         if not self.parsed:
-            self.name, inner = self.tokens
+            name, inner = self.tokens
+            self.name = name.parse(scope)
             if not inner: inner = []
             self.parsed = [p.parse(scope) 
                            for p in inner
@@ -46,3 +47,11 @@ class Block(Node):
         if self.inner:
             out.append(''.join([p.format(fills) for p in self.inner]))
         return ''.join(out)
+    
+    def copy(self, to):
+        """
+        """
+        this = copy.deepcopy(self)
+        out = [p for p in this.tokens[1] if p]
+        utility.rename(out, self.name, to)
+        return out
