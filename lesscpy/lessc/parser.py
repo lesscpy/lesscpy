@@ -84,7 +84,6 @@ class LessParser(object):
         """ Output scopemap.
         """
         if self.result:
-#            utility.print_recursive(self.result)
             self._scopemap_aux(self.result)
             
     def _scopemap_aux(self, ll, lvl=0):
@@ -94,7 +93,10 @@ class LessParser(object):
             for p in ll:
                 self._scopemap_aux(p, lvl)
         elif hasattr(ll, 'tokens'):
-            print(pad, t) 
+            if t is Block:
+                print(pad, ll.name) 
+            else:
+                print(pad, t) 
             self._scopemap_aux(list(utility.flatten(ll.tokens)), lvl+1)
 #        else:
 #            print(pad, t)
@@ -202,7 +204,7 @@ class LessParser(object):
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
         """
-        name = p[1].parse(self.scope)
+        p[1].parse(self.scope)
         p[0] = p[1]
         self.scope.current = p[1].real
         
