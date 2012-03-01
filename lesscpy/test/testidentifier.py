@@ -79,7 +79,10 @@ class TestIdentifier(unittest.TestCase):
                                                   '.a .next .d .deep, '
                                                   '.b .next .c .deep, '
                                                   '.b .next .d .deep')
-
+        self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%.a%'
+                                   ' %.next% %.d% %.deep%.b% %.next%'
+                                   ' %.c% %.deep%.b% %.next% %.d% %.deep')
+                         
 if __name__ == '__main__':
     unittest.main()
     

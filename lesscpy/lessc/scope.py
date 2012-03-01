@@ -39,7 +39,7 @@ class Scope(list):
         """
         """
         self[-1]['__blocks__'].append(block)
-        self[-1]['__names__'].append(block.name.strip())
+        self[-1]['__names__'].append(block.raw())
         
     def add_mixin(self, mixin):
         """
@@ -74,14 +74,15 @@ class Scope(list):
         i = len(self)
         while i >= 0:
             i -= 1
+            print(name, self[i]['__names__'])
             if name in self[i]['__names__']:
                 for b in self[i]['__blocks__']:
-                    if b.name.strip() == name:
+                    if b.raw() == name:
                         return b
             else:
                 # deep search
                 for b in self[i]['__blocks__']:
-                    if name.startswith(b.name):
+                    if name.startswith(b.raw()):
                         b = utility.blocksearch(b, name)
                         if b: return b
         return False

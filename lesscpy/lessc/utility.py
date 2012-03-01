@@ -40,8 +40,8 @@ def blocksearch(block, name):
     """
     print('blocksearch', name)
     for b in block.inner:
-        print('cmp', b.name, name)
-        if b.name == name:
+        print('cmp', b.raw(), name)
+        if b.raw() == name:
             return b
         else:#if name.startswith(b.name):
             return blocksearch(b, name)

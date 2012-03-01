@@ -24,6 +24,9 @@ class Block(Node):
                 self.inner = [p.parse(scope) for p in self.inner]
         return self
     
+    def raw(self):
+        return self.name.raw()
+    
     def format(self, fills):
         """
         """

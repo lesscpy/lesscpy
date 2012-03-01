@@ -54,6 +54,11 @@ class Identifier(Node):
                 parsed.append(' ')
             parsed.extend(name)
         return parsed
+    
+    def raw(self):
+        """
+        """
+        return '%'.join('%'.join(p) for p in self.parsed)
         
     
     def format(self, fills):

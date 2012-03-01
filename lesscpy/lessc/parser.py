@@ -189,12 +189,13 @@ class LessParser(object):
             self.handle_error(e, p)
             p[0] = None
         self.scope.pop()
+        self.scope.add_block(block)
             
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
         """
         m = p[1].parse(None)
-        block = self.scope.blocks(m)
+        block = self.scope.blocks(m.raw())
         if block:
             p[0] = block.copy(self.scope.current)
         else:
