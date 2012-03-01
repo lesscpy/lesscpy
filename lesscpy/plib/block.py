@@ -10,8 +10,7 @@ class Block(Node):
         """
         """
         if not self.parsed:
-            name, inner = self.tokens
-            self.name = name.parse(scope)
+            self.name, inner = self.tokens
             if not inner: inner = []
             self.parsed = [p.parse(scope) 
                            for p in inner
@@ -31,14 +30,7 @@ class Block(Node):
         out = []
         if self.parsed:
             f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
-            name = self.name.strip()
-            if fills['nl']:
-                if len(name) > 80 and name.count(',') > 5:
-                    name = name.replace(',', ',%s' % fills['nl'])
-                else:
-                    name = name.replace(',', ',%s' % fills['ws'])
-            else:
-                name = re.sub(' ([\+\>~]) ', '\\1', name)
+            name = self.name.format(fills)
             fills.update({
                 'identifier': name,
                 'proplist': ''.join([p.format(fills) for p in self.parsed]),

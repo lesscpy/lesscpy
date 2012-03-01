@@ -76,13 +76,22 @@ form[data-disabled] {
 p::before {
 	color: black;
 }
-:lang(en-us)> q {
+:lang(en-us) > q {
 	quotes: "\201c""\201d""\2018""\2019";
 }
-:lang(en-gb)> q {
+:lang(en-gb) > q {
 	quotes: "\2018""\2019""\201c""\201d";
 }
-a.one, a.two, a.three, a.four, a.five, a.six, a.seven, a.eight, a.nine, a.ten {
+a.one, 
+a.two, 
+a.three, 
+a.four, 
+a.five, 
+a.six, 
+a.seven, 
+a.eight, 
+a.nine, 
+a.ten {
 	max-width: 12px;
 }
 a.longclassname.one,
@@ -180,6 +189,16 @@ audio,
 video {
 	padding: 0;
 }
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+article, 
+aside, 
+details, 
+figcaption, 
+figure, 
+footer, 
+header, 
+hgroup, 
+menu, 
+nav, 
+section {
 	padding: 0;
 }

@@ -189,7 +189,6 @@ class LessParser(object):
             self.handle_error(e, p)
             p[0] = None
         self.scope.pop()
-        self.scope.add_block(block)
             
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
@@ -206,7 +205,7 @@ class LessParser(object):
         """
         p[1].parse(self.scope)
         p[0] = p[1]
-        self.scope.current = p[1].real
+        self.scope.current = p[1]
         
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
