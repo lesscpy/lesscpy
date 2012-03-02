@@ -1,0 +1,78 @@
+.mixin {
+	direction: rtl;
+}
+#mixin {
+	unicode-bidi: embed;
+}
+.bible-quote {
+	direction: rtl;
+	unicode-bidi: embed;
+}
+.nested_mixin_1 {
+	letter-spacing: -1px;
+}
+.nested_mixin_1 #mixin {
+	white-space: pre;
+}
+.nested {
+	letter-spacing: -1px;
+}
+.nested #mixin {
+	white-space: pre;
+}
+#nested_mixin_1 {
+	color: red;
+}
+#nested_mixin_1 .mixin {
+	color: yellow;
+}
+pre {
+	color: red;
+}
+pre .mixin {
+	color: yellow;
+}
+div.nest a:hover .deep p, div.nest a:focus .deep p {
+	widows: 3;
+}
+.nest_deep a:hover .deep p, .nest_deep a:focus .deep p {
+	widows: 3;
+}
+.mixout {
+	border-color: orange;
+}
+.borders {
+	border-style: dashed;
+}
+#namespace .borders {
+	border-style: dotted;
+}
+#namespace .biohazard {
+	content: "death";
+}
+#namespace .biohazard .man {
+	color: transparent;
+}
+#theme > .mixin {
+	background-color: grey;
+}
+#container {
+	color: black;
+	border-color: orange;
+	background-color: grey;
+}
+#header .milk {
+	color: white;
+	background-color: grey;
+}
+#header #cookie {
+	border-style: dashed;
+}
+#header #cookie .chips {
+	border-style: dotted;
+}
+#header #cookie .chips .calories {
+	color: black;
+	border-color: orange;
+	background-color: grey;
+}
