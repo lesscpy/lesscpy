@@ -8,18 +8,27 @@
 import collections
 import re
 
-def flatten(l):
+def flatten(ll):
     """
     Flatten list.
-    @param l: list
+    @param ll: list
     @return: generator
     """
-    for el in l:
+    for el in ll:
         if isinstance(el, collections.Iterable) and not isinstance(el, str):
             for sub in flatten(el):
                 yield sub
         else:
             yield el
+            
+def pairwise(lst):
+    """ yield item i and item i+1 in lst. e.g.
+        (lst[0], lst[1]), (lst[1], lst[2]), ..., (lst[-1], None)
+    """
+    if not lst: return
+    for i in range(len(lst)-1):
+        yield lst[i], lst[i+1]
+    yield lst[-1], None
             
 def rename(ll, fr, scope):
     """ Rename all sub-blocks moved under another 
@@ -33,15 +42,11 @@ def rename(ll, fr, scope):
             if p.inner: rename(p.inner, fr, scope)
             
 def blocksearch(block, name):
+    """ Recursive search for name in block
     """
-    """
-    print('blocksearch', name)
     for b in block.inner:
-        print('cmp', b.raw(), name)
-        if b.raw() == name:
-            return b
-        else:#if name.startswith(b.name):
-            return blocksearch(b, name)
+        return (b if b.raw() == name 
+                else blocksearch(b, name))
     return False
 
 def destring(v):

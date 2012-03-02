@@ -22,7 +22,10 @@ class Identifier(Node):
             else:
                 name.append(n)
         names.append(name)
-        self.parsed = self.root(scope, names) if scope else names
+        parsed = self.root(scope, names) if scope else names
+        self.parsed = [[i for i, j in utility.pairwise(part) 
+                        if i != ' ' or (j and '?' not in j)] 
+                       for part in parsed]
         return self
     
     def root(self, scope, names):
@@ -66,7 +69,7 @@ class Identifier(Node):
         """
         name = ',$$'.join(''.join(p).strip() 
                           for p in self.parsed)
-        name = re.sub(' *?\?(.)\? *?', '%(ws)s\\1%(ws)s', name) % fills
+        name = re.sub('\?(.)\?', '%(ws)s\\1%(ws)s', name) % fills
         return (name.replace('$$', fills['nl']) 
                 if len(name) > 85 
                 else name.replace('$$', fills['ws'])).replace('  ', ' ')

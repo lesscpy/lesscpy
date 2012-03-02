@@ -9,7 +9,6 @@ class Block(Node):
     def parse(self, scope):
         """
         """
-        print('parse block')
         if not self.parsed:
             self.name, inner = self.tokens
             if not inner: inner = []
