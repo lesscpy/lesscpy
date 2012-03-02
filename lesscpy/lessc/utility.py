@@ -21,19 +21,16 @@ def flatten(l):
         else:
             yield el
             
-def rename(ll, fr, to):
+def rename(ll, fr, scope):
     """ Rename all sub-blocks moved under another 
         block. (mixins)
     """
     for p in ll:
         if hasattr(p, 'inner'):
-            parts = p.name.replace(',', ' , ').split(' ')
-            p.name = ' '.join([to.strip() 
-                               if n == fr 
-                               else n 
-                               for n in parts])
-            p.name = p.name.replace(' , ', ',')
-            if p.inner: rename(p.inner, fr, to)
+            p.name.parse(scope)
+            scope.push()
+            scope.current = p.name
+            if p.inner: rename(p.inner, fr, scope)
             
 def blocksearch(block, name):
     """

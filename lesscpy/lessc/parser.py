@@ -197,7 +197,7 @@ class LessParser(object):
         m = p[1].parse(None)
         block = self.scope.blocks(m.raw())
         if block:
-            p[0] = block.copy(self.scope.current)
+            p[0] = block.copy(self.scope)
         else:
             p[0] = None
         

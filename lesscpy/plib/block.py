@@ -9,6 +9,7 @@ class Block(Node):
     def parse(self, scope):
         """
         """
+        print('parse block')
         if not self.parsed:
             self.name, inner = self.tokens
             if not inner: inner = []
@@ -43,10 +44,11 @@ class Block(Node):
             out.append(''.join([p.format(fills) for p in self.inner]))
         return ''.join(out)
     
-    def copy(self, to):
+    def copy(self, scope):
         """
         """
         this = copy.deepcopy(self)
+        scope = copy.deepcopy(scope)
         out = [p for p in this.tokens[1] if p]
-        utility.rename(out, self.name, to)
+        utility.rename(out, self.name, scope)
         return out

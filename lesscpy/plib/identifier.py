@@ -58,7 +58,7 @@ class Identifier(Node):
     def raw(self):
         """
         """
-        return '%'.join('%'.join(p) for p in self.parsed)
+        return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
         
     
     def format(self, fills):
