@@ -18,7 +18,7 @@ class TestIdentifier(unittest.TestCase):
         ]:
             t, r = i
             id = Identifier(t, 0)
-            self.assertEqual(id.parse(None).format(fl), r, i)
+            self.assertEqual(id.parse(None).fmt(fl), r, i)
             
     def test_scope(self):
         fl = {'ws': ' '}
@@ -35,7 +35,7 @@ class TestIdentifier(unittest.TestCase):
         ]:
             t, r = i
             id = Identifier(t, 0)
-            self.assertEqual(id.parse(sc).format(fl), r, i)
+            self.assertEqual(id.parse(sc).fmt(fl), r, i)
             
     def test_combinators(self):
         fl = {'ws': ' '}
@@ -51,11 +51,11 @@ class TestIdentifier(unittest.TestCase):
         ]:
             t, r = i
             id = Identifier(t, 0)
-            self.assertEqual(id.parse(sc).format(fl), r, i)
+            self.assertEqual(id.parse(sc).fmt(fl), r, i)
         sc.push()
         sc.current = Identifier(['&', '.next'], 0).parse(sc)
         id = Identifier(['&', '.top'], 0)
-        self.assertEqual(id.parse(sc).format(fl), '.current.next.top')
+        self.assertEqual(id.parse(sc).fmt(fl), '.current.next.top')
             
     def test_groups(self):
         fl = {'ws': ' '}
@@ -70,12 +70,12 @@ class TestIdentifier(unittest.TestCase):
         ]:
             t, r = i
             id = Identifier(t, 0)
-            self.assertEqual(id.parse(sc).format(fl), r, i)
+            self.assertEqual(id.parse(sc).fmt(fl), r, i)
         sc.current = Identifier(['.next'], 0).parse(sc)
         sc.push()
         sc.current = Identifier(['.c', ',', '.d'], 0).parse(sc)
         id = Identifier(['.deep'], 0)
-        self.assertEqual(id.parse(sc).format(fl), '.a .next .c .deep, '
+        self.assertEqual(id.parse(sc).fmt(fl), '.a .next .c .deep, '
                                                   '.a .next .d .deep, '
                                                   '.b .next .c .deep, '
                                                   '.b .next .d .deep')
