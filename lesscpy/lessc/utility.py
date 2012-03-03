@@ -26,10 +26,11 @@ def pairwise(lst):
         (lst[0], lst[1]), (lst[1], lst[2]), ..., (lst[-1], None)
     """
     if not lst: return
-    for i in range(len(lst)-1):
+    l = len(lst)
+    for i in range(l-1):
         yield lst[i], lst[i+1]
     yield lst[-1], None
-            
+    
 def rename(ll, fr, scope):
     """ Rename all sub-blocks moved under another 
         block. (mixins)
@@ -116,7 +117,7 @@ def is_variable(v):
     return False
 
 def is_int(v):
-    """
+    """ Is value integer
     """
     try:
         int(str(v))
@@ -126,7 +127,7 @@ def is_int(v):
     return False
 
 def is_float(v):
-    """
+    """ Is value float
     """
     if not is_int(v):
         try:
@@ -137,7 +138,7 @@ def is_float(v):
     return False
 
 def split_unit(v):
-    """
+    """ Split a number from its unit
     """
     r = re.search('^(\-?[\d\.]+)(.*)$', str(v))
     return r.groups() if r else ('','')

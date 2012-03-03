@@ -64,7 +64,7 @@ class Identifier(Node):
         return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
         
     
-    def format(self, fills):
+    def fmt(self, fills):
         """
         """
         name = ',$$'.join(''.join(p).strip() 

@@ -13,7 +13,7 @@ class Statement(Node):
                 # Media @import
                 self.parsed.insert(3, ' ')
     
-    def format(self, fills):
+    def fmt(self, fills):
         """
         """
         return ''.join(self.parsed) + fills['eb']

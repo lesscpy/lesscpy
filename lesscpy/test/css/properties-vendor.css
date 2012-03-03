@@ -1,0 +1,11 @@
+div.vendor {
+	-moz-transform: translate(0,11em)rotate(-90deg);
+	-webkit-animation: anim2 7s infinite ease-in-out;
+}
+div.long {
+	-moz-box-shadow: 0pt 0pt 2px rgba(255,255,255,0.4)inset, 0pt 4px 6px rgba(255,255,255,0.4)inset;
+}
+div.styles {
+	display: -moz-inline-stack;
+	background: -webkit-gradient(linear,left top,left bottom,from(red),to(blue));
+}

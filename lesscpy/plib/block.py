@@ -27,20 +27,20 @@ class Block(Node):
     def raw(self):
         return self.name.raw()
     
-    def format(self, fills):
+    def fmt(self, fills):
         """
         """
         out = []
         if self.parsed:
             f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
-            name = self.name.format(fills)
+            name = self.name.fmt(fills)
             fills.update({
                 'identifier': name,
-                'proplist': ''.join([p.format(fills) for p in self.parsed]),
+                'proplist': ''.join([p.fmt(fills) for p in self.parsed]),
             })
             out.append(f % fills)
         if self.inner:
-            out.append(''.join([p.format(fills) for p in self.inner]))
+            out.append(''.join([p.fmt(fills) for p in self.inner]))
         return ''.join(out)
     
     def copy(self, scope):

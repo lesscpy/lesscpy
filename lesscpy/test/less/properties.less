@@ -23,6 +23,7 @@ div.shorthands {
   	padding: 0 auto;
   	padding: 1px 0 2px 0;
   	margin: 0;
+  	padding: -1px -0 -2px -0;
 }
 /*
 
@@ -39,4 +40,16 @@ tbody tr {
 }
 tbody td:first-child:before {
   	content: counter(group, upper-latin) "." counter(row);
+}
+/*
+	Escapes
+*/
+.escape\|random\|char {
+	color: red;
+}
+.mixin\!tUp {
+	font-weight: bold;
+}
+.trailingTest\+ {
+	color: red;
 }

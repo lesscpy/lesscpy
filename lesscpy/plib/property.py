@@ -37,7 +37,7 @@ class Property(Node):
                      for u in style]
         return style
         
-    def format(self, fills):
+    def fmt(self, fills):
         """
         """
         f = "%(tab)s%(property)s:%(ws)s%(style)s%(important)s;%(nl)s"
@@ -47,8 +47,9 @@ class Property(Node):
                            if p == ','
                            else p 
                            for p in self.parsed]
-        style = ''.join([p.format(fills) 
-                         if hasattr(p, 'format') 
+
+        style = ''.join([p.fmt(fills) 
+                         if hasattr(p, 'fmt') 
                          else str(p)
                          for p in self.parsed])
         fills.update({

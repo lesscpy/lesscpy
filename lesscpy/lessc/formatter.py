@@ -31,7 +31,7 @@ class Formatter(object):
                 'ws': ' ',
                 'eb': eb
             })
-        self.out = [u.format(self.items) 
+        self.out = [u.fmt(self.items) 
                     for u in parse.result 
                     if u]
         return ''.join(self.out).strip()

@@ -532,7 +532,7 @@ class LessParser(object):
     def p_interpolated_str(self, p):
         """ istring                 : less_string
         """
-        p[0] = String(p)
+        p[0] = String(p[1], p.lineno(1))
         
     def p_variable_neg(self, p):
         """ variable                : '-' variable

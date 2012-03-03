@@ -36,5 +36,5 @@ class Node(object):
                 else t 
                 for t in tokens]
 
-    def format(self, fills):
+    def fmt(self, fills):
         raise ValueError('No defined format')

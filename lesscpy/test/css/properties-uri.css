@@ -17,4 +17,6 @@
 	background-image: url(https://some.server.com:9696/path/img.jpeg);
 	behavior: url(border-radius.htc);
 	background-image: url(fonts.svg#MyGeometricModern);
+	image: url(http://), "}", url("http://}");
+	image: url(http://tooks.com);
 }
