@@ -10,8 +10,10 @@ class Mixin(Node):
     def parse(self, scope):
         """
         """
-        self.name, self.args = self.tokens[0]
+        self.name, args = self.tokens[0]
+        self.args = [a for a in args if a != ','] if args else []
         self.body = Block([None, self.tokens[1]], 0)
+        self.scope = copy.deepcopy(scope[-1])
         return self
     
     def parse_args(self, args):
@@ -22,22 +24,29 @@ class Mixin(Node):
                       if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
             if args:
+                l = len(args)
                 for i in range(len(parsed)):
-                    if args[i]:
+                    if i < l and args[i]:
                         if type(parsed[i]) is Variable: 
                             parsed[i].value = args[i]
                         else:
                             parsed[i] = Variable([parsed[i], 
                                                   None, 
                                                   args[i]]).parse(None)
+            if any(v for v in parsed 
+                   if type(v) is not Variable):
+                raise SyntaxError('Missing argument to mixin')
             return parsed
         return []
     
     def call(self, scope, args=None):
         """
         """
+        if args:
+            args = [a for a in args if a != ',']
         scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
         for v in self.parse_args(args):
             scope.add_variable(v) 
+        scope.update([self.scope], -1)
         return body.parse(scope).copy(scope)

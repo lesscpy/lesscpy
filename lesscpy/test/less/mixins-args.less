@@ -32,5 +32,16 @@
 }
 #args {
 	.args(red, 1px);
-//	.args(red);
+}
+/*
+	Local var
+*/
+.local () {
+	@var: red;
+	color: @var;
+}
+#local {
+	@var: blue;
+	padding: 0;
+	.local();
 }

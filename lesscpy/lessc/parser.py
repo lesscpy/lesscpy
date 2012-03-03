@@ -199,7 +199,14 @@ class LessParser(object):
         if block:
             p[0] = block.copy(self.scope)
         else:
-            p[0] = None
+            mixin = self.scope.mixins(m.raw())
+            if mixin:
+                try:
+                    p[0] = mixin.call(self.scope)
+                except SyntaxError as e:
+                    self.handle_error(e, p.lineno(2))
+            else:
+                self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
@@ -236,7 +243,10 @@ class LessParser(object):
         """
         mixin = self.scope.mixins(p[1][0])
         if mixin:
-            p[0] = mixin.call(self.scope, p[3])
+            try:
+                p[0] = mixin.call(self.scope, p[3])
+            except SyntaxError as e:
+                self.handle_error(e, p.lineno(2))
         else:
             self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
 
