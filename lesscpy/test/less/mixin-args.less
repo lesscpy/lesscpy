@@ -1,0 +1,83 @@
+/*
+ 
+*/
+.empty () {}
+#empty {
+	.empty();
+	.empty(red, 1px);
+}
+/*
+	
+*/
+.basic(@a: 3px) {
+	line-height: @a;
+}
+#basic {
+	.basic();
+	.basic(6px);
+}
+#idbasic (@a: 3px){
+	line-height: @a;
+}
+.idbasic {
+	#idbasic();
+	#idbasic(6px);
+}
+/*
+	Args
+*/
+.args (@color, @width) {
+	color: @color;
+	width: @width;
+}
+#args {
+	.args(red, 1px);
+}
+/*
+	Vars and scope
+*/
+.local () {
+	@var: red;
+	color: @var;
+}
+#local {
+	@var: blue;
+	padding: 0;
+	.local();
+}
+@glob: 5;
+.global-mixin(@a:2) {
+  	width: @glob + @a;
+}
+.scope-mix {
+  	.global-mixin(3);
+}
+/*
+	Call as block mixin
+*/
+.hidden() {
+  	color: transparent;
+}
+#hidden {
+  	.hidden;
+  	.hidden();
+}
+/*
+	kwargs
+*/
+.kwarg (@a: 1px, @b: 50%) {
+  	width: @a * 5;
+  	height: @b - 1%;
+}
+.both {
+	.kwarg(3px, 20%);
+}
+.one-arg {
+  	.kwarg(3px);
+}
+.no-parens {
+  	.kwarg;
+}
+.no-args {
+  	.kwarg();
+}
