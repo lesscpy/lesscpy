@@ -45,3 +45,13 @@
 	padding: 0;
 	.local();
 }
+/*
+	Call as block mixin
+*/
+.hidden() {
+  	color: transparent;
+}
+#hidden {
+  	.hidden;
+  	.hidden();
+}
