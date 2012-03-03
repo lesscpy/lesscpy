@@ -167,6 +167,7 @@ class LessLexer:
     
     def t_t_ws(self, t):
         r'[ \t\f\v]+'
+        t.value = ' '
         return t
 
     def t_t_popen(self, t):

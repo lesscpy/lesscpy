@@ -47,7 +47,6 @@ class Property(Node):
                            if p == ','
                            else p 
                            for p in self.parsed]
-
         style = ''.join([p.fmt(fills) 
                          if hasattr(p, 'fmt') 
                          else str(p)
