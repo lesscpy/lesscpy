@@ -46,8 +46,10 @@ class Block(Node):
     def copy(self, scope):
         """
         """
-        this = copy.deepcopy(self)
-        scope = copy.deepcopy(scope)
-        out = [p for p in this.tokens[1] if p]
-        utility.rename(out, self.name, scope)
-        return out
+        if self.tokens[1]:
+            tokens = copy.deepcopy(self.tokens)
+            scope = copy.deepcopy(scope)
+            out = [p for p in tokens[1] if p]
+            utility.rename(out, self.name, scope)
+            return out
+        return None

@@ -220,20 +220,25 @@ class LessParser(object):
     def p_mixin(self, p):
         """ mixin_decl                : open_mixin declaration_list brace_close
         """
-        p[0] = None
+        self.scope.add_mixin(Mixin(list(p)[1:], p.lineno(3)).parse(self.scope))
         self.scope.pop()
+        p[0] = None
 
     def p_open_mixin(self, p):
         """ open_mixin                : class t_popen mixin_args t_pclose brace_open
                                       | id t_popen mixin_args t_pclose brace_open
         """
-        p[0] = None
+        p[0] = [p[1][0], p[3]]
         
     def p_call_mixin(self, p):
         """ call_mixin                : class t_popen mixin_args t_pclose ';'
                                       | id t_popen mixin_args t_pclose ';'
         """
-        p[0] = None
+        mixin = self.scope.mixins(p[1][0])
+        if mixin:
+            p[0] = mixin.call(self.scope, p[3])
+        else:
+            self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
 
     def p_mixin_args_aux(self, p):
         """ mixin_args                : mixin_args ',' argument
@@ -246,14 +251,18 @@ class LessParser(object):
     def p_mixin_args(self, p):
         """ mixin_args                : argument
                                       | mixin_kwarg
-                                      | empty
         """
         p[0] = [p[1]]
+        
+    def p_mixin_args_empty(self, p):
+        """ mixin_args                : empty
+        """
+        p[0] = None
         
     def p_mixin_kwarg(self, p):
         """ mixin_kwarg                : variable ':' argument
         """
-        p[0] = list(p)[1:]
+        p[0] = Variable(list(p)[1:], p.lineno(2))
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -651,15 +660,13 @@ class LessParser(object):
         self.parser.restart()
         return t
         
-    def handle_error(self, e, p, t='E'):
+    def handle_error(self, e, line, t='E'):
         """ Custom error handler
             @param Exception: Exception
             @param Parser token: Parser token
             @param string: Error level 
         """
-        l = [n for n in [p.lineno(i) for i in range(len(p))] if n]
-        l = l[0] if l else -1
         if self.verbose:
-            print("%s: line: %d: " % (t, l), end='')
+            print("%s: line: %d: " % (t, line), end='')
             print(e)
             

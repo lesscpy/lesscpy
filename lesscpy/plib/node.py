@@ -2,7 +2,7 @@
 """
 from lesscpy.lessc import utility
 class Node(object):
-    def __init__(self, p, ln):
+    def __init__(self, p, ln=0):
         self.tokens = p
         self.lineno = ln
         self.parsed = False

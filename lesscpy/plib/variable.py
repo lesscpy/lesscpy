@@ -7,4 +7,5 @@ class Variable(Node):
         """
         self.name = self.tokens.pop(0)
         self.value = self.tokens[1]
+        return self
         
