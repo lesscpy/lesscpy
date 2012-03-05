@@ -5,6 +5,7 @@ import copy
 from .node import Node
 from .block import Block
 from .variable import Variable
+from lesscpy.lessc import utility
 
 class Mixin(Node):
     def parse(self, scope):
@@ -27,15 +28,14 @@ class Mixin(Node):
                 l = len(args)
                 for i in range(len(parsed)):
                     if i < l and args[i]:
-                        if type(parsed[i]) is Variable: 
+                        if utility.is_variable(args[i]):
+                            pass
+                        elif type(parsed[i]) is Variable: 
                             parsed[i].value = args[i]
                         else:
                             parsed[i] = Variable([parsed[i], 
                                                   None, 
                                                   args[i]]).parse(None)
-            if any(v for v in parsed 
-                   if type(v) is not Variable):
-                raise SyntaxError('Missing argument to mixin')
             return parsed
         return []
     
@@ -47,6 +47,7 @@ class Mixin(Node):
         scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
         for v in self.parse_args(args):
-            scope.add_variable(v) 
+            if type(v) is Variable:
+                scope.add_variable(v) 
         scope.update([self.scope], -1)
         return body.parse(scope).copy(scope)
