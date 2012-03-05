@@ -1,7 +1,7 @@
 """
     
 """
-import copy
+import copy, itertools
 from .node import Node
 from .block import Block
 from .variable import Variable
@@ -17,27 +17,23 @@ class Mixin(Node):
         self.scope = copy.deepcopy(scope[-1])
         return self
     
-    def parse_args(self, args):
+    def parse_args(self, args, scope):
         """
         """
         if self.args:
-            parsed = [v.parse(None) 
+            parsed = [v.parse(scope) 
                       if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
-            if args:
-                l = len(args)
-                for i in range(len(parsed)):
-                    if i < l and args[i]:
-                        if utility.is_variable(args[i]):
-                            pass
-                        elif type(parsed[i]) is Variable: 
-                            parsed[i].value = args[i]
-                        else:
-                            parsed[i] = Variable([parsed[i], 
-                                                  None, 
-                                                  args[i]]).parse(None)
-            return parsed
-        return []
+            args = args if type(args) is list else [args]
+            for arg, var in itertools.zip_longest(args, parsed):
+                if type(var) is Variable and arg: 
+                    var.value = arg
+                elif utility.is_variable(arg):
+                    tmp = scope.variables(arg)
+                    if not tmp: continue
+                    var = Variable([var, None, tmp.name]).parse(scope)
+                print(var.name, var.value)
+                scope.add_variable(var)
     
     def call(self, scope, args=None):
         """
@@ -46,8 +42,6 @@ class Mixin(Node):
             args = [a for a in args if a != ',']
         scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
-        for v in self.parse_args(args):
-            if type(v) is Variable:
-                scope.add_variable(v) 
+        self.parse_args(args, scope)
         scope.update([self.scope], -1)
         return body.parse(scope).copy(scope)

@@ -33,6 +33,11 @@
 #args {
 	.args(red, 1px);
 }
+#args_locals {
+	@a: green;
+	@b: 3px;
+	.args(@a, @b);
+}
 /*
 	Vars and scope
 */
