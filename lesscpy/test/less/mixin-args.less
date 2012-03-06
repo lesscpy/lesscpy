@@ -86,3 +86,24 @@
 .no-args {
   	.kwarg();
 }
+/*
+	@arguments
+*/
+.mixin-arguments (@width: 0px) {
+    border: @arguments;
+}
+.arguments {
+    .mixin-arguments(1px, solid, black);
+}
+.arguments2 {
+    .mixin-arguments(1px);
+}
+.arguments3 {
+    .mixin-arguments();
+}
+.arguments_empty() {
+	border: @arguments;
+}
+.arguments3 {
+    .arguments_empty(1px, solid, red);
+}

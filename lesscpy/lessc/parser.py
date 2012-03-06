@@ -182,11 +182,10 @@ class LessParser(object):
         """
         try:
             block = Block(list(p)[1:-1], p.lineno(3))
-            if not self.scope.in_mixin():
-                block.parse(self.scope)
+            block.parse(self.scope)
             p[0] = block
         except SyntaxError as e:
-            self.handle_error(e, p)
+            self.handle_error(e, p.lineno(3))
             p[0] = None
         self.scope.pop()
         self.scope.add_block(block)
@@ -322,10 +321,14 @@ class LessParser(object):
         """ property_decl           : prop_open style_list ';'
                                     | prop_open style_list css_important ';'
                                     | prop_open empty ';'
-                                    | prop_open less_arguments ';'
         """
         l = len(p)
         p[0] = Property(list(p)[1:-1], p.lineno(l-1))
+        
+    def p_property_decl_arguments(self, p):
+        """ property_decl           : prop_open less_arguments ';'
+        """
+        p[0] = Property([p[1], [p[2]]], p.lineno(3))
         
     def p_prop_open_ie_hack(self, p):
         """ prop_open               : '*' prop_open

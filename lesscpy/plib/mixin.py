@@ -20,27 +20,39 @@ class Mixin(Node):
     def parse_args(self, args, scope):
         """
         """
+        arguments = args if args else None
         if self.args:
             parsed = [v.parse(scope) 
                       if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
             args = args if type(args) is list else [args]
-            for arg, var in itertools.zip_longest(args, parsed):
-                if type(var) is Variable and arg: 
-                    var.value = arg
+            vars = []
+            for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed):
+                if type(var) is Variable:
+                    if arg: var.value = arg
                 elif utility.is_variable(arg):
                     tmp = scope.variables(arg)
                     if not tmp: continue
                     var = Variable([var, None, tmp.name]).parse(scope)
                 elif utility.is_variable(var):
                     var = Variable([var, None, arg]).parse(scope)
+                else: continue
+                vars.append(var)
+            for var in vars:
                 scope.add_variable(var)
+            if not arguments:
+                arguments = [v.value for v in vars]
+        if arguments:
+            arguments = [' ' if a == ',' else a for a in arguments]
+        else:
+            arguments = ''
+        scope.add_variable(Variable(['@arguments', 
+                                     None, 
+                                     arguments]).parse(scope))
     
     def call(self, scope, args=None):
         """
         """
-        if args:
-            args = [a for a in args if a != ',']
         scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
         self.parse_args(args, scope)
