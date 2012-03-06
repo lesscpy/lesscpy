@@ -28,8 +28,7 @@ def create_test (args):
                     self.assertEqual(line, pout[i], '%s: Line %d' % (cssf, i+1))
                     i += 1
         else:
-            pass
-#            self.fail("%s not found..." % cssf)
+            pass #self.fail("%s not found..." % cssf)
         if os.path.exists(minf):
             p = parser.LessParser()
             p.parse(filename=lessf)
@@ -41,8 +40,7 @@ def create_test (args):
                     self.assertEqual(line.rstrip(), mout[i], '%s: Line %d' % (minf, i+1))
                     i += 1
         else:
-            pass
-#            self.fail("%s not found..." % minf)
+            pass #self.fail("%s not found..." % minf)
     return do_test_expected
 
 LESS = glob.glob( os.path.join('less/', '*.less'))

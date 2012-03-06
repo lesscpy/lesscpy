@@ -1,0 +1,5 @@
+@import 'some.css.file.css';
+@import 'some/other.css.file.CSS';
+@import 'some.css' all;
+@import "some.print.css" print;
+.import{color:red;width:6px;height:9px;}
