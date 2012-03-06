@@ -1,0 +1,12 @@
+/*
+	Chaining
+*/
+.a(@a) {
+	margin: @a;
+}
+.b(@b) {
+	.a(@b);
+}
+.c {
+	.b(3px);
+}

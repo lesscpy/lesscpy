@@ -1,0 +1,55 @@
+#basic {
+	line-height: 3px;
+	line-height: 6px;
+}
+.idbasic {
+	line-height: 3px;
+	line-height: 6px;
+}
+#args {
+	color: red;
+	width: 1px;
+}
+#args_locals {
+	color: green;
+	width: 3px;
+}
+#local {
+	padding: 0;
+	color: red;
+}
+.scope-mix {
+	width: 8;
+}
+#hidden {
+	color: transparent;
+	color: transparent;
+}
+.both {
+	width: 15px;
+	height: 19%;
+}
+.one-arg {
+	width: 15px;
+	height: 49%;
+}
+.no-parens {
+	width: 5px;
+	height: 49%;
+}
+.no-args {
+	width: 5px;
+	height: 49%;
+}
+.arguments {
+	border: 1px solid black;
+}
+.arguments2 {
+	border: 1px;
+}
+.arguments3 {
+	border: 0px;
+}
+.arguments3 {
+	border: 1px solid red;
+}
