@@ -32,7 +32,8 @@ class Mixin(Node):
                     tmp = scope.variables(arg)
                     if not tmp: continue
                     var = Variable([var, None, tmp.name]).parse(scope)
-                print(var.name, var.value)
+                elif utility.is_variable(var):
+                    var = Variable([var, None, arg]).parse(scope)
                 scope.add_variable(var)
     
     def call(self, scope, args=None):
