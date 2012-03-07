@@ -30,17 +30,28 @@ class Block(Node):
     def fmt(self, fills):
         """
         """
+        f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
+        name = self.name.fmt(fills)
         if self.parsed:
-            f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
-            name = self.name.fmt(fills)
             fills.update({
                 'identifier': name,
                 'proplist': ''.join([p.fmt(fills) for p in self.parsed]),
             })
             out.append(f % fills)
         if self.inner:
-            out.append(''.join([p.fmt(fills) for p in self.inner]))
+            if name.startswith('@media'):
+                inner = ''.join([p.fmt(fills) for p in self.inner])
+                inner = inner.replace(fills['nl'], 
+                                      fills['nl'] + fills['tab']).rstrip(fills['tab'])
+                fills.update({
+                    'identifier': name,
+                    'proplist': fills['tab'] + inner,
+                })
+                out.append(f % fills)
+            else:
+                out.append(''.join([p.fmt(fills) for p in self.inner]))
+                
         return ''.join(out)
     
     def copy(self, scope):

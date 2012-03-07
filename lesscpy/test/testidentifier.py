@@ -82,6 +82,20 @@ class TestIdentifier(unittest.TestCase):
         self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%.a%'
                                    ' %.next% %.d% %.deep%.b% %.next%'
                                    ' %.c% %.deep%.b% %.next% %.d% %.deep')
+    
+    def test_media(self):
+        fl = {'ws': ' '}
+        sc = Scope()
+        sc.push()
+        sc.current = Identifier(['@media', ' ', 'screen', ',',  'projection'], 0).parse(sc) 
+        self.assertEqual(sc.current.fmt(fl), '@media screen,projection')
+        for i in [
+            (['html'], 'html'),
+        ]:
+            t, r = i
+            id = Identifier(t, 0)
+            self.assertEqual(id.parse(sc).fmt(fl), r, i)
+        
                          
 if __name__ == '__main__':
     unittest.main()

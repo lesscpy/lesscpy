@@ -1,0 +1,11 @@
+@media screen,projection{html{background:#fffef0;color:#330000;}
+body{max-width:35em;margin:0 auto;}
+}
+@media print{.class{color:blue;}
+.class .sub{width:42;}
+.top,header>h1{color:#444444;}
+}
+@media screen{body{max-width:480;}
+}
+@media all and (orientation:portrait){aside{float:none;}
+}
