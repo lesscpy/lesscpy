@@ -8,12 +8,6 @@
   	#long {
     	color: #ffeeaa;
   	}
-  	#rgba {
-    	color: rgba(255, 238, 170, 0.1);
-  	}
-  	#argb {
-    	color: argb(rgba(255, 238, 170, 0.1));
-  	}
 }
 #blue {
   	#short {
@@ -22,15 +16,6 @@
   	#long {
     	color: #0000ff;
   	}
-  	#rgba {
-    	color: rgba(0, 0, 255, 0.1);
-  	}
-  	#argb {
-    	color: argb(rgba(0, 0, 255, 0.1));
-  	}
-}
-#alpha #hsla {
-    color: hsla(11, 20%, 20%, 0.6);
 }
 #overflow {
   	.a { color: #111111 - #444444; } // #000000
@@ -53,15 +38,112 @@
 /*
 	color functions
 */
-.color_functions {
-	lighten: lighten(#ff0000, 40%);
-	darken: darken(#ff0000, 40%);
-	saturate: saturate(#29332f, 20%);
-	desaturate: desaturate(#203c31, 20%);
-	greyscale: greyscale(#203c31);
-	spin-p: spin(hsl(340, 50%, 50%), 40);
-	spin-n: spin(hsl(30, 50%, 50%), -40);
-	hue: hue(hsl(98, 12%, 95%));
-  	saturation: saturation(hsl(98, 12%, 95%));
-  	lightness: lightness(hsl(98, 12%, 95%));	
+.hsl {
+	color: hsl(0, 100%, 100%);
+	color: hsl(100, 100%, 100%);
+	color: hsl(0, 0%, 0%);
+	color: hsl(100, 0%, 0%);
 }
+.saturate {
+	color: saturate(#555, 1%);
+	color: saturate(#555, 10%);
+	color: saturate(#555, 20%);
+	color: saturate(#555, 40%);
+	color: saturate(#555, 60%);
+	color: saturate(#555, 100%);
+	color: saturate(#000, 100%);
+	color: saturate(#000, 0%);
+	color: saturate(#fff, 100%);
+	color: saturate(#fff, 0%);
+	color: saturate(#29332f, 1%);
+	color: saturate(#29332f, 10%);
+	color: saturate(#29332f, 20%);
+	color: saturate(#29332f, 40%);
+	color: saturate(#29332f, 60%);
+	color: saturate(#29332f, 100%);
+}
+.desaturate {
+	color: desaturate(#555, 1%);
+	color: desaturate(#555, 10%);
+	color: desaturate(#555, 20%);
+	color: desaturate(#555, 40%);
+	color: desaturate(#555, 60%);
+	color: desaturate(#555, 100%);
+	color: desaturate(#000, 100%);
+	color: desaturate(#000, 0%);
+	color: desaturate(#fff, 100%);
+	color: desaturate(#fff, 0%);
+	color: desaturate(#29332f, 1%);
+	color: desaturate(#29332f, 10%);
+	color: desaturate(#29332f, 20%);
+	color: desaturate(#29332f, 40%);
+	color: desaturate(#29332f, 60%);
+	color: desaturate(#29332f, 100%);
+}
+.lighten {
+	color: lighten(#555, 1%);
+	color: lighten(#555, 10%);
+	color: lighten(#555, 20%);
+	color: lighten(#555, 40%);
+	color: lighten(#555, 60%);
+	color: lighten(#555, 100%);
+	color: lighten(#000, 100%);
+	color: lighten(#000, 0%);
+	color: lighten(#fff, 100%);
+	color: lighten(#fff, 0%);
+	color: lighten(#29332f, 1%);
+	color: lighten(#29332f, 10%);
+	color: lighten(#29332f, 20%);
+	color: lighten(#29332f, 40%);
+	color: lighten(#29332f, 60%);
+	color: lighten(#29332f, 100%);
+}
+.lighten {
+	color: darken(#555, 1%);
+	color: darken(#555, 10%);
+	color: darken(#555, 20%);
+	color: darken(#555, 40%);
+	color: darken(#555, 60%);
+	color: darken(#555, 100%);
+	color: darken(#000, 100%);
+	color: darken(#000, 0%);
+	color: darken(#fff, 100%);
+	color: darken(#fff, 0%);
+	color: darken(#29332f, 1%);
+	color: darken(#29332f, 10%);
+	color: darken(#29332f, 20%);
+	color: darken(#29332f, 40%);
+	color: darken(#29332f, 60%);
+	color: darken(#29332f, 100%);
+}
+.spin {
+	color: spin(#555, 1%);
+	color: spin(#555, 10%);
+	color: spin(#555, 20%);
+	color: spin(#555, 40%);
+	color: spin(#555, 60%);
+	color: spin(#555, 100%);
+	color: spin(#000, 100%);
+	color: spin(#000, 0%);
+	color: spin(#fff, 100%);
+	color: spin(#fff, 0%);
+	color: spin(#29332f, 1%);
+	color: spin(#29332f, 10%);
+	color: spin(#29332f, 20%);
+	color: spin(#29332f, 40%);
+	color: spin(#29332f, 60%);
+	color: spin(#29332f, 100%);
+}
+.grayscale {
+	color: grayscale(#000, 100%);
+	color: grayscale(#000, 0%);
+	color: grayscale(#fff, 100%);
+	color: grayscale(#fff, 0%);
+	color: grayscale(#29332f, 1%);
+	color: grayscale(#29332f, 10%);
+	color: grayscale(#29332f, 20%);
+	color: grayscale(#29332f, 40%);
+	color: grayscale(#29332f, 60%);
+	color: grayscale(#29332f, 100%);
+}
+

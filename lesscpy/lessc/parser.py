@@ -16,7 +16,7 @@ import ply.yacc
 from . import lexer
 from . import utility
 from .scope import Scope
-from .color import LessColor
+from .color import Color
 from lesscpy.plib import *
     
 class LessParser(object):
@@ -575,7 +575,7 @@ class LessParser(object):
     def p_color(self, p):
         """ color                    : css_color
         """
-        p[0] = LessColor().format(p[1]) 
+        p[0] = Color().fmt(p[1]) 
         
     def p_number(self, p):
         """ number                    : css_number

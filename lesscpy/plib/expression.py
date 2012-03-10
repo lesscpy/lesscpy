@@ -25,7 +25,7 @@ class Expression(Node):
         if(a is False or b is False):
             return ' '.join([str(A), str(O), str(B)])
         if ua == 'color' or ub == 'color':
-            return color.LessColor().process((A, O, B))
+            return color.Color().process((A, O, B))
         out = self.operate(a, b, O)
         if type(a) is int and type(b) is int:
             out = int(out)

@@ -14,7 +14,7 @@ class Call(Node):
             name = 'sformat'
         elif name == '~':
             name = 'e'
-        color = Color.LessColor()
+        color = Color.Color()
         args = [t for t in parsed 
                 if type(t) is not str or t not in '(),']
         if hasattr(self, name):

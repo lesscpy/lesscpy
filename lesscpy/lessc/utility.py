@@ -99,13 +99,13 @@ def is_color(v):
     """
     if not v or type(v) is not str: 
         return False
-    l = len(v)
-    if l == 4 or l == 7:
+    if len(v) in [4, 5, 7, 9]:
         try:
             int(v[1:], 16)
             return True
         except Exception:
-            return False
+            pass
+    return False
             
 def is_variable(v):
     """ Check if string is LESS variable
