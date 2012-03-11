@@ -117,22 +117,22 @@
 	color: darken(#29332f, 100%);
 }
 .spin {
-	color: spin(#555, 1%);
-	color: spin(#555, 10%);
-	color: spin(#555, 20%);
-	color: spin(#555, 40%);
-	color: spin(#555, 60%);
-	color: spin(#555, 100%);
-	color: spin(#000, 100%);
-	color: spin(#000, 0%);
-	color: spin(#fff, 100%);
-	color: spin(#fff, 0%);
-	color: spin(#29332f, 1%);
-	color: spin(#29332f, 10%);
-	color: spin(#29332f, 20%);
-	color: spin(#29332f, 40%);
-	color: spin(#29332f, 60%);
-	color: spin(#29332f, 100%);
+	color: spin(#555, 1);
+	color: spin(#555, -10);
+	color: spin(#555, 20);
+	color: spin(#555, -40);
+	color: spin(#555, 60);
+	color: spin(#555, -100);
+	color: spin(#000, 100);
+	color: spin(#000, 0);
+	color: spin(#fff, 100);
+	color: spin(#fff, 0);
+	color: spin(#29332f, 1);
+	color: spin(#29332f, -10);
+	color: spin(#29332f, 20);
+	color: spin(#29332f, -40);
+	color: spin(#29332f, 60);
+	color: spin(#29332f, 100);
 }
 .grayscale {
 	color: grayscale(#000, 100%);
@@ -146,4 +146,21 @@
 	color: grayscale(#29332f, 60%);
 	color: grayscale(#29332f, 100%);
 }
-
+.mix {
+	color: mix(#f00, #00f);
+	color: mix(#f00, #0ff);
+	color: mix(#f70, #0aa);
+	color: mix(#f00, #00f, 25%);
+	color: mix(#f00, #00f, 100%);
+	color: mix(#f00, #00f, 0%);
+}
+/*
+	Variables
+*/
+@base: #f04615;
+.vars {
+  color: saturate(@base, 5%);
+  background-color: lighten(spin(@base, 8), 25%);
+  @new: hsl(hue(@base), 45%, 90%);
+  color: @new;
+}

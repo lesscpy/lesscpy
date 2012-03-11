@@ -100,17 +100,26 @@ class Color():
     def hue(self, *args):
         """
         """
-        pass
+        if args:
+            h, l, s = self._hextohls(args[0])
+            return round(h * 360, 3)
+        raise ValueError('Illegal color values')
     
     def saturation(self, *args):
         """
         """
-        pass
+        if args:
+            h, l, s = self._hextohls(args[0])
+            return s * 100
+        raise ValueError('Illegal color values')
     
     def lightness(self, *args):
         """
         """
-        pass
+        if args:
+            h, l, s = self._hextohls(args[0])
+            return l * 100
+        raise ValueError('Illegal color values')
     
     def opacity(self, *args):
         """
@@ -156,6 +165,7 @@ class Color():
     
     def grayscale(self, *args):
         """
+        Simply 100% desaturate.
         """
         if len(args) == 2:
             return self.desaturate(args[0], 100)
@@ -163,6 +173,7 @@ class Color():
 
     def greyscale(self, *args):
         """
+        Wrapper for grayscale
         """
         return self.grayscale(*args)
     
@@ -182,22 +193,43 @@ class Color():
     
     def mix(self, *args):
         """
-        Mix to colors
+        This algorithm factors in both the user-provided weight
+        and the difference between the alpha values of the two colors
+        to decide how to perform the weighted average of the two RGB values.
+        
+        It works by first normalizing both parameters to be within [-1, 1],
+        where 1 indicates "only use color1", -1 indicates "only use color 0",
+        and all values in between indicated a proportionately weighted average.
+        
+        Once we have the normalized variables w and a,
+        we apply the formula (w + a)/(1 + w*a)
+        to get the combined weight (in [-1, 1]) of color1.
+        This formula has two especially nice properties:
+        
+         * When either w or a are -1 or 1, the combined weight is also that number
+           (cases where w * a == -1 are undefined, and handled as a special case).
+      
+         * When a is 0, the combined weight is w, and vice versa
+      
+        Finally, the weight of color1 is renormalized to be within [0, 1]
+        and the weight of color2 is given by 1 minus the weight of color1.
+        
         Copyright (c) 2006-2009 Hampton Catlin, Nathan Weizenbaum, and Chris Eppstein
         http://sass-lang.com
         """
         if len(args) >= 2:
             try:
                 c1, c2, w = args
-                if type(w) == str: w = int(w.strip('%'))
-                w = ((w / 100.0) * 2) - 1
             except ValueError:
                 c1, c2 = args
-                w = 1
+                w = 50
+            if type(w) == str: w = int(w.strip('%'))
+            w = ((w / 100.0) * 2) - 1
             rgb1 = self._hextorgb(c1)
             rgb2 = self._hextorgb(c2)
             a = 0
-            w1 = (((w if (w * a) == -1 else (w + a)) / (1 + w * a)) + 1) / 2.0
+            w1 = (((w if w * a == -1 else w + a) / (1 + w * a)) + 1)
+            w1 = w1 / 2.0
             w2 = 1 - w1
             rgb = [
                 rgb1[0] * w1 + rgb2[0] * w2,
