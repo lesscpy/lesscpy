@@ -98,11 +98,12 @@ class LessLexer:
             t.type = 'css_class'
         elif c == '#':
             t.type = 'css_id'
-            try:
-                int(v[1:], 16)
-                t.type = 'css_color'
-            except ValueError:
-                pass
+            if len(v) in [4, 7]:
+                try:
+                    int(v[1:], 16)
+                    t.type = 'css_color'
+                except ValueError:
+                    pass
         elif v in css.propertys:
             t.type = 'css_property'
             t.value = t.value.strip()

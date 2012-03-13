@@ -30,3 +30,4 @@ a.one,a.two,a.three,a.four,a.five,a.six,a.seven,a.eight,a.nine,a.ten{max-width:1
 a.longclassname.one,a.longclassname.two,a.longclassname.three,a.longclassname.four,a.longclassname.five,a.longclassname.six,a.longclassname.seven,a.longclassname.eight,a.longclassname.nine,a.longclassname.ten{max-height:12px;}
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{padding:0;}
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{padding:0;}
+#f7{color:#fff777;}

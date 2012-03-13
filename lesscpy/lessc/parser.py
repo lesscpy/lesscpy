@@ -98,9 +98,6 @@ class LessParser(object):
             else:
                 print(pad, t) 
             self._scopemap_aux(list(utility.flatten(ll.tokens)), lvl+1)
-#        else:
-#            print(pad, t)
-            
     
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -582,7 +579,11 @@ class LessParser(object):
     def p_color(self, p):
         """ color                    : css_color
         """
-        p[0] = Color().fmt(p[1]) 
+        try:
+            p[0] = Color().fmt(p[1]) 
+        except ValueError:
+            self.handle_error('Illegal color value `%s`' % p[1], p.lineno(1), 'W')
+            p[0] = p[1]
         
     def p_number(self, p):
         """ number                    : css_number

@@ -10,6 +10,7 @@
 import os
 import sys
 import glob
+import copy
 import argparse
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from lesscpy.lessc import parser
@@ -121,9 +122,7 @@ def run():
             if not scope:
                 scope = p.scope
             else:
-                scope[0].update(p.scope[0])
-    else:
-        scope = None
+                scope.update(p.scope)
     p = None
     f = formatter.Formatter()
     if not os.path.exists(args.target):
@@ -136,7 +135,7 @@ def run():
         p = parser.LessParser(yacc_debug=(args.debug),
                               lex_optimize=True,
                               yacc_optimize=(not args.debug),
-                              scope=scope,
+                              scope=copy.deepcopy(scope),
                               verbose=args.verbose)
         p.parse(filename=args.target, debuglevel=0)
         if args.scopemap:
