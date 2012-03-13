@@ -165,7 +165,7 @@ class LessParser(object):
                     self.scope.update(recurse.scope)
                 else:
                     err = "Cannot import '%s', file not found" % filename
-                    self.handle_error(err, p, 'W')
+                    self.handle_error(err, p.lineno(1), 'W')
                 p[0] = None
             except ImportError as e:
                 self.handle_error(e, p)
@@ -248,13 +248,19 @@ class LessParser(object):
                 self.handle_error(e, p.lineno(2))
         else:
             self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
+            
+    def p_mixin_args_arguments(self, p):
+        """ mixin_args                : less_arguments
+        """
+        p[0] = [p[1]]
 
     def p_mixin_args_aux(self, p):
         """ mixin_args                : mixin_args ',' argument
                                       | mixin_args ',' mixin_kwarg
+                                      | mixin_args argument
+                                      | mixin_args mixin_kwarg
         """
-        p[1].append(p[2])
-        p[1].append(p[3])
+        p[1].extend(list(p)[2:])
         p[0] = p[1]
 
     def p_mixin_args(self, p):
@@ -349,6 +355,7 @@ class LessParser(object):
     def p_style_list_aux(self, p):
         """ style_list              : style_list style
                                     | style_list ',' style
+                                    | style_list t_ws style
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
@@ -495,7 +502,7 @@ class LessParser(object):
         p[0] = p[1]
         
     def p_argument_list(self, p):
-        """ argument_list    : argument
+        """ argument_list       : argument
         """
         p[0] = [p[1]]
         

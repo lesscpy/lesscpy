@@ -44,7 +44,7 @@ def ldirectory(inpath, outpath, args, scope):
                                   lex_optimize=True,
                                   yacc_optimize=True,
                                   scope=scope,
-                                  yacctab=yacctab,
+                                  tabfile=yacctab,
                                   verbose=args.verbose)
             p.parse(filename=lf, debuglevel=0)
             css = f.format(p, args.minify, args.xminify)
@@ -115,7 +115,7 @@ def run():
                                   yacc_debug=False,
                                   lex_optimize=True,
                                   yacc_optimize=True,
-                                  yacctab=yacctab,
+                                  tabfile=yacctab,
                                   verbose=args.verbose)
             p.parse(filename=u, debuglevel=0)
             if not scope:
