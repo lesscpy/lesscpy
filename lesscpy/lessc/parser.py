@@ -491,6 +491,11 @@ class LessParser(object):
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  
+
+    def p_argument_list_empty(self, p):
+        """ argument_list       : empty
+        """
+        p[0] = ''
         
     def p_argument_list_aux(self, p):
         """ argument_list       : argument_list argument

@@ -3,3 +3,4 @@
 .nav2{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333", endColorstr="#000000", GradientType=0);}
 body{*zoom:1px;}
 >body{*zoom:1px;}
+.ui-datepicker-cover{display:none;display:block;position:absolute;z-index:-1;filter:mask();top:-4px;left:-4px;width:200px;height:200px;}
