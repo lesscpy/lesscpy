@@ -23,3 +23,15 @@
 	background: the, great, wall;
 	border: 2px solid black;
 }
+.no_final_semi {
+	color: white;
+}
+.no_final_semi1 {
+	color: yellow;
+	color: white;
+}
+@media all {
+	html {
+		padding: src('no semi in media block');
+	}
+}

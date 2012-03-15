@@ -75,6 +75,7 @@ class LessLexer:
     def __init__(self):
         self.build(reflags=re.UNICODE|re.IGNORECASE)
         self.last = None
+        self.next = None
         
     def t_css_filter(self, t):
         (r'\[[^\]]*\]'
@@ -219,11 +220,24 @@ class LessLexer:
     def token(self):
         """
         """
+        if self.next:
+            t = self.next
+            self.next = None
+            return t
         while True:
             t = self.lexer.token()
             if not t: return t
             if t.type == 't_ws' and self.last and self.last.type not in self.significant_ws:
                 continue
+            if t.type == '}' and self.last and self.last.type not in '{;}':
+                self.next = t
+                tok = lex.LexToken()
+                tok.type = ';'
+                tok.value = ';'
+                tok.lineno = t.lineno
+                tok.lexpos = t.lexpos
+                self.last = tok
+                return tok
             self.last = t
             break
         return t
