@@ -398,9 +398,10 @@ class LessParser(object):
         """ identifier_group          : identifier_group child_selector ident_parts
                                       | identifier_group '+' ident_parts
                                       | identifier_group general_sibling_selector ident_parts
+                                      | identifier_group '*'
         """
         p[1].extend([p[2]])
-        p[1].extend(p[3])
+        if len(p) > 3: p[1].extend(p[3])
         p[0] = p[1]
         
     def p_identifier_group(self, p):
