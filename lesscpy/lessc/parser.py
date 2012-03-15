@@ -678,7 +678,7 @@ class LessParser(object):
             @param Lex token: Error token 
         """
         if t and self.verbose: 
-            print("E: %s line: %d, Syntax Error, token: `%s`, `%s`" 
+            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m" 
                   % (self.target, t.lineno, t.type, t.value))
         while True:
             t = self.lex.token()
@@ -696,6 +696,6 @@ class LessParser(object):
             @param string: Error level 
         """
         if self.verbose:
-            print("%s: line: %d: " % (t, line), end='')
-            print(e)
+            color = '\x1b[31m' if t == 'E' else '\x1b[33m'
+            print("%s%s: line: %d: %s\n" % (color, t, line, e), end='\x1b[0m')
             
