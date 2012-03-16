@@ -40,7 +40,7 @@ def create_test (args):
                     self.assertEqual(line.rstrip(), mout[i], '%s: Line %d' % (minf, i+1))
                     i += 1
         else:
-            pass #self.fail("%s not found..." % minf)
+            self.fail("%s not found..." % minf)
     return do_test_expected
 
 LESS = glob.glob( os.path.join('less/', '*.less'))

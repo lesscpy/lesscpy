@@ -1,0 +1,9 @@
+.escape\|random\|char {
+	color: red;
+}
+.mixin\!tUp {
+	font-weight: bold;
+}
+.trailingTest\+ {
+	color: red;
+}
