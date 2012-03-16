@@ -52,8 +52,7 @@ class LessParser(object):
             tabfile = 'yacctab'
             
         self.ignored = ('css_comment', 'less_comment',
-                        'css_vendor_hack', 'css_keyframes',
-                        'css_page')
+                        'css_vendor_hack', 'css_keyframes')
         
         self.tokens = [t for t in self.lex.tokens 
                        if t not in self.ignored]
@@ -214,7 +213,7 @@ class LessParser(object):
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
         """
-        p[0] = Identifier([p[1], p[2]])
+        p[0] = Identifier([p[1], p[2]]).parse(self.scope)
         
 
 #
@@ -379,6 +378,8 @@ class LessParser(object):
 
     def p_identifier(self, p):
         """ identifier                : identifier_list
+                                      | page
+                                      | page filter
         """
         p[0] = Identifier(p[1], 0)
 
@@ -468,6 +469,9 @@ class LessParser(object):
         """ filter                    : css_filter
                                       | ':' word
                                       | ':' vendor_property
+                                      | ':' vendor_property t_ws
+                                      | ':' css_property
+                                      | ':' css_property t_ws
                                       | ':' css_filter
                                       | ':' ':' word
                                       | ':' ':' vendor_property
@@ -626,6 +630,12 @@ class LessParser(object):
     def p_property(self, p):
         """ property                  : css_property
                                       | css_property t_ws
+        """
+        p[0] = tuple(list(p)[1:]) 
+        
+    def p_page(self, p):
+        """ page                      : css_page
+                                      | css_page t_ws
         """
         p[0] = tuple(list(p)[1:]) 
         

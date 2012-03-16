@@ -76,6 +76,7 @@ Supported features
 * Mixins
 * mixins (Nested)
 * Parametered mixins (class)
+* Parametered mixins (id)
 * @arguments
 * Nesting
 * Escapes ~/e()
@@ -87,6 +88,7 @@ Supported features
 ** desaturate
 ** spin
 ** hue
+** mix
 ** saturation
 ** lightness
 * Other functions:
@@ -105,7 +107,6 @@ Differences from lessc.js
 Not supported (yet)
 ===================
 * Keyframe blocks
-* Parametered mixins (id)
 * mixins (closures)
 * mixins (Nested (Calls))
 * Pattern-matching
