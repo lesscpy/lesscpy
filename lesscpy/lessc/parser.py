@@ -307,10 +307,7 @@ class LessParser(object):
         try:
             v = Variable(list(p)[1:], p.lineno(4))
             v.parse(self.scope)
-            if self.scope.in_mixin():
-                self.stash[v.name] = v
-            else:
-                self.scope.add_variable(v)
+            self.scope.add_variable(v)
         except SyntaxError as e:
             self.handle_error(e, p)
         p[0] = None

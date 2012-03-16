@@ -84,12 +84,6 @@ class Scope(list):
                         b = utility.blocksearch(b, name)
                         if b: return b
         return False
-    
-    def in_mixin(self):
-        """
-        """
-        return any([s for s in self 
-                    if s['__current__'] == '__mixin__'])
         
     def update(self, scope, at=0):
         """
