@@ -65,6 +65,13 @@ class Scope(list):
     def mixins(self, name):
         """
         """
+        m = self._smixins(name)
+        if m: return m
+        return self._smixins(name.replace('?>?', ' '))
+        
+    def _smixins(self, name):
+        """
+        """
         return (self._mixins[name] 
                 if name in self._mixins
                 else False)

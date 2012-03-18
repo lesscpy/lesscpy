@@ -86,3 +86,16 @@
 	.outer .inner(@width);
 	.outer .innerkwarg();
 }
+#font {
+  	#family {
+    	.serif() {
+      		font-family: Georgia, "Times New Roman", Times, serif;
+    	}
+  	}
+  	.serif(@size: @baseFontSize, @weight: normal, @lineHeight: @baseLineHeight) {
+    	#font > #family > .serif;
+  	}
+}
+.font {
+	#font > .serif();
+}
