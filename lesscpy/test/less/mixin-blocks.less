@@ -92,3 +92,17 @@ div.nest {
 .secure-zone { 
 	#namespace .biohazard .man; 
 }
+//
+// Direct access
+//
+.outer {
+	.inner {
+		padding: 3px;
+	}
+
+}
+.tx {
+	.outer .inner;
+	// Same
+	.outer > .inner;
+}

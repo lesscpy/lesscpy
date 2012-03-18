@@ -23,3 +23,5 @@ div.nest a:hover .deep p,div.nest a:focus .deep p{widows:3;}
 #header #cookie .chips{border-style:dotted;}
 #header #cookie .chips .calories{color:black;border-color:orange;background-color:grey;}
 .secure-zone{color:transparent;}
+.outer .inner{padding:3px;}
+.tx{padding:3px;padding:3px;}

@@ -79,3 +79,10 @@ div.nest a:hover .deep p, div.nest a:focus .deep p {
 .secure-zone {
 	color: transparent;
 }
+.outer .inner {
+	padding: 3px;
+}
+.tx {
+	padding: 3px;
+	padding: 3px;
+}

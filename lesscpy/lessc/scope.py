@@ -72,6 +72,13 @@ class Scope(list):
     def blocks(self, name):
         """
         """
+        b = self._blocks(name)
+        if b: return b
+        return self._blocks(name.replace('?>?', ' '))
+    
+    def _blocks(self, name):
+        """
+        """
         i = len(self)
         while i >= 0:
             i -= 1
