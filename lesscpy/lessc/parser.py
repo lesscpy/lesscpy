@@ -19,18 +19,6 @@ from .scope import Scope
 from .color import Color
 from lesscpy.plib import *
 
-class Deferred(object):
-    def __init__(self, mixin, args):
-        """
-        """
-        self.mixin = mixin
-        self.args = args
-    
-    def parse(self, scope):
-        """
-        """
-        return self.mixin.call(scope, self.args)
-    
 class LessParser(object):
     precedence = (
        ('left', '+', '-'),
@@ -193,6 +181,7 @@ class LessParser(object):
         if block:
             p[0] = block.copy(self.scope)
         else:
+            # fallback to mixin. Allow calls to mixins without parens
             mixin = self.scope.mixins(m.raw())
             if mixin:
                 try:
@@ -246,8 +235,16 @@ class LessParser(object):
                     p[0] = mixin.call(self.scope, p[3])
             except SyntaxError as e:
                 self.handle_error(e, p.lineno(2))
+        elif not p[3]:
+            # fallback to block. Allow calls of name() to blocks
+            block = self.scope.blocks(p[1].raw())
+            if block:
+                p[0] = block.copy(self.scope)
         else:
-            self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
+            if self.scope.in_mixin:
+                p[0] = Deferred(p[1], p[3])
+            else: 
+                self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
             
     def p_mixin_args_arguments(self, p):
         """ mixin_args                : less_arguments

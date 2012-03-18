@@ -1,6 +1,7 @@
 __all__ = [
    'Block', 
    'Call', 
+   'Deferred',
    'Expression', 
    'Identifier',
    'Mixin',
@@ -12,6 +13,7 @@ __all__ = [
 ]
 from .block import Block
 from .call import Call
+from .deferred import Deferred
 from .expression import Expression
 from .identifier import Identifier
 from .mixin import Mixin

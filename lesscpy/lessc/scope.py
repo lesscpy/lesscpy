@@ -54,6 +54,7 @@ class Scope(list):
         
     def variables(self, name):
         """
+        Search for variable by name
         """
         i = len(self)
         while i >= 0:
@@ -64,6 +65,8 @@ class Scope(list):
     
     def mixins(self, name):
         """
+        Search mixins for name.
+        Allow '>' to be ignored.
         """
         m = self._smixins(name)
         if m: return m
@@ -71,6 +74,7 @@ class Scope(list):
         
     def _smixins(self, name):
         """
+        Inner wrapper to search for mixins by name.
         """
         return (self._mixins[name] 
                 if name in self._mixins
@@ -78,6 +82,8 @@ class Scope(list):
         
     def blocks(self, name):
         """
+        Search for defined blocks recursively.
+        Allow '>' to be ignored.
         """
         b = self._blocks(name)
         if b: return b
@@ -85,17 +91,20 @@ class Scope(list):
     
     def _blocks(self, name):
         """
+        Inner wrapper to search for blocks by name.
         """
         i = len(self)
         while i >= 0:
             i -= 1
             if name in self[i]['__names__']:
                 for b in self[i]['__blocks__']:
-                    if b.raw() == name:
+                    r = b.raw()
+                    if r and r == name:
                         return b
             else:
                 for b in self[i]['__blocks__']:
-                    if name.startswith(b.raw()):
+                    r = b.raw()
+                    if r and name.startswith(r):
                         b = utility.blocksearch(b, name)
                         if b: return b
         return False
