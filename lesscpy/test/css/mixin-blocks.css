@@ -76,3 +76,6 @@ div.nest a:hover .deep p, div.nest a:focus .deep p {
 	border-color: orange;
 	background-color: grey;
 }
+.secure-zone {
+	color: transparent;
+}

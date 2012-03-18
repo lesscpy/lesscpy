@@ -28,14 +28,16 @@ class Mixin(Node):
             args = args if type(args) is list else [args]
             vars = []
             for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed):
+                if arg is None and utility.is_variable(var):
+                    raise SyntaxError('Missing argument to mixin')
                 if arg == var and utility.is_variable(arg):
                     continue
-                elif type(var) is Variable:
-                    if arg: var.value = arg
                 elif utility.is_variable(arg):
                     tmp = scope.variables(arg)
                     if not tmp: continue
                     var = Variable([var, None, tmp.name]).parse(scope)
+                elif type(var) is Variable:
+                    if arg: var.value = arg
                 elif utility.is_variable(var):
                     var = Variable([var, None, arg]).parse(scope)
                 else: continue

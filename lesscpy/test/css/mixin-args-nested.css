@@ -1,0 +1,59 @@
+#e {
+	radius: 5px;
+}
+#j {
+	radius: 5px;
+}
+#k {
+	radius: 1px;
+}
+.content {
+	width: 600px;
+}
+.content .column {
+	margin: 600px;
+}
+.content .column.blue {
+	color: blue;
+}
+.content .column.blue .deep {
+	padding: 600px;
+}
+.content-em {
+	width: 200px;
+}
+.content-em .column {
+	margin: 200px;
+}
+.content-em .column.blue {
+	color: blue;
+}
+.content-em .column.blue .deep {
+	padding: 200px;
+}
+.test-2 {
+	width: 300px;
+	width: 300px;
+}
+.test-2 .column {
+	margin: 300px;
+}
+.test-2 .column.blue {
+	color: blue;
+}
+.test-2 .column.blue .deep {
+	padding: 300px;
+}
+.test-2-em {
+	width: 600px;
+	width: 600px;
+}
+.test-2-em .column {
+	margin: 600px;
+}
+.test-2-em .column.blue {
+	color: blue;
+}
+.test-2-em .column.blue .deep {
+	padding: 600px;
+}

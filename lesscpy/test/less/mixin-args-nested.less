@@ -1,0 +1,68 @@
+/*
+	Args nested
+*/
+.a(@radius) {
+  	radius: @radius;
+}
+.b(@radius) {
+  	.a(@radius);
+}
+.c(@radius) {
+	.b(@radius);
+}
+.d(@radius) {
+	.c(@radius);
+}
+#e {
+  	.d(5px);
+}
+// kwarg
+.f(@radius: 1px) {
+  	radius: @radius;
+}
+.g(@radius) {
+  	.f(@radius);
+}
+.h(@radius) {
+	.g(@radius);
+}
+.i(@radius: 1px) {
+	.h(@radius);
+}
+#j {
+  	.i(5px);
+}
+#k {
+  	.i();
+}
+//
+// Nested
+//
+.nested-ruleset (@width: 200px) {
+    width: @width;
+    .column { 
+    	margin: @width; 
+    	&.blue {
+    		color: blue;
+    		.deep {
+    			padding: @width;
+    		}
+    	}
+    }
+}
+.content {
+    .nested-ruleset(600px);
+} 
+.content-em {
+    .nested-ruleset();
+}
+.nested-2(@width: 300px) {
+	width: @width;
+	.nested-ruleset(@width);
+}
+.test-2 {
+	.nested-2();
+}
+.test-2-em {
+	.nested-2(600px);
+}

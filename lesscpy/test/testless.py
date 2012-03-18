@@ -27,6 +27,8 @@ def create_test (args):
                     if not line: continue
                     self.assertEqual(line, pout[i], '%s: Line %d' % (cssf, i+1))
                     i += 1
+            if len(pout) > i and i:
+                self.fail("%s: result has more lines (%d < %d)" % (cssf, i, len(pout)))
         else:
             self.fail("%s not found..." % cssf)
         if os.path.exists(minf):
@@ -39,6 +41,8 @@ def create_test (args):
                 for line in cssf.readlines():
                     self.assertEqual(line.rstrip(), mout[i], '%s: Line %d' % (minf, i+1))
                     i += 1
+            if len(mout) > i and i:
+                self.fail("%s: result has more lines (%d < %d)" % (minf, i, len(mout)))
         else:
             self.fail("%s not found..." % minf)
     return do_test_expected
