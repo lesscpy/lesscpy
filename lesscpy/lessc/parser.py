@@ -91,17 +91,18 @@ class LessParser(object):
     def p_tunit(self, p):
         """ tunit                    : unit_list
         """
-        p[0] = p[1]
+        p[0] = [u for u in p[1] if u]
         
     def p_unit_list(self, p):
         """ unit_list                : unit_list unit
                                      | unit
         """
-        if len(p) == 3:
-            if type(p[2]) is list:
-                p[1].extend(p[2])
-            else:
-                p[1].append(p[2])
+        if type(p[1]) is list:
+            if len(p) >= 3:
+                if type(p[2]) is list:
+                    p[1].extend(p[2])
+                else:
+                    p[1].append(p[2])
         else:
             p[1] = [p[1]] 
         p[0] = p[1]

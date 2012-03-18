@@ -57,7 +57,6 @@ class Block(Node):
                 out.append(f % fills)
             else:
                 out.append(''.join([p.fmt(fills) for p in self.inner]))
-                
         return ''.join(out)
     
     def copy(self, scope):
