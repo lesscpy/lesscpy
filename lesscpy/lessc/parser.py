@@ -147,9 +147,9 @@ class LessParser(object):
                 if not fe: ipath += '.less'
                 filename = "%s%s%s" % (cpath, os.sep, ipath)
                 if os.path.exists(filename):
-                    recurse = LessParser(importlvl=self.importlvl+1, verbose=self.verbose)
+                    recurse = LessParser(importlvl=self.importlvl+1, 
+                                         verbose=self.verbose, scope=self.scope)
                     recurse.parse(filename=filename, debuglevel=0)
-                    self.scope.update(recurse.scope)
                 else:
                     err = "Cannot import '%s', file not found" % filename
                     self.handle_error(err, p.lineno(1), 'W')
