@@ -99,3 +99,17 @@
 .font {
 	#font > .serif();
 }
+/*
+	Deferred calls.
+*/
+.gradientBar(@primaryColor, @secondaryColor) {
+  	#gradient > .vertical(@primaryColor, @secondaryColor);
+}
+#gradient {
+  	.vertical(@startColor: #555, @endColor: #333) {
+    	background-color: mix(@startColor, @endColor, 60%);
+  	}
+}
+.deferred {
+	.gradientBar(#555, #964);
+}

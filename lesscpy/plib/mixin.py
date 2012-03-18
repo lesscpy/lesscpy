@@ -26,24 +26,10 @@ class Mixin(Node):
                       if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
             args = args if type(args) is list else [args]
-            vars = []
-            for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed):
-                if arg is None and utility.is_variable(var):
-                    raise SyntaxError('Missing argument to mixin')
-                if arg == var and utility.is_variable(arg):
-                    continue
-                elif utility.is_variable(arg):
-                    tmp = scope.variables(arg)
-                    if not tmp: continue
-                    var = Variable([var, None, tmp.name]).parse(scope)
-                elif type(var) is Variable:
-                    if arg: var.value = arg
-                elif utility.is_variable(var):
-                    var = Variable([var, None, arg]).parse(scope)
-                else: continue
-                vars.append(var)
+            vars = [self._parse_arg(var, arg, scope) 
+                    for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed)]
             for var in vars:
-                scope.add_variable(var)
+                if var: scope.add_variable(var)
             if not arguments:
                 arguments = [v.value for v in vars]
         if arguments:
@@ -53,6 +39,32 @@ class Mixin(Node):
         scope.add_variable(Variable(['@arguments', 
                                      None, 
                                      arguments]).parse(scope))
+        
+    def _parse_arg(self, var, arg, scope):
+        """
+        """
+        if type(var) is Variable:
+            # kwarg
+            if arg:
+                if utility.is_variable(arg):
+                    tmp = scope.variables(arg)
+                    if not tmp: return None
+                    var.value = tmp.value
+                else:
+                    var.value = arg
+        else:
+            #arg
+            if utility.is_variable(var):
+                if arg is None:
+                    raise SyntaxError('Missing argument to mixin')
+                elif utility.is_variable(arg):
+                    tmp = scope.variables(arg)
+                    if not tmp: return None
+                    var = Variable([var, None, tmp.value]).parse(scope)
+                else:
+                    var = Variable([var, None, arg]).parse(scope)
+        return var
+#        if var: collect.append(var)
     
     def call(self, scope, args=None):
         """
