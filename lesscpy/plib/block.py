@@ -24,11 +24,11 @@ class Block(Node):
                 self.inner = [p.parse(scope) for p in self.inner]
         return self
     
-    def raw(self):
+    def raw(self, clean=False):
         """
         """
         try:
-            return self.name.raw()
+            return self.name.raw(clean)
         except AttributeError:
             pass
     

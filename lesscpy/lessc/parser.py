@@ -200,7 +200,7 @@ class LessParser(object):
                 except SyntaxError as e:
                     self.handle_error(e, p.lineno(2))
             else:
-                self.handle_error('Call unknown block `%s`' % m.raw(), p.lineno(2))
+                self.handle_error('Call unknown block `%s`' % m.raw(True), p.lineno(2))
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open

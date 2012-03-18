@@ -63,9 +63,10 @@ class Identifier(Node):
             parsed.extend(name)
         return parsed
     
-    def raw(self):
+    def raw(self, clean=False):
         """
         """
+        if clean: return ''.join(''.join(p) for p in self.parsed).replace('?', ' ')
         return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
         
     
