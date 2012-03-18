@@ -98,7 +98,10 @@ class LessParser(object):
                                      | unit
         """
         if len(p) == 3:
-            p[1].append(p[2])
+            if type(p[2]) is list:
+                p[1].extend(p[2])
+            else:
+                p[1].append(p[2])
         else:
             p[1] = [p[1]] 
         p[0] = p[1]
@@ -108,6 +111,7 @@ class LessParser(object):
                                      | variable_decl
                                      | block_decl
                                      | mixin_decl
+                                     | call_mixin
         """
         p[0] = p[1]
         

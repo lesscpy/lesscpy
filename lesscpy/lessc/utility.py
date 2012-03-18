@@ -38,9 +38,11 @@ def rename(ll, scope):
     for p in ll:
         if hasattr(p, 'inner'):
             p.name.parse(scope)
-            scope.push()
-            scope.current = p.name
-            if p.inner: rename(p.inner, scope)
+            if p.inner: 
+                scope.push()
+                scope.current = p.name
+                rename(p.inner, scope)
+                scope.pop()
             
 def blocksearch(block, name):
     """ Recursive search for name in block

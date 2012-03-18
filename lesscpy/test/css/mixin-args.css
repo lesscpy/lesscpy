@@ -59,6 +59,6 @@
 .div :-moz-placeholder {
 	color: #ffffff;
 }
-.div :-moz-placeholder::-webkit-input-placeholder {
+.div::-webkit-input-placeholder {
 	color: #ffffff;
 }

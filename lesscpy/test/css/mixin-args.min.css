@@ -15,4 +15,4 @@
 .arguments3{border:1px solid red;}
 .arguments4{border:1px solid red;}
 .div :-moz-placeholder{color:#ffffff;}
-.div :-moz-placeholder::-webkit-input-placeholder{color:#ffffff;}
+.div::-webkit-input-placeholder{color:#ffffff;}

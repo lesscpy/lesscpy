@@ -15,6 +15,7 @@ class Block(Node):
             self.parsed = [p.parse(scope) 
                            for p in inner
                            if p and type(p) is not type(self)]
+            self.parsed = list(utility.flatten(self.parsed))
             if not inner: 
                 self.inner = []
             else:

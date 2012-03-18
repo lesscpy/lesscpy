@@ -63,8 +63,9 @@ class Mixin(Node):
                     var = Variable([var, None, tmp.value]).parse(scope)
                 else:
                     var = Variable([var, None, arg]).parse(scope)
+            else:
+                return None
         return var
-#        if var: collect.append(var)
     
     def call(self, scope, args=None):
         """
@@ -79,5 +80,4 @@ class Mixin(Node):
         r = list(utility.flatten([body.parsed, body.inner]))
         
         utility.rename(r, scope)
-        
         return r
