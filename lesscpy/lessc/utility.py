@@ -31,7 +31,7 @@ def pairwise(lst):
         yield lst[i], lst[i+1]
     yield lst[-1], None
     
-def rename(ll, fr, scope):
+def rename(ll, scope):
     """ Rename all sub-blocks moved under another 
         block. (mixins)
     """
@@ -40,15 +40,28 @@ def rename(ll, fr, scope):
             p.name.parse(scope)
             scope.push()
             scope.current = p.name
-            if p.inner: rename(p.inner, fr, scope)
+            if p.inner: rename(p.inner, scope)
             
 def blocksearch(block, name):
     """ Recursive search for name in block
     """
     for b in block.inner:
-        return (b if b.raw() == name 
-                else blocksearch(b, name))
+        b = (b if b.raw() == name 
+             else blocksearch(b, name))
+        if b: return b
     return False
+
+def debug_print(ll, lvl=0):
+    """
+    """
+    pad = ''.join(['\t.'] * lvl)
+    t = type(ll)
+    if t is list:
+        for p in ll:
+            debug_print(p, lvl)
+    elif hasattr(ll, 'tokens'):
+        print(pad, t) 
+        debug_print(list(flatten(ll.tokens)), lvl+1)
 
 def destring(v):
     """ Strip quotes

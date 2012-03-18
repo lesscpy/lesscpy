@@ -18,6 +18,18 @@ from . import utility
 from .scope import Scope
 from .color import Color
 from lesscpy.plib import *
+
+class Deferred(object):
+    def __init__(self, mixin, args):
+        """
+        """
+        self.mixin = mixin
+        self.args = args
+    
+    def parse(self, scope):
+        """
+        """
+        return self.mixin.call(scope, self.args)
     
 class LessParser(object):
     precedence = (
@@ -82,21 +94,7 @@ class LessParser(object):
     def scopemap(self):
         """ Output scopemap.
         """
-        if self.result:
-            self._scopemap_aux(self.result)
-            
-    def _scopemap_aux(self, ll, lvl=0):
-        pad = ''.join(['\t.'] * lvl)
-        t = type(ll)
-        if t is list:
-            for p in ll:
-                self._scopemap_aux(p, lvl)
-        elif hasattr(ll, 'tokens'):
-            if t is Block:
-                print(pad, ll.name) 
-            else:
-                print(pad, t) 
-            self._scopemap_aux(list(utility.flatten(ll.tokens)), lvl+1)
+        utility.debug_print(self.result)
     
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,7 +176,8 @@ class LessParser(object):
         """
         try:
             block = Block(list(p)[1:-1], p.lineno(3))
-            block.parse(self.scope)
+            if not self.scope.in_mixin:
+                block.parse(self.scope)
             p[0] = block
         except SyntaxError as e:
             self.handle_error(e, p.lineno(3))
@@ -201,7 +200,7 @@ class LessParser(object):
                 except SyntaxError as e:
                     self.handle_error(e, p.lineno(2))
             else:
-                self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
+                self.handle_error('Call unknown block `%s`' % m.raw(), p.lineno(2))
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
@@ -224,6 +223,7 @@ class LessParser(object):
         """
         self.scope.add_mixin(Mixin(list(p)[1:], p.lineno(3)).parse(self.scope))
         self.scope.pop()
+        self.scope.in_mixin = False
         p[0] = None
 
     def p_open_mixin(self, p):
@@ -231,6 +231,7 @@ class LessParser(object):
                                       | id t_popen mixin_args t_pclose brace_open
         """
         p[0] = [p[1][0], p[3]]
+        self.scope.in_mixin = True
         
     def p_call_mixin(self, p):
         """ call_mixin                : class t_popen mixin_args t_pclose ';'
@@ -239,7 +240,10 @@ class LessParser(object):
         mixin = self.scope.mixins(p[1][0])
         if mixin:
             try:
-                p[0] = mixin.call(self.scope, p[3])
+                if self.scope.in_mixin:
+                    p[0] = Deferred(mixin, p[3])
+                else:
+                    p[0] = mixin.call(self.scope, p[3])
             except SyntaxError as e:
                 self.handle_error(e, p.lineno(2))
         else:
@@ -309,7 +313,7 @@ class LessParser(object):
             v.parse(self.scope)
             self.scope.add_variable(v)
         except SyntaxError as e:
-            self.handle_error(e, p)
+            self.handle_error(e, p.lineno(2))
         p[0] = None
         
 #
@@ -702,6 +706,7 @@ class LessParser(object):
             @param Parser token: Parser token
             @param string: Error level 
         """
+#        print(e.trace())
         if self.verbose:
             color = '\x1b[31m' if t == 'E' else '\x1b[33m'
             print("%s%s: line: %d: %s\n" % (color, t, line, e), end='\x1b[0m')

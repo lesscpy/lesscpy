@@ -107,3 +107,17 @@
 .arguments4 {
     .arguments_empty(1px solid red);
 }
+//
+// filter mixins
+//
+.placeholder(@color: #000) {
+  :-moz-placeholder {
+    color: @color;
+  }
+  &::-webkit-input-placeholder {
+    color: @color;
+  }
+}
+.div {
+	.placeholder(#fff);
+}

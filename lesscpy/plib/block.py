@@ -19,13 +19,18 @@ class Block(Node):
                 self.inner = []
             else:
                self. inner = [p for p in inner 
-                         if p and type(p) is type(self)]
+                              if p and type(p) is type(self)]
             if self.inner:
                 self.inner = [p.parse(scope) for p in self.inner]
         return self
     
     def raw(self):
-        return self.name.raw()
+        """
+        """
+        try:
+            return self.name.raw()
+        except AttributeError:
+            pass
     
     def fmt(self, fills):
         """
@@ -58,9 +63,9 @@ class Block(Node):
         """
         """
         if self.tokens[1]:
-            tokens = copy.deepcopy(self.tokens)
+            tokens = copy.deepcopy(self.tokens[1])
             scope = copy.deepcopy(scope)
-            out = [p for p in tokens[1] if p]
-            utility.rename(out, self.name, scope)
+            out = [p for p in tokens if p]
+            utility.rename(out, scope)
             return out
         return None

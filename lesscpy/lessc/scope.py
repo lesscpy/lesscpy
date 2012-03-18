@@ -7,6 +7,7 @@ class Scope(list):
         super().__init__()
         self._mixins = {}
         if init: self.push()
+        self.in_mixin = False
         
     def push(self):
         """

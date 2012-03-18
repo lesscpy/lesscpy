@@ -28,7 +28,9 @@ class Mixin(Node):
             args = args if type(args) is list else [args]
             vars = []
             for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed):
-                if type(var) is Variable:
+                if arg == var and utility.is_variable(arg):
+                    continue
+                elif type(var) is Variable:
                     if arg: var.value = arg
                 elif utility.is_variable(arg):
                     tmp = scope.variables(arg)
@@ -55,6 +57,13 @@ class Mixin(Node):
         """
         scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
+        
         self.parse_args(args, scope)
         scope.update([self.scope], -1)
-        return body.parse(scope).copy(scope)
+        
+        body.parse(scope)
+        r = list(utility.flatten([body.parsed, body.inner]))
+        
+        utility.rename(r, scope)
+        
+        return r
