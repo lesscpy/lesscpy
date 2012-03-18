@@ -66,3 +66,23 @@
 .test-2-em {
 	.nested-2(600px);
 }
+/*
+	Inner nested mixins
+*/
+.outer {
+	.inner(@width) {
+		padding: @width;
+	}
+	.innerkwarg(@width: 3px) {
+		margin: @width;
+	}
+}
+.tx {
+	.outer .inner(3px);
+	.outer .innerkwarg(1px);
+}
+.ty {
+	@width: 7px;
+	.outer .inner(@width);
+	.outer .innerkwarg();
+}

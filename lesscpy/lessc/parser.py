@@ -227,17 +227,17 @@ class LessParser(object):
         p[0] = None
 
     def p_open_mixin(self, p):
-        """ open_mixin                : class t_popen mixin_args t_pclose brace_open
-                                      | id t_popen mixin_args t_pclose brace_open
+        """ open_mixin                : identifier t_popen mixin_args t_pclose brace_open
         """
-        p[0] = [p[1][0], p[3]]
+        p[1].parse(self.scope)
+        p[0] = [p[1], p[3]]
         self.scope.in_mixin = True
         
     def p_call_mixin(self, p):
-        """ call_mixin                : class t_popen mixin_args t_pclose ';'
-                                      | id t_popen mixin_args t_pclose ';'
+        """ call_mixin                : identifier t_popen mixin_args t_pclose ';'
         """
-        mixin = self.scope.mixins(p[1][0])
+        p[1].parse(None)
+        mixin = self.scope.mixins(p[1].raw())
         if mixin:
             try:
                 if self.scope.in_mixin:
@@ -247,7 +247,7 @@ class LessParser(object):
             except SyntaxError as e:
                 self.handle_error(e, p.lineno(2))
         else:
-            self.handle_error('Call unknown mixin `%s`' % p[1], p.lineno(2))
+            self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
             
     def p_mixin_args_arguments(self, p):
         """ mixin_args                : less_arguments

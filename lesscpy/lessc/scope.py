@@ -45,7 +45,7 @@ class Scope(list):
     def add_mixin(self, mixin):
         """
         """
-        self._mixins[mixin.name] = mixin
+        self._mixins[mixin.name.raw()] = mixin
         
     def add_variable(self, variable):
         """
