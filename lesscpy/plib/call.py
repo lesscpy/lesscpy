@@ -8,26 +8,28 @@ import lesscpy.lessc.color as Color
 
 class Call(Node):
     def parse(self, scope):
-        name = ''.join(self.tokens.pop(0))
-        parsed = self.process(self.tokens, scope)
-        if name == '%(':
-            name = 'sformat'
-        elif name == '~':
-            name = 'e'
-        color = Color.Color()
-        args = [t for t in parsed 
-                if type(t) is not str or t not in '(),']
-        if hasattr(self, name):
-            try:
-                return getattr(self, name)(*args)
-            except ValueError:
-                pass
-        if hasattr(color, name):
-            try:
-                return getattr(color, name)(*args)
-            except ValueError:
-                pass
-        return name + ''.join([p for p in parsed])
+        if not self.parsed:
+            name = ''.join(self.tokens.pop(0))
+            parsed = self.process(self.tokens, scope)
+            if name == '%(':
+                name = 'sformat'
+            elif name == '~':
+                name = 'e'
+            color = Color.Color()
+            args = [t for t in parsed 
+                    if type(t) is not str or t not in '(),']
+            if hasattr(self, name):
+                try:
+                    return getattr(self, name)(*args)
+                except ValueError:
+                    pass
+            if hasattr(color, name):
+                try:
+                    return getattr(color, name)(*args)
+                except ValueError:
+                    pass
+            self.parsed = name + ''.join([p for p in parsed])
+        return self.parsed
     
     def e(self, string):
         """ Less Escape.
