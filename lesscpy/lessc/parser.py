@@ -373,6 +373,7 @@ class LessParser(object):
                                     | vendor_property
                                     | istring
                                     | fcall
+                                    | css_ms_filter
         """
         p[0] = p[1]
         

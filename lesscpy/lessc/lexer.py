@@ -35,6 +35,7 @@ class LessLexer:
         'css_important',
         'css_vendor_hack',
         'css_uri',
+        'css_ms_filter',
         
         'less_variable',
         'less_comment',
@@ -82,6 +83,10 @@ class LessLexer:
         (r'\[[^\]]*\]'
         '|(not|lang|nth-[a-z\-]+)\(.+\)'
         '|and[ \t]\(.+\)')
+        return t
+    
+    def t_css_ms_filter(self, t):
+        r'progid:[^;]*'
         return t
         
     def t_css_ident(self, t):

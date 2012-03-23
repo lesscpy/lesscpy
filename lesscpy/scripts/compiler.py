@@ -41,9 +41,9 @@ def ldirectory(inpath, outpath, args, scope):
             recompile = True
         if recompile:
             if args.verbose: print("%s -> %s" % (lf, outf))
-            p = parser.LessParser(yacc_debug=False,
+            p = parser.LessParser(yacc_debug=(args.debug),
                                   lex_optimize=True,
-                                  yacc_optimize=True,
+                                  yacc_optimize=(not args.debug),
                                   scope=scope,
                                   tabfile=yacctab,
                                   verbose=args.verbose)
@@ -112,10 +112,9 @@ def run():
     scope = None
     if args.include:
         for u in args.include.split(','):
-            p = parser.LessParser(
-                                  yacc_debug=False,
+            p = parser.LessParser(yacc_debug=(args.debug),
                                   lex_optimize=True,
-                                  yacc_optimize=True,
+                                  yacc_optimize=(not args.debug),
                                   tabfile=yacctab,
                                   verbose=args.verbose)
             p.parse(filename=u, debuglevel=0)
