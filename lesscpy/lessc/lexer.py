@@ -68,6 +68,7 @@ class LessLexer:
         'css_ident',
         'css_number',
         'css_color',
+        'less_variable',
         '&',
     ]
     significant_ws += list(set(reserved.values()))

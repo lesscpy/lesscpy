@@ -582,7 +582,7 @@ class LessParser(object):
     def p_variable_neg(self, p):
         """ variable                : '-' variable
         """
-        p[0] = '-' + p[2] 
+        p[0] = ['-', p[2]] 
         
     def p_variable_strange(self, p):
         """ variable                : t_popen variable t_pclose
@@ -593,7 +593,8 @@ class LessParser(object):
         """ variable                : less_variable
                                     | less_variable t_ws
         """
-        p[0] = p[1] 
+        p[0] = p[1]
+#        p[0] = tuple(list(p)[1:]) 
 
     def p_color(self, p):
         """ color                   : css_color
