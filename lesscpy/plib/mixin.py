@@ -70,9 +70,7 @@ class Mixin(Node):
     def call(self, scope, args=None):
         """
         """
-        scope = copy.deepcopy(scope)
         body = copy.deepcopy(self.body)
-        
         self.parse_args(args, scope)
         scope.update([self.scope], -1)
         
