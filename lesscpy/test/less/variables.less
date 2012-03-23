@@ -86,10 +86,13 @@
     	}
   	}
 }
-/*
-
-*/
 @gnegvar: 1px;
 .negvar {
 	padding: -@gnegvar;
+}
+@a: 1px;
+.varpad {
+	border-left: @a solid transparent;
+    border-right: @a solid transparent;
+    border-top: @a solid black;
 }

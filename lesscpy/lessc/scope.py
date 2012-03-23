@@ -56,6 +56,8 @@ class Scope(list):
         """
         Search for variable by name
         """
+        if type(name) is tuple:
+            name = name[0]
         i = len(self)
         while i >= 0:
             i -= 1

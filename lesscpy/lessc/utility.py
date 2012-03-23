@@ -129,6 +129,9 @@ def is_variable(v):
     """
     if type(v) is str:
         return (v.startswith('@') or v.startswith('-@'))
+    elif type(v) is tuple:
+        v = ''.join(v)
+        return (v.startswith('@') or v.startswith('-@'))
     return False
 
 def is_int(v):

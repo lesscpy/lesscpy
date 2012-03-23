@@ -593,8 +593,8 @@ class LessParser(object):
         """ variable                : less_variable
                                     | less_variable t_ws
         """
-        p[0] = p[1]
-#        p[0] = tuple(list(p)[1:]) 
+#        p[0] = p[1]
+        p[0] = tuple(list(p)[1:]) 
 
     def p_color(self, p):
         """ color                   : css_color
