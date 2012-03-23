@@ -150,10 +150,11 @@ class LessParser(object):
                     recurse = LessParser(importlvl=self.importlvl+1, 
                                          verbose=self.verbose, scope=self.scope)
                     recurse.parse(filename=filename, debuglevel=0)
+                    p[0] = recurse.result
                 else:
                     err = "Cannot import '%s', file not found" % filename
                     self.handle_error(err, p.lineno(1), 'W')
-                p[0] = None
+                    p[0] = None
             except ImportError as e:
                 self.handle_error(e, p)
         else:
