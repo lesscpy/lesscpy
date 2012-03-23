@@ -46,7 +46,7 @@ class Block(Node):
             })
             out.append(f % fills)
         if self.inner:
-            if name.startswith('@media'):
+            if self.name.subparse: # @media
                 inner = ''.join([p.fmt(fills) for p in self.inner])
                 inner = inner.replace(fills['nl'], 
                                       fills['nl'] + fills['tab']).rstrip(fills['tab'])

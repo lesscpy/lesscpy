@@ -102,6 +102,8 @@ html4 = [
     'screen',
     'all',
     'projection',
+    'from',
+    'to'
 ]
 html5 = [
     'article',

@@ -52,7 +52,7 @@ class LessParser(object):
             tabfile = 'yacctab'
             
         self.ignored = ('css_comment', 'less_comment',
-                        'css_vendor_hack', 'css_keyframes')
+                        'css_vendor_hack')
         
         self.tokens = [t for t in self.lex.tokens 
                        if t not in self.ignored]
@@ -397,6 +397,12 @@ class LessParser(object):
         """ identifier_list           : identifier_group
         """
         p[0] = p[1]
+        
+    def p_identifier_list_keyframe(self, p):
+        """ identifier_list           : css_keyframes t_ws css_ident
+                                      | css_keyframes t_ws css_ident t_ws
+        """
+        p[0] = list(p)[1:]
         
     def p_identifier_group_op(self, p):
         """ identifier_group          : identifier_group child_selector ident_parts

@@ -9,9 +9,15 @@ class Identifier(Node):
         """
         names       = []
         name        = []
-        if self.tokens and self.tokens[0] == '@media':
+        self._subp  = (
+            '@media', '@keyframes', 
+            '@-moz-keyframes', '@-webkit-keyframes'
+        )
+        if self.tokens and self.tokens[0] in self._subp:
             name = list(utility.flatten(self.tokens))
+            self.subparse = True
         else:
+            self.subparse = False
             for n in utility.flatten(self.tokens):
                 if n == '*':
                     name.append('* ')
@@ -38,7 +44,7 @@ class Identifier(Node):
         if parent: 
             parent = parent[-1]
             return [self._pscn(part, n) 
-                    if part[0] != '@media'
+                    if part[0] not in self._subp
                     else n
                     for part in parent.parsed
                     for n in names]
