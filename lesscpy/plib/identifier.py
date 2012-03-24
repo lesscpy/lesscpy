@@ -13,6 +13,8 @@ class Identifier(Node):
             '@media', '@keyframes', 
             '@-moz-keyframes', '@-webkit-keyframes'
         )
+        if self.tokens and hasattr(self.tokens, 'parse'):
+            self.tokens = self.tokens.parse(scope)
         if self.tokens and self.tokens[0] in self._subp:
             name = list(utility.flatten(self.tokens))
             self.subparse = True

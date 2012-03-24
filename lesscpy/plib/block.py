@@ -4,8 +4,6 @@ import re, copy
 from .node import Node
 from lesscpy.lessc import utility
 class Block(Node):
-    pass
-
     def parse(self, scope):
         """
         """

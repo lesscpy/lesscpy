@@ -73,9 +73,7 @@ class Mixin(Node):
         body = copy.deepcopy(self.body)
         self.parse_args(args, scope)
         scope.update([self.scope], -1)
-        
         body.parse(scope)
         r = list(utility.flatten([body.parsed, body.inner]))
-        
         utility.rename(r, scope)
         return r

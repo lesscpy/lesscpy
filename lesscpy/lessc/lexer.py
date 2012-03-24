@@ -19,7 +19,7 @@ class LessLexer:
     states = (
       ('parn', 'inclusive'),
     )
-    literals = ',>{}=%!/*-+:;~&';
+    literals = ',<>{}=%!/*-+:;~&';
     tokens = [
         'css_ident',
         'css_dom',
@@ -41,6 +41,9 @@ class LessLexer:
         'less_comment',
         'less_string',
         'less_open_format',
+        'less_when',
+        'less_and',
+        'less_not',
         
         't_ws',
         't_popen',
@@ -82,7 +85,7 @@ class LessLexer:
     def t_css_filter(self, t):
         (r'\[[^\]]*\]'
         '|(not|lang|nth-[a-z\-]+)\(.+\)'
-        '|and[ \t]\(.+\)')
+        '|and[ \t]\([^><]+\)')
         return t
     
     def t_css_ms_filter(self, t):
@@ -112,6 +115,12 @@ class LessLexer:
                     t.type = 'css_color'
                 except ValueError:
                     pass
+        elif v == 'when':
+            t.type = 'less_when'
+        elif v == 'and':
+            t.type = 'less_and'
+        elif v == 'not':
+            t.type = 'less_not'
         elif v in css.propertys:
             t.type = 'css_property'
             t.value = t.value.strip()
@@ -132,11 +141,15 @@ class LessLexer:
         r'\#[0-9]([0-9a-f]{5}|[0-9a-f]{2})'
         return t
     
+    def t_css_number(self, t):
+        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz)?'
+        return t
+    
     def t_parn_css_uri(self, t):
         (r'data:[^\)]+'
          '|(([a-z]+://)?'
          '('
-         '([\.\w:]+[\\/][\\/]?)+'
+         '([\.a-z:]+[\w\.:]*[\\/][\\/]?)+'
          '|([a-z][\w\.\-]+(\.[a-z0-9]+))'
          '(\#[a-z]+)?)'
          ')+')
@@ -150,10 +163,6 @@ class LessLexer:
          '([_a-z0-9\-]|[\200-\377]'
          '|\\\[0-9a-f]{1,6}'
          '|\\\[^\r\n\s0-9a-f])*)')
-        return t
-    
-    def t_css_number(self, t):
-        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz)?'
         return t
     
     def t_newline(self, t):

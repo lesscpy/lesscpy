@@ -200,7 +200,10 @@ class LessParser(object):
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
         """
-        p[1].parse(self.scope)
+        try:
+            p[1].parse(self.scope)
+        except SyntaxError as e:
+            pass
         p[0] = p[1]
         self.scope.current = p[1]
         
@@ -223,10 +226,37 @@ class LessParser(object):
 
     def p_open_mixin(self, p):
         """ open_mixin                : identifier t_popen mixin_args t_pclose brace_open
+                                      | identifier t_popen mixin_args t_pclose mixin_guard brace_open
         """
         p[1].parse(self.scope)
         p[0] = [p[1], p[3]]
+#        if len(p) > 6:
+#            p[0].append(p[5])
         self.scope.in_mixin = True
+        
+    def p_mixin_guard(self, p):
+        """ mixin_guard               : less_when mixin_guard_cond
+                                      | less_when less_not mixin_guard_cond
+        """
+        pass
+    
+    def p_mixin_guard_cond(self, p):
+        """ mixin_guard_cond          : mixin_guard_cond ',' mixin_guard_cond
+                                      | mixin_guard_cond less_and mixin_guard_cond
+                                      | t_popen argument mixin_guard_cmp argument t_pclose
+                                      | t_popen argument t_pclose
+        """
+        pass
+    
+    def p_mixin_guard_cmp(self, p):
+        """ mixin_guard_cmp           : '>'
+                                      | '<'
+                                      | '='
+                                      | '!' '='
+                                      | '>' '='
+                                      | '<' '='
+        """
+        pass
         
     def p_call_mixin(self, p):
         """ call_mixin                : identifier t_popen mixin_args t_pclose ';'
@@ -387,6 +417,11 @@ class LessParser(object):
                                       | page filter
         """
         p[0] = Identifier(p[1], 0)
+        
+    def p_identifier_istr(self, p):
+        """ identifier                : t_popen '~' istring t_pclose
+        """
+        p[0] = Identifier(Call([p[2], p[3]]), 0)
 
     def p_identifier_list_aux(self, p):
         """ identifier_list           : identifier_list ',' identifier_group

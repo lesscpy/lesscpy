@@ -1,6 +1,6 @@
 """
 """
-import re
+import re, math
 from urllib.parse import quote as urlquote
 from .node import Node
 import lesscpy.lessc.utility as utility
@@ -8,9 +8,11 @@ import lesscpy.lessc.color as Color
 
 class Call(Node):
     def parse(self, scope):
+        """
+        """
         if not self.parsed:
-            name = ''.join(self.tokens.pop(0))
-            parsed = self.process(self.tokens, scope)
+            name = ''.join(self.tokens[0])
+            parsed = self.process(self.tokens[1:], scope)
             if name == '%(':
                 name = 'sformat'
             elif name == '~':
@@ -31,7 +33,7 @@ class Call(Node):
             self.parsed = name + ''.join([p for p in parsed])
         return self.parsed
     
-    def e(self, string):
+    def e(self, string, *args):
         """ Less Escape.
             @param string: value
             @return string
@@ -58,20 +60,24 @@ class Call(Node):
         format = format.replace('%A', '%s')
         return format % tuple(items)
     
-    def increment(self, v):
+    def increment(self, *args):
         """ Increment function
             @param Mixed: value
             @return: incremented value
         """
-        n, u = utility.analyze_number(v)
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
         return utility.with_unit(n+1, u)
     
-    def decrement(self, v):
+    def decrement(self, *args):
         """ Decrement function
             @param Mixed: value
             @return: incremented value
         """
-        n, u = utility.analyze_number(v)
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
         return utility.with_unit(n-1, u)
     
     def add(self, *args):
@@ -79,12 +85,42 @@ class Call(Node):
             @param list: values
             @return: int
         """
+        if(len(args) <= 1):
+            raise SyntaxError('Wrong number of arguments')
         return sum([int(v) for v in args])
     
-    def round(self, v):
+    def round(self, *args):
         """ Round number
             @param Mixed: value
             @return: rounded value
         """
-        n, u = utility.analyze_number(v)
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
         return utility.with_unit(round(float(n)), u)
+    
+    def ceil(self, *args):
+        """
+        """
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
+        return utility.with_unit(math.ceil(n), u)
+    
+    def floor(self, *args):
+        """
+        """
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
+        return utility.with_unit(math.floor(n), u)
+    
+    def percentage(self, *args):
+        """
+        """
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        n, u = utility.analyze_number(args[0])
+        n = int(n * 100.0)
+        u = '%'
+        return utility.with_unit(n, u)
