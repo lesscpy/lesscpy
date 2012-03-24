@@ -66,7 +66,14 @@ class Expression(Node):
             '+': '__add__',
             '-': '__sub__',
             '*': '__mul__',
-            '/': '__truediv__'
+            '/': '__truediv__',
+            '=': '__eq__',
+            '>': '__gt__',
+            '<': '__lt__',
+            '>=': '__ge__',
+            '<=': '__le__',
+            '!=': '__ne__',
+            '<>': '__ne__',
         }.get(o)
         v = getattr(a, operation)(b)
         if v is NotImplemented:

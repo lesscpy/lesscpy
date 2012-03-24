@@ -4,6 +4,7 @@
 import copy, itertools
 from .node import Node
 from .block import Block
+from .expression import Expression
 from .variable import Variable
 from lesscpy.lessc import utility
 
@@ -11,11 +12,16 @@ class Mixin(Node):
     def parse(self, scope):
         """
         """
-        self.name, args = self.tokens[0]
+        self.name, args, self.guards = self.tokens[0]
         self.args = [a for a in args if a != ','] if args else []
         self.body = Block([None, self.tokens[1]], 0)
         self.scope = copy.deepcopy(scope[-1])
         return self
+    
+    def raw(self):
+        """
+        """
+        return self.name.raw()
     
     def parse_args(self, args, scope):
         """
@@ -67,13 +73,29 @@ class Mixin(Node):
                 return None
         return var
     
+    def parse_guards(self, scope, args):
+        """
+        Parse guards on mixin.
+        """
+        if self.guards:
+            for g in self.guards:
+                if type(g) is list:
+                    e = Expression(g)
+                    if not e.parse(scope):
+                        return False
+        return True
+            
+    
     def call(self, scope, args=None):
         """
+        Call mixin. Parses a copy of the mixins body
+        in the current scope and returns it.
         """
-        body = copy.deepcopy(self.body)
         self.parse_args(args, scope)
-        scope.update([self.scope], -1)
-        body.parse(scope)
-        r = list(utility.flatten([body.parsed, body.inner]))
-        utility.rename(r, scope)
-        return r
+        if self.parse_guards(scope, args):
+            body = copy.deepcopy(self.body)
+            scope.update([self.scope], -1)
+            body.parse(scope)
+            r = list(utility.flatten([body.parsed, body.inner]))
+            utility.rename(r, scope)
+            return r

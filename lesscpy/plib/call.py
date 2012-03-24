@@ -1,4 +1,5 @@
 """
+    Calls to builtin functions.
 """
 import re, math
 from urllib.parse import quote as urlquote
@@ -9,6 +10,7 @@ import lesscpy.lessc.color as Color
 class Call(Node):
     def parse(self, scope):
         """
+        Parse Node within scope
         """
         if not self.parsed:
             name = ''.join(self.tokens[0])
@@ -33,12 +35,14 @@ class Call(Node):
             self.parsed = name + ''.join([p for p in parsed])
         return self.parsed
     
-    def e(self, string, *args):
+    def e(self, *args):
         """ Less Escape.
             @param string: value
             @return string
         """
-        return utility.destring(string.strip('~'))
+        if(len(args) > 1):
+            raise SyntaxError('Wrong number of arguments')
+        return utility.destring(args[0].strip('~'))
     
     def sformat(self, *args):
         """ String format
@@ -100,7 +104,7 @@ class Call(Node):
         return utility.with_unit(round(float(n)), u)
     
     def ceil(self, *args):
-        """
+        """ Ceil number
         """
         if(len(args) > 1):
             raise SyntaxError('Wrong number of arguments')
@@ -108,7 +112,7 @@ class Call(Node):
         return utility.with_unit(math.ceil(n), u)
     
     def floor(self, *args):
-        """
+        """ Floor number
         """
         if(len(args) > 1):
             raise SyntaxError('Wrong number of arguments')
@@ -116,7 +120,7 @@ class Call(Node):
         return utility.with_unit(math.floor(n), u)
     
     def percentage(self, *args):
-        """
+        """ Return percentage value
         """
         if(len(args) > 1):
             raise SyntaxError('Wrong number of arguments')

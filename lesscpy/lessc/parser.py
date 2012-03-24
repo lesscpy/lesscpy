@@ -190,10 +190,13 @@ class LessParser(object):
             # fallback to mixin. Allow calls to mixins without parens
             mixin = self.scope.mixins(m.raw())
             if mixin:
-                try:
-                    p[0] = mixin.call(self.scope)
-                except SyntaxError as e:
-                    self.handle_error(e, p.lineno(2))
+                for m in mixin:
+                    try:
+                        res = m.call(self.scope)
+                    except SyntaxError as e:
+                        self.handle_error(e, p.lineno(2))
+                    if m: break
+                p[0] = res
             else:
                 self.handle_error('Call unknown block `%s`' % m.raw(True), p.lineno(2))
         
@@ -230,23 +233,40 @@ class LessParser(object):
         """
         p[1].parse(self.scope)
         p[0] = [p[1], p[3]]
-#        if len(p) > 6:
-#            p[0].append(p[5])
+        if len(p) > 6:
+            p[0].append(p[5])
+        else:
+            p[0].append(None)
         self.scope.in_mixin = True
         
     def p_mixin_guard(self, p):
-        """ mixin_guard               : less_when mixin_guard_cond
-                                      | less_when less_not mixin_guard_cond
+        """ mixin_guard               : less_when mixin_guard_cond_list
         """
-        pass
+        p[0] = p[2]
+        
+    def p_mixin_guard_not(self, p):
+        """ mixin_guard               : less_when less_not mixin_guard_cond_list
+        """
+        p[0] = p[3]
+        
+    def p_mixin_guard_cond_list_aux(self, p):
+        """ mixin_guard_cond_list    : mixin_guard_cond_list ',' mixin_guard_cond
+                                     | mixin_guard_cond_list less_and mixin_guard_cond
+        """
+        p[1].append(p[2])
+        p[1].append(p[3])
+        p[0] = p[1]
+        
+    def p_mixin_guard_cond_list(self, p):
+        """ mixin_guard_cond_list     : mixin_guard_cond
+        """
+        p[0] = [p[1]]
     
     def p_mixin_guard_cond(self, p):
-        """ mixin_guard_cond          : mixin_guard_cond ',' mixin_guard_cond
-                                      | mixin_guard_cond less_and mixin_guard_cond
-                                      | t_popen argument mixin_guard_cmp argument t_pclose
+        """ mixin_guard_cond          : t_popen argument mixin_guard_cmp argument t_pclose
                                       | t_popen argument t_pclose
         """
-        pass
+        p[0] = list(p)[2:-1]
     
     def p_mixin_guard_cmp(self, p):
         """ mixin_guard_cmp           : '>'
@@ -255,8 +275,9 @@ class LessParser(object):
                                       | '!' '='
                                       | '>' '='
                                       | '<' '='
+                                      | '<' '>'
         """
-        pass
+        p[0] = ''.join(list(p)[1:])
         
     def p_call_mixin(self, p):
         """ call_mixin                : identifier t_popen mixin_args t_pclose ';'
@@ -264,23 +285,26 @@ class LessParser(object):
         p[1].parse(None)
         mixin = self.scope.mixins(p[1].raw())
         if mixin:
-            try:
-                if self.scope.in_mixin:
-                    p[0] = Deferred(mixin, p[3])
-                else:
-                    p[0] = mixin.call(self.scope, p[3])
-            except SyntaxError as e:
-                self.handle_error(e, p.lineno(2))
+            for m in mixin:
+                try:
+                    if self.scope.in_mixin:
+                        res = Deferred(m, p[3])
+                    else:
+                        res = m.call(self.scope, p[3])
+                    if res: break
+                except SyntaxError as e:
+                    self.handle_error(e, p.lineno(2))
         elif not p[3]:
             # fallback to block. Allow calls of name() to blocks
             block = self.scope.blocks(p[1].raw())
             if block:
-                p[0] = block.copy(self.scope)
+                res = block.copy(self.scope)
         else:
             if self.scope.in_mixin:
-                p[0] = Deferred(p[1], p[3])
-            else: 
-                self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
+                res = Deferred(p[1], p[3])
+        if not res:
+            self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
+        p[0] = res
             
     def p_mixin_args_arguments(self, p):
         """ mixin_args                : less_arguments

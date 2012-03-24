@@ -14,5 +14,8 @@ class Deferred(Node):
         """
         if hasattr(self.mixin, 'call'):
             return self.mixin.call(scope, self.args)
-        m = scope.mixins(self.mixin.raw())
-        if m: return m.call(scope, self.args)
+        mixins = scope.mixins(self.mixin.raw())
+        if not mixins: return mixins
+        for m in mixins:
+            res = m.call(scope, self.args)
+            if res: return res

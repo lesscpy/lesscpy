@@ -63,6 +63,7 @@ class LessLexer:
         '@arguments': 'less_arguments',
     }
     tokens += list(set(reserved.values()))
+    # Tokens with significant following whitespace
     significant_ws = [
         'css_class', 
         'css_id', 
@@ -224,16 +225,27 @@ class LessLexer:
         self.lexer = lex.lex(module=self, **kwargs)    
             
     def file(self, filename):
+        """
+        Lex file.
+        """
         with open(filename) as f:
             self.lexer.input(f.read())
         return self
     
     def input(self, filename):
+        """
+        Wrapper for file
+        """
         with open(filename) as f:
             self.lexer.input(f.read())
             
     def token(self):
         """
+        Token function. Contains 2 hacks:
+            1.  Injects ';' into blocks where the last property
+                leaves out the ;
+            2.  Strips out whitespace from nonsignificant locations
+                to ease parsing.
         """
         if self.next:
             t = self.next
