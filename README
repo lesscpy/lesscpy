@@ -8,7 +8,9 @@ A compiler written in python 3 for the lesscss language.
 For those of us not willing/able to have node.js installed in our environment. 
 Not all features of lesscss are supported (yet).
 Some features wil probably never be supported (JavaScript evaluation). 
-This program uses PLY (Python Lex-Yacc) to tokenize/parse the input. 
+This program uses PLY (Python Lex-Yacc) to tokenize/parse the input and is 
+considerably slower than the nodejs compiler. The plan is to utilize this 
+to build in proper syntax checking and perhaps YUI compressing.
 
 This is an early version, so you are likly to find bugs.
 

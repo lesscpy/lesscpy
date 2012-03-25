@@ -11,7 +11,8 @@ class Identifier(Node):
         name        = []
         self._subp  = (
             '@media', '@keyframes', 
-            '@-moz-keyframes', '@-webkit-keyframes'
+            '@-moz-keyframes', '@-webkit-keyframes',
+            '@-ms-keyframes'
         )
         if self.tokens and hasattr(self.tokens, 'parse'):
             self.tokens = self.tokens.parse(scope)
