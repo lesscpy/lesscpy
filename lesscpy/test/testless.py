@@ -12,13 +12,19 @@ from lesscpy.lessc import formatter
 class TestCase(unittest.TestCase):
     pass
 
+class Opt(object):
+    def __init__(self):
+        self.minify = False
+        self.xminify = False
+        self.tabs = True
+
 def create_test (args):
     def do_test_expected(self):
         lessf, cssf, minf = args
         if os.path.exists(cssf):
             p = parser.LessParser()
             p.parse(filename=lessf)
-            f = formatter.Formatter()
+            f = formatter.Formatter(Opt())
             pout = f.format(p).split('\n')
             i = 0
             with open(cssf) as cssf:
@@ -33,9 +39,11 @@ def create_test (args):
             self.fail("%s not found..." % cssf)
         if os.path.exists(minf):
             p = parser.LessParser()
+            opt = Opt()
+            opt.minify = True
             p.parse(filename=lessf)
-            f = formatter.Formatter()
-            mout = f.format(p, True).split('\n')
+            f = formatter.Formatter(opt)
+            mout = f.format(p).split('\n')
             i = 0
             with open(minf) as cssf:
                 for line in cssf.readlines():

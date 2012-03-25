@@ -30,7 +30,7 @@ def ldirectory(inpath, outpath, args, scope):
             if not args.dry_run:
                 os.mkdir(outpath)
     less = glob.glob(os.path.join(inpath, '*.less'))
-    f = formatter.Formatter()
+    f = formatter.Formatter(args)
     for lf in less:
         outf = os.path.splitext(os.path.basename(lf))
         minx = '.min' if args.min_ending else ''
@@ -48,7 +48,7 @@ def ldirectory(inpath, outpath, args, scope):
                                   tabfile=yacctab,
                                   verbose=args.verbose)
             p.parse(filename=lf, debuglevel=0)
-            css = f.format(p, args.minify, args.xminify)
+            css = f.format(p)
             if not args.dry_run:
                 with open(outf, 'w') as outfile:
                     outfile.write(css)
@@ -66,12 +66,15 @@ def run():
     aparse = argparse.ArgumentParser(description='LessCss Compiler', epilog='<< jtm@robot.is @_o >>')
     aparse.add_argument('-I', '--include', action="store", type=str,
                         help="Included less-files (comma separated)")
-    aparse.add_argument('-x', '--minify', action="store_true", 
-                        default=False, help="Minify output")
-    aparse.add_argument('-X', '--xminify', action="store_true", 
-                        default=False, help="Minify output, no end of block newlines")
     aparse.add_argument('-v', '--verbose', action="store_true", 
                         default=False, help="Verbose mode")
+    fgroup = aparse.add_argument_group('Formatting options')
+    fgroup.add_argument('-x', '--minify', action="store_true", 
+                        default=False, help="Minify output")
+    fgroup.add_argument('-X', '--xminify', action="store_true", 
+                        default=False, help="Minify output, no end of block newlines")
+    fgroup.add_argument('-t', '--tabs', help="Use tabs", action="store_true")
+    fgroup.add_argument('-s', '--spaces', help="Number of startline spaces (default 2)", default=2)
     dgroup = aparse.add_argument_group('Directory options', 
                                        'Compiles all *.less files in directory that '
                                        'have a newer timestamp than it\'s css file.')
@@ -123,7 +126,7 @@ def run():
             else:
                 scope.update(p.scope)
     p = None
-    f = formatter.Formatter()
+    f = formatter.Formatter(args)
     if not os.path.exists(args.target):
         sys.exit("Target not found '%s' ..." % args.target)
     if os.path.isdir(args.target):
@@ -141,6 +144,6 @@ def run():
             args.no_css = True
             p.scopemap()
         if not args.no_css and p:
-            out = f.format(p, args.minify, args.xminify)
+            out = f.format(p)
             print(out)
     

@@ -6,18 +6,20 @@
     <jtm@robot.is>
 """
 class Formatter(object):
-    def format(self, parse, minify=False, xminify=False):
+    def __init__(self, args):
+        self.args = args
+        
+    def format(self, parse):
         """
         """
         if not parse.result:
             return ''
         eb = '\n' 
-        if xminify:
+        if self.args.xminify:
             eb = ''
-            minify = True
-        self.minify = minify
+            self.args.minify = True
         self.items = {}
-        if minify:
+        if self.args.minify:
             self.items.update({
                 'nl': '',
                 'tab': '',
@@ -25,9 +27,10 @@ class Formatter(object):
                 'eb': eb
             })
         else:
+            tab = '\t' if self.args.tabs else ' ' * int(self.args.spaces)
             self.items.update({
                 'nl': '\n',
-                'tab': '\t',
+                'tab': tab,
                 'ws': ' ',
                 'eb': eb
             })
