@@ -127,7 +127,7 @@ def is_color(v):
     """
     if not v or type(v) is not str: 
         return False
-    if len(v) in [4, 5, 7, 9]:
+    if v[0] == '#' and len(v) in [4, 5, 7, 9]:
         try:
             int(v[1:], 16)
             return True

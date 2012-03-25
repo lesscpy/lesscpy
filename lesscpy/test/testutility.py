@@ -66,6 +66,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test('#12345'))
         self.assertFalse(test('AbCdEf'))
         self.assertFalse(test(''))
+        self.assertFalse(test('.925'))
         self.assertFalse(test(False))
         self.assertFalse(test([]))
         
