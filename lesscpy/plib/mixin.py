@@ -37,7 +37,7 @@ class Mixin(Node):
             for var in vars:
                 if var: scope.add_variable(var)
             if not arguments:
-                arguments = [v.value for v in vars]
+                arguments = [v.value for v in vars if v]
         if arguments:
             arguments = [' ' if a == ',' else a for a in arguments]
         else:
@@ -73,29 +73,37 @@ class Mixin(Node):
                 return None
         return var
     
-    def parse_guards(self, scope, args):
+    def parse_guards(self, scope):
         """
         Parse guards on mixin.
         """
         if self.guards:
+            cor = True if ',' in self.guards else False
             for g in self.guards:
                 if type(g) is list:
-                    e = Expression(g)
-                    if not e.parse(scope):
+                    res = (g[0].parse(scope) 
+                           if len(g) == 1 
+                           else Expression(g).parse(scope))
+                    if cor:
+                        if res: return True
+                    elif not res:
                         return False
         return True
-            
     
     def call(self, scope, args=None):
         """
         Call mixin. Parses a copy of the mixins body
         in the current scope and returns it.
         """
-        self.parse_args(args, scope)
-        if self.parse_guards(scope, args):
+        try:
+            self.parse_args(args, scope)
+        except SyntaxError:
+            return False
+        if self.parse_guards(scope):
             body = copy.deepcopy(self.body)
             scope.update([self.scope], -1)
             body.parse(scope)
             r = list(utility.flatten([body.parsed, body.inner]))
             utility.rename(r, scope)
             return r
+        return False

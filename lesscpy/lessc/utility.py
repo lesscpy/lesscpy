@@ -53,6 +53,19 @@ def blocksearch(block, name):
         if b: return b
     return False
 
+def reverse_guard(ll):
+    """
+    """
+    rev = {
+        '<': '>',
+        '>': '<',
+        '=': '!=',
+        '!=': '=',
+        '>=': '<=',
+        '<=': '>='
+    }
+    return [rev[l] if l in rev else l for l in ll]
+
 def debug_print(ll, lvl=0):
     """
     """

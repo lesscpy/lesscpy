@@ -190,12 +190,13 @@ class LessParser(object):
             # fallback to mixin. Allow calls to mixins without parens
             mixin = self.scope.mixins(m.raw())
             if mixin:
+                res = None
                 for m in mixin:
                     try:
                         res = m.call(self.scope)
                     except SyntaxError as e:
                         self.handle_error(e, p.lineno(2))
-                    if m: break
+                    if res: break
                 p[0] = res
             else:
                 self.handle_error('Call unknown block `%s`' % m.raw(True), p.lineno(2))
@@ -244,11 +245,6 @@ class LessParser(object):
         """
         p[0] = p[2]
         
-    def p_mixin_guard_not(self, p):
-        """ mixin_guard               : less_when less_not mixin_guard_cond_list
-        """
-        p[0] = p[3]
-        
     def p_mixin_guard_cond_list_aux(self, p):
         """ mixin_guard_cond_list    : mixin_guard_cond_list ',' mixin_guard_cond
                                      | mixin_guard_cond_list less_and mixin_guard_cond
@@ -261,6 +257,12 @@ class LessParser(object):
         """ mixin_guard_cond_list     : mixin_guard_cond
         """
         p[0] = [p[1]]
+        
+    def p_mixin_guard_cond_rev(self, p):
+        """ mixin_guard_cond          : less_not t_popen argument mixin_guard_cmp argument t_pclose
+                                      | less_not t_popen argument t_pclose
+        """
+        p[0] = utility.reverse_guard(list(p)[3:-1])
     
     def p_mixin_guard_cond(self, p):
         """ mixin_guard_cond          : t_popen argument mixin_guard_cmp argument t_pclose
@@ -284,6 +286,7 @@ class LessParser(object):
         """
         p[1].parse(None)
         mixin = self.scope.mixins(p[1].raw())
+        res = None
         if mixin:
             for m in mixin:
                 try:
@@ -302,8 +305,11 @@ class LessParser(object):
         else:
             if self.scope.in_mixin:
                 res = Deferred(p[1], p[3])
-        if not res:
-            self.handle_error('Call unknown mixin `%s`' % p[1].raw(True), p.lineno(2))
+        if res is False:
+            args = ''.join([''.join(a) for a in p[3]]) if p[3] else ''
+            self.handle_error('Call unknown mixin `%s(%s)`' % 
+                              (p[1].raw(True), args), 
+                              p.lineno(2))
         p[0] = res
             
     def p_mixin_args_arguments(self, p):

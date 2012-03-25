@@ -1,0 +1,111 @@
+/*
+	Guards
+*/
+.inner(@index) {
+	width: @index * 1px;
+}
+.sign (@index) when (@index > 0) {
+	.inner(@index);
+}
+.sign (@index) when (@index < 0) {
+	height: @index;
+}
+.sign (@index: 0) when (@index = 0) {
+	padding: @index;
+}
+.a {
+	.sign(1px);
+	.sign(-1px);
+	.sign(0);
+	// No arg
+	.sign();
+	.sign;
+}
+// condition list
+.mixin1 (@a) when (@a > 10), (@a < -10) {
+	margin: @a;
+}
+.b{
+	.mixin1(11);
+	.mixin1(-11);
+}
+.max (@a, @b) when (@a > @b) { 
+	width: @a 
+}
+.max (@a, @b) when (@a < @b) { 
+	height: @b 
+}
+.c {
+	.max(3px, 5px);
+	.max(5px, 3px);
+}
+@media1: mobile;
+.mmixin (@a) when (@media1 = mobile) {
+	src: 'mobile';
+	padding: @a;
+}
+.mmixin (@a) when (@media1 = desktop) {
+	src: 'desktop';
+	padding: @a * 3px;
+}
+.d {
+	.mmixin(1px);
+}
+/*
+	isType functions
+*/
+.mixtype (@a, @b: 0) when (isnumber(@b)) {
+	width: @b;
+}
+.mixtype (@a, @b: black) when (iscolor(@b)) {
+	color: @b;
+}
+.mixtype (@a, @b: 'http://www.lesscss.org') when (isurl(@b)) {
+	src: @b;
+}
+.mixtype (@a, @b: 'somestr') when (isstring(@b)) {
+	filter: @b;
+}
+.mixtype (@a, @b: 'somestr') when (iskeyword(@b)) {
+	ignore: @b;
+}
+.e {
+	.mixtype (6px, 9px);
+	.mixtype (6px, yellow);
+	.mixtype (6px, 'http://www.lesscss.org/#-parametric-mixins');
+	.mixtype (6px, 'wtf');
+	.mixtype (6px, when);
+}
+/*
+	Mixed conditions
+*/
+.mixcond (@a) when (isnumber(@a)) and (@a > 0) {
+	width: @a;
+}
+/*
+.mixcond (@a) when (isnumber(@a)) and not (@a != 0) {
+	margin: @a;
+}
+*/
+.mixcond (@b) when not (@b > 0) {
+	height: @b;
+}
+.f {
+	.mixcond(9px);
+//	.mixcond(0);
+	.mixcond(-9px);
+}
+/*
+	Bootstrap example
+*/
+.span(@index) {
+	width: @index * 1px;
+}
+.spanX (@index) when (@index > 0) {
+	(~".span@{index}") { 
+		.span(@index); 
+	}
+}
+.a {
+	.spanX(5);
+}

@@ -76,12 +76,14 @@ Supported features
 * Mixins
 * mixins (Nested)
 * mixins (Nested (Calls))
+* Guard expressions
 * Parametered mixins (class)
 * Parametered mixins (id)
 * @arguments
 * Nesting
 * Escapes ~/e()
 * Expressions
+* Keyframe blocks
 * Color functions:
 ** lighten
 ** darken
@@ -98,6 +100,12 @@ Supported features
 ** decrement
 ** format '%('
 ** add
+** iscolor
+** isnumber
+** isurl
+** isstring
+** iskeyword
+* Keyframe blocks
 
 Differences from lessc.js
 =========================
@@ -107,10 +115,8 @@ Differences from lessc.js
 
 Not supported (yet)
 ===================
-* Keyframe blocks
 * mixins (closures)
 * Pattern-matching
-* Guard expressions
 * JavaScript evaluation
 
 License
