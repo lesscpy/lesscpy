@@ -130,3 +130,7 @@ footer, header, hgroup, menu, nav, section {
 .asterisk_last * { 
 	padding: 0;
 }
+@var: 3;
+(~".class_no_@{var}") {
+	padding: @var * -1px;
+}
