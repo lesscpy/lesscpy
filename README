@@ -40,9 +40,11 @@ or simply place the package into your python path.
 Compiler script Usage
 =====================
  
-usage: lesscpy [-h] [-I INCLUDE] [-x] [-X] [-m] [-D] [-v] [-o OUT] [-S] [-V]
-               [-L] [-N]
+usage: lesscpy [-h] [-I INCLUDE] [-v] [-x] [-X] [-t] [-s SPACES] [-o OUT] [-r]
+               [-f] [-m] [-D] [-S] [-V] [-L] [-N]
                target
+
+LessCss Compiler
 
 positional arguments:
   target                less file or directory
@@ -51,9 +53,14 @@ optional arguments:
   -h, --help            show this help message and exit
   -I INCLUDE, --include INCLUDE
                         Included less-files (comma separated)
+  -v, --verbose         Verbose mode
+
+Formatting options:
   -x, --minify          Minify output
   -X, --xminify         Minify output, no end of block newlines
-  -v, --verbose         Verbose mode
+  -t, --tabs            Use tabs
+  -s SPACES, --spaces SPACES
+                        Number of startline spaces (default 2)
 
 Directory options:
   Compiles all *.less files in directory that have a newer timestamp than
