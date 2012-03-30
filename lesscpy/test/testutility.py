@@ -86,9 +86,9 @@ class TestUtility(unittest.TestCase):
         self.assertEqual('1.0px', test(1.0, 'px'))
         self.assertEqual('0.0px', test('.0', 'px'))
         self.assertEqual('0.6px', test(.6, 'px'))
-        self.assertEqual(1, test(1))
-        self.assertEqual(1, test(1, None))
-        self.assertEqual(1, test(1,))
+        self.assertEqual('1', test(1))
+        self.assertEqual('1', test(1, None))
+        self.assertEqual('1', test(1,))
         
     
     

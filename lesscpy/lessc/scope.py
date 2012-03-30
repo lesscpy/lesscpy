@@ -1,16 +1,29 @@
 """
+.. module:: lesscpy.lessc.scope
+    :synopsis: Scope class.
+    
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from . import utility
 
 class Scope(list):
+    """ Scope class. A stack implementation.
+    """
     def __init__(self, init=False):
+        """Scope
+        Args:
+            init (bool): Initiate scope
+        """
         super().__init__()
         self._mixins = {}
         if init: self.push()
         self.in_mixin = False
         
     def push(self):
-        """
+        """Push level on scope
         """
         self.append({
             '__variables__' : {},
@@ -29,7 +42,9 @@ class Scope(list):
         
     @property
     def scopename(self):
-        """
+        """Current scope name as list
+        Returns:
+            list
         """
         return [r['__current__'] 
                 for r in self 
@@ -37,13 +52,17 @@ class Scope(list):
 
         
     def add_block(self, block):
-        """
+        """Add block element to scope
+        Args:
+            block (Block): Block object
         """
         self[-1]['__blocks__'].append(block)
         self[-1]['__names__'].append(block.raw())
         
     def add_mixin(self, mixin):
-        """
+        """Add mixin to scope
+        Args:
+            mixin (Mixin): Mixin object
         """
         raw = mixin.name.raw()
         if raw in self._mixins:
@@ -52,13 +71,18 @@ class Scope(list):
             self._mixins[raw] = [mixin]
         
     def add_variable(self, variable):
-        """
+        """Add variable to scope
+        Args:
+            variable (Variable): Variable object
         """
         self[-1]['__variables__'][variable.name] = variable
         
     def variables(self, name):
-        """
-        Search for variable by name
+        """Search for variable by name. Searches scope top down
+        Args:
+            name (string): Search term
+        Returns:
+            Variable object OR False
         """
         if type(name) is tuple:
             name = name[0]
@@ -70,17 +94,19 @@ class Scope(list):
         return False
     
     def mixins(self, name):
-        """
-        Search mixins for name.
-        Allow '>' to be ignored.
+        """ Search mixins for name.
+        Allow '>' to be ignored. '.a .b()' == '.a > .b()'
+        Args:
+            name (string): Search term
+        Returns:
+            Mixin object list OR False
         """
         m = self._smixins(name)
         if m: return m
         return self._smixins(name.replace('?>?', ' '))
         
     def _smixins(self, name):
-        """
-        Inner wrapper to search for mixins by name.
+        """Inner wrapper to search for mixins by name.
         """
         return (self._mixins[name] 
                 if name in self._mixins
@@ -89,15 +115,18 @@ class Scope(list):
     def blocks(self, name):
         """
         Search for defined blocks recursively.
-        Allow '>' to be ignored.
+        Allow '>' to be ignored. '.a .b' == '.a > .b'
+        Args:
+            name (string): Search term
+        Returns:
+            Block object OR False
         """
         b = self._blocks(name)
         if b: return b
         return self._blocks(name.replace('?>?', ' '))
     
     def _blocks(self, name):
-        """
-        Inner wrapper to search for blocks by name.
+        """Inner wrapper to search for blocks by name.
         """
         i = len(self)
         while i >= 0:
@@ -116,7 +145,11 @@ class Scope(list):
         return False
         
     def update(self, scope, at=0):
-        """
+        """Update scope. Add another scope to this one.
+        Args:
+            scope (Scope): Scope object
+        Kwargs:
+            at (int): Level to update
         """
         if hasattr(scope, '_mixins') and not at:
             self._mixins.update(scope._mixins)
@@ -125,13 +158,19 @@ class Scope(list):
         self[at]['__names__'].extend(scope[at]['__names__'])
         
     def swap(self, name):
-        """
+        """ Swap variable name for variable value
+        Args:
+            name (str): Variable name
+        Returns:
+            Variable value (Mixed)
         """
         if name.startswith('@@'):
             var = self.variables(name[1:])
-            if var is False: raise SyntaxError('Unknown variable %s' % name)
+            if var is False: 
+                raise SyntaxError('Unknown variable %s' % name)
             name = '@' + utility.destring(var.value[0])
         var = self.variables(name)
-        if var is False: raise SyntaxError('Unknown variable %s' % name)
+        if var is False: 
+            raise SyntaxError('Unknown variable %s' % name)
         return var.value
         

@@ -1,9 +1,11 @@
+# -*- coding: utf8 -*-
 """
-    LESSCPY Color functions
+.. module:: lesscpy.lessc.color
+    :synopsis: Lesscpy Color functions
     
     Copyright (c)
     See LICENSE for details.
-    <jtm@robot.is>
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import colorsys
 from . import utility
@@ -11,8 +13,10 @@ from . import utility
 class Color():
     def process(self, expression):
         """ Process color expression
-            @param tuple: color expression
-            @return: string
+        args:
+            expression (tuple): color expression
+        returns:
+            str
         """
         a, o, b = expression
         c1 = self._hextorgb(a)
@@ -25,23 +29,29 @@ class Color():
             r.append("%02x" % v)
         return ''.join(r)
     
-    def operate(self, a, b, o):
+    def operate(self, left, right, operation):
         """ Do operation on colors
-            @param string: color
-            @param string: color
-            @param string: operator
+        args:
+            left (str): left side
+            right (str): right side
+            operation (str): Operation
+        returns:
+            str
         """
         operation = {
             '+': '__add__',
             '-': '__sub__',
             '*': '__mul__',
             '/': '__truediv__'
-        }.get(o)
-        v = getattr(a, operation)(b)
-        return v
+        }.get(operation)
+        return getattr(left, operation)(right)
     
     def rgb(self, *args):
-        """
+        """ Translate rgb(...) to color string
+        raises:
+            ValueError
+        returns:
+            str
         """
         if len(args) == 4:
             return self.rgba(*args)
@@ -57,7 +67,11 @@ class Color():
         raise ValueError('Illegal color values')
     
     def rgba(self, *args):
-        """
+        """ Translate rgba(...) to color string
+        raises:
+            ValueError
+        returns:
+            str
         """
         if len(args) == 4:
             try:
@@ -71,7 +85,11 @@ class Color():
         raise ValueError('Illegal color values')
     
     def hsl(self, *args):
-        """
+        """ Translate hsl(...) to color string
+        raises:
+            ValueError
+        returns:
+            str
         """
         if len(args) == 4:
             return self.hsla(*args)
@@ -85,7 +103,11 @@ class Color():
         raise ValueError('Illegal color values')
     
     def hsla(self, *args):
-        """
+        """ Translate hsla(...) to color string
+        raises:
+            ValueError
+        returns:
+            str
         """
         if len(args) == 4:
             h, s, l, a = args
@@ -97,28 +119,46 @@ class Color():
             return "rgba(%s,%s,%s,%s)" % tuple(color)
         raise ValueError('Illegal color values')
     
-    def hue(self, *args):
+    def hue(self, color, *args):
+        """ Return the hue value of a color
+        args:
+            color (str): color
+        raises:
+            ValueError
+        returns:
+            float
         """
-        """
-        if args:
-            h, l, s = self._hextohls(args[0])
-            return round(h * 360, 3)
+        if color:
+            h, l, s = self._hextohls(color)
+            return round(h * 360.0, 3)
         raise ValueError('Illegal color values')
     
-    def saturation(self, *args):
+    def saturation(self, color, *args):
+        """ Return the saturation value of a color
+        args:
+            color (str): color
+        raises:
+            ValueError
+        returns:
+            float
         """
-        """
-        if args:
-            h, l, s = self._hextohls(args[0])
-            return s * 100
+        if color:
+            h, l, s = self._hextohls(color)
+            return s * 100.0
         raise ValueError('Illegal color values')
     
-    def lightness(self, *args):
+    def lightness(self, color, *args):
+        """ Return the lightness value of a color
+        args:
+            color (str): color
+        raises:
+            ValueError
+        returns:
+            float
         """
-        """
-        if args:
-            h, l, s = self._hextohls(args[0])
-            return l * 100
+        if color:
+            h, l, s = self._hextohls(color)
+            return l * 100.0
         raise ValueError('Illegal color values')
     
     def opacity(self, *args):
@@ -126,74 +166,97 @@ class Color():
         """
         pass
     
-    def lighten(self, *args):
+    def lighten(self, color, diff, *args):
+        """ Lighten a color
+        args:
+            color (str): color
+            diff (str): percentage
+        returns:
+            str
         """
-        """
-        if len(args) == 2:
-            color, diff = args
+        if color and diff:
             return self._ophsl(color, diff, 1, '__add__')
         raise ValueError('Illegal color values')
     
-    def darken(self, *args):
+    def darken(self, color, diff, *args):
+        """ Darken a color
+        args:
+            color (str): color
+            diff (str): percentage
+        returns:
+            str
         """
-        """
-        if len(args) == 2:
-            color, diff = args
+        if color and diff:
             return self._ophsl(color, diff, 1, '__sub__')
         raise ValueError('Illegal color values')
     
-    def saturate(self, *args):
+    def saturate(self, color, diff, *args):
+        """ Saturate a color
+        args:
+            color (str): color
+            diff (str): percentage
+        returns:
+            str
         """
-        """
-        if len(args) == 2:
-            color, diff = args
+        if color and diff:
             return self._ophsl(color, diff, 2, '__add__')
         raise ValueError('Illegal color values')
     
-    def desaturate(self, *args):
+    def desaturate(self, color, diff, *args):
+        """ Desaturate a color
+        args:
+            color (str): color
+            diff (str): percentage
+        returns:
+            str
         """
-        """
-        if len(args) == 2:
-            color, diff = args
+        if color and diff:
             return self._ophsl(color, diff, 2, '__sub__')
         raise ValueError('Illegal color values')
     
-    def clamp(self, v):
-        """
-        """
-        return min(1, max(0, v))
+    def _clamp(self, value):
+        # Clamp value
+        return min(1, max(0, value))
     
-    def grayscale(self, *args):
+    def grayscale(self, color, *args):
+        """ Simply 100% desaturate.
+        args:
+            color (str): color
+        returns:
+            str
         """
-        Simply 100% desaturate.
-        """
-        if len(args) == 2:
-            return self.desaturate(args[0], 100)
+        if color:
+            return self.desaturate(color, 100.0)
         raise ValueError('Illegal color values')
 
-    def greyscale(self, *args):
+    def greyscale(self, color, *args):
+        """Wrapper for grayscale, other spelling
         """
-        Wrapper for grayscale
-        """
-        return self.grayscale(*args)
+        return self.grayscale(color, *args)
     
-    def spin(self, *args):
+    def spin(self, color, degree, *args):
+        """ Spin color by degree. (Increase / decrease hue)
+        args:
+            color (str): color
+            degree (str): percentage
+        raises:
+            ValueError
+        returns:
+            str
         """
-        """
-        if len(args) == 2:
-            color, deg = args
-            if type(deg) == str: deg = int(deg.strip('%'))
+        if color and degree:
+            if type(degree) == str: 
+                degree = int(degree.strip('%'))
             h, l, s = self._hextohls(color)
-            h = ((h * 360) + deg) % 360
-            h = 360 + h if h < 0 else h
-            rgb = colorsys.hls_to_rgb(h / 360, l, s)
+            h = ((h * 360.0) + degree) % 360.0
+            h = 360.0 + h if h < 0 else h
+            rgb = colorsys.hls_to_rgb(h / 360.0, l, s)
             color = (round(c * 255) for c in rgb)
             return self._rgbatohex(color)
         raise ValueError('Illegal color values')
     
-    def mix(self, *args):
-        """
-        This algorithm factors in both the user-provided weight
+    def mix(self, color1, color2, weight=50, *args):
+        """This algorithm factors in both the user-provided weight
         and the difference between the alpha values of the two colors
         to decide how to perform the weighted average of the two RGB values.
         
@@ -216,19 +279,24 @@ class Color():
         
         Copyright (c) 2006-2009 Hampton Catlin, Nathan Weizenbaum, and Chris Eppstein
         http://sass-lang.com
+        args:
+            color1 (str): first color
+            color2 (str): second color
+            weight (int/str): weight
+        raises:
+            ValueError
+        returns:
+            str
         """
-        if len(args) >= 2:
-            try:
-                c1, c2, w = args
-            except ValueError:
-                c1, c2 = args
-                w = 50
-            if type(w) == str: w = int(w.strip('%'))
-            w = ((w / 100.0) * 2) - 1
-            rgb1 = self._hextorgb(c1)
-            rgb2 = self._hextorgb(c2)
-            a = 0
-            w1 = (((w if w * a == -1 else w + a) / (1 + w * a)) + 1)
+        if color1 and color2:
+            if type(weight) == str: 
+                weight = int(weight.strip('%'))
+            weight = ((weight / 100.0) * 2) - 1
+            rgb1 = self._hextorgb(color1)
+            rgb2 = self._hextorgb(color2)
+            alpha = 0
+            w1 = (((weight if weight * alpha == -1 
+                    else weight + alpha) / (1 + weight * alpha)) + 1)
             w1 = w1 / 2.0
             w2 = 1 - w1
             rgb = [
@@ -240,10 +308,14 @@ class Color():
         raise ValueError('Illegal color values')
         
     def fmt(self, color):
-        """
-            Format CSS Hex color code.
-            uppercase becomes lowercase, 3 digit codes expand to 6 digit.
-            @param string: color
+        """ Format CSS Hex color code.
+        uppercase becomes lowercase, 3 digit codes expand to 6 digit.
+        args:
+            color (str): color
+        raises:
+            ValueError
+        returns:
+            str
         """
         if utility.is_color(color):
             color = color.lower().strip('#')
@@ -253,8 +325,6 @@ class Color():
         raise ValueError('Cannot format non-color')
     
     def _rgbatohex(self, rgba):
-        """
-        """
         return '#%s' % ''.join(["%02x" % v for v in 
                                 [0xff 
                                  if h > 0xff else 
@@ -262,8 +332,6 @@ class Color():
                                  for h in rgba]
                                 ])
     def _hextorgb(self, hex):    
-        """
-        """
         hex = hex.strip()
         if hex[0] == '#':
             hex = hex.strip('#').strip(';')
@@ -275,17 +343,13 @@ class Color():
         return [int(hex, 16)] * 3
         
     def _hextohls(self, hex):
-        """
-        """
         rgb = self._hextorgb(hex)
         return colorsys.rgb_to_hls(*[c / 255.0 for c in rgb])
     
     def _ophsl(self, color, diff, idx, op):
-        """
-        """
         if type(diff) == str: diff = int(diff.strip('%'))
         hls = list(self._hextohls(color))
-        hls[idx] = self.clamp(getattr(hls[idx], op)(diff / 100))
+        hls[idx] = self._clamp(getattr(hls[idx], op)(diff / 100))
         rgb = colorsys.hls_to_rgb(*hls)
         color = (round(c * 255) for c in rgb)
         return self._rgbatohex(color)

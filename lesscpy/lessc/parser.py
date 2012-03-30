@@ -1,8 +1,8 @@
 # -*- coding: utf8 -*-
 """
-.. module:: parser
+.. module:: lesscpy.lessc.parser
     :synopsis: Lesscss parser.
-
+    
     http://www.dabeaz.com/ply/ply.html
     http://www.w3.org/TR/CSS21/grammar.html#scanner
     http://lesscss.org/#docs
@@ -33,7 +33,8 @@ class LessParser(object):
             scope=None,
             outputdir='/tmp',
             importlvl=0,
-            verbose=False):
+            verbose=False
+        ):
         """ Parser object
             
             Kwargs:
@@ -46,9 +47,9 @@ class LessParser(object):
                 importlvl (int): Import depth
                 verbose (bool): Verbose mode
         """
-        self.verbose = verbose
-        self.importlvl = importlvl
-        self.lex = lexer.LessLexer()
+        self.verbose    = verbose
+        self.importlvl  = importlvl
+        self.lex        = lexer.LessLexer()
         if not tabfile:
             tabfile = 'yacctab'
             

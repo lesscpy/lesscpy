@@ -1,41 +1,52 @@
+# -*- coding: utf8 -*-
 """
-    Utility functions
+.. module:: lesscpy.lessc.utility
+    :synopsis: various utility functions
     
     Copyright (c)
     See LICENSE for details.
-    <jtm@robot.is>
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import collections
 import re
 
-def flatten(ll):
+def flatten(lst):
+    """Flatten list.
+    Args:
+        lst (list): List to flatten
+    Returns: 
+        generator
     """
-    Flatten list.
-    @param ll: list
-    @return: generator
-    """
-    for el in ll:
-        if isinstance(el, collections.Iterable) and not isinstance(el, str):
-            for sub in flatten(el):
+    for elm in lst:
+        if isinstance(elm, collections.Iterable) and not isinstance(elm, str):
+            for sub in flatten(elm):
                 yield sub
         else:
-            yield el
+            yield elm
             
 def pairwise(lst):
     """ yield item i and item i+1 in lst. e.g.
         (lst[0], lst[1]), (lst[1], lst[2]), ..., (lst[-1], None)
+    Args:
+        lst (list): List to process
+    Returns:
+        list
     """
-    if not lst: return
-    l = len(lst)
-    for i in range(l-1):
+    if not lst: 
+        return
+    length = len(lst)
+    for i in range(length-1):
         yield lst[i], lst[i+1]
     yield lst[-1], None
     
-def rename(ll, scope):
+def rename(blocks, scope):
     """ Rename all sub-blocks moved under another 
         block. (mixins)
+    Args:
+        lst (list): block list
+        scope (object): Scope object
     """
-    for p in ll:
+    for p in blocks:
         if hasattr(p, 'inner'):
             p.name.parse(scope)
             if p.inner: 
@@ -45,7 +56,11 @@ def rename(ll, scope):
                 scope.pop()
             
 def blocksearch(block, name):
-    """ Recursive search for name in block
+    """ Recursive search for name in block (inner blocks)
+    Args:
+        name (str): search term
+    Returns:
+        Block OR False
     """
     for b in block.inner:
         b = (b if b.raw() == name 
@@ -53,43 +68,59 @@ def blocksearch(block, name):
         if b: return b
     return False
 
-def reverse_guard(ll):
-    """
+def reverse_guard(lst):
+    """ Reverse guard expression. not 
+        (@a > 5) ->  (@a <= 5)
+    Args:
+        lst (list): Expression
+    returns:
+        list
     """
     rev = {
-        '<': '>',
-        '>': '<',
+        '<': '>=',
+        '>': '<=',
         '=': '!=',
         '!=': '=',
-        '>=': '<=',
-        '<=': '>='
+        '>=': '<',
+        '<=': '>'
     }
-    return [rev[l] if l in rev else l for l in ll]
+    return [rev[l] if l in rev else l for l in lst]
 
-def debug_print(ll, lvl=0):
-    """
+def debug_print(lst, lvl=0):
+    """ Print scope tree
+    args:
+        lst (list): parse result
+        lvl (int): current nesting level
     """
     pad = ''.join(['\t.'] * lvl)
-    t = type(ll)
+    t = type(lst)
     if t is list:
-        for p in ll:
+        for p in lst:
             debug_print(p, lvl)
-    elif hasattr(ll, 'tokens'):
+    elif hasattr(lst, 'tokens'):
         print(pad, t) 
-        debug_print(list(flatten(ll.tokens)), lvl+1)
+        debug_print(list(flatten(lst.tokens)), lvl+1)
 
-def destring(v):
-    """ Strip quotes
-        @param string: value
-        @return: string
+def destring(value):
+    """ Strip quotes from string
+    args:
+        value (str)
+    returns:
+        str
     """
-    return v.strip('"\'')
+    return value.strip('"\'')
 
 def analyze_number(var, err=''):
     """ Analyse number for type and split from unit
-        @param str: value
-        @raises: SyntaxError
-        @return: tuple (number, unit)
+        1px -> (q, 'px')
+    args:
+        var (str): number string
+    kwargs:
+        err (str): Error message
+    raises:
+        SyntaxError
+    returns:
+        tuple
     """
     n, u = split_unit(var)
     if type(var) is not str:
@@ -104,74 +135,94 @@ def analyze_number(var, err=''):
         raise SyntaxError('%s ´%s´' % (err, var))
     return (n, u)
 
-def with_unit(n, u=None):
+def with_unit(number, unit=None):
     """ Return number with unit
-        @param int/float: value
-        @param str: unit
-        @return: mixed
+    args:
+        number (mixed): Number
+        unit (str): Unit
+    returns:
+        str
     """
-    if type(n) is tuple:
-        n, u = n
-    if n == 0: return 0
-    if u:
-        n = str(n)
-        if n.startswith('.'):
-            n = '0' + n 
-        return "%s%s" % (n, u)
-    return n
+    if type(number) is tuple:
+        number, unit = number
+    if number == 0: 
+        return '0'
+    if unit:
+        number = str(number)
+        if number.startswith('.'):
+            number = '0' + number
+        return "%s%s" % (number, unit)
+    return number if type(number) is str else str(number)
             
-def is_color(v):
-    """ Is CSS color
-        @param mixed: value
-        @return: bool
+def is_color(value):
+    """ Is string CSS color
+    args:
+        value (str): string
+    returns:
+        bool
     """
-    if not v or type(v) is not str: 
+    if not value or type(value) is not str: 
         return False
-    if v[0] == '#' and len(v) in [4, 5, 7, 9]:
+    if value[0] == '#' and len(value) in [4, 5, 7, 9]:
         try:
-            int(v[1:], 16)
+            int(value[1:], 16)
             return True
-        except Exception:
+        except ValueError:
             pass
     return False
             
-def is_variable(v):
+def is_variable(value):
     """ Check if string is LESS variable
-        @param string: check
-        @return: bool
+    args:
+        value (str): string
+    returns:
+        bool
     """
-    if type(v) is str:
-        return (v.startswith('@') or v.startswith('-@'))
-    elif type(v) is tuple:
-        v = ''.join(v)
-        return (v.startswith('@') or v.startswith('-@'))
+    if type(value) is str:
+        return (value.startswith('@') or value.startswith('-@'))
+    elif type(value) is tuple:
+        value = ''.join(value)
+        return (value.startswith('@') or value.startswith('-@'))
     return False
 
-def is_int(v):
+def is_int(value):
     """ Is value integer
+    args:
+        value (str): string
+    returns:
+        bool
     """
     try:
-        int(str(v))
+        int(str(value))
         return True
     except (ValueError, TypeError):
         pass
     return False
 
-def is_float(v):
+def is_float(value):
     """ Is value float
+    args:
+        value (str): string
+    returns:
+        bool
     """
-    if not is_int(v):
+    if not is_int(value):
         try:
-            float(str(v))
+            float(str(value))
             return True
         except (ValueError, TypeError):
             pass
     return False
 
-def split_unit(v):
+def split_unit(value):
     """ Split a number from its unit
+        1px -> (q, 'px')
+    Args:
+        value (str): input
+    returns:
+        tuple
     """
-    r = re.search('^(\-?[\d\.]+)(.*)$', str(v))
+    r = re.search('^(\-?[\d\.]+)(.*)$', str(value))
     return r.groups() if r else ('','')
     
     
