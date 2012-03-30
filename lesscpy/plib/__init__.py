@@ -1,3 +1,12 @@
+# -*- coding: utf8 -*-
+"""
+.. module:: lesscpy.plib
+    :synopsis: Parse Nodes for Lesscpy
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
+"""
 __all__ = [
    'Block', 
    'Call', 

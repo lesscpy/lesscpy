@@ -1,9 +1,21 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.variable
+    :synopsis: Variable declaration
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from .node import Node
+
 class Variable(Node):
     def parse(self, scope):
-        """
+        """ Parse function
+        args:
+            scope (Scope): Scope object
+        returns:
+            self
         """
         self.name = self.tokens.pop(0)
         self.value = self.tokens[1]

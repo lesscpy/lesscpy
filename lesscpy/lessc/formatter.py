@@ -1,9 +1,11 @@
+# -*- coding: utf8 -*-
 """
-    CSS Formatter class.
+.. module:: lesscpy.lessc.formatter
+    :synopsis: CSS Formatter class.
     
     Copyright (c)
     See LICENSE for details.
-    <jtm@robot.is>
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 class Formatter(object):
     def __init__(self, args):

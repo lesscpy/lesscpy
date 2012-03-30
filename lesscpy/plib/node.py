@@ -1,17 +1,41 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.node
+    :synopsis: Base Node
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from lesscpy.lessc import utility
+
 class Node(object):
-    def __init__(self, p, ln=0):
-        self.tokens = p
-        self.lineno = ln
+    def __init__(self, tokens, lineno=0):
+        """ Base Node
+        args:
+            tokens (list): tokenlist
+            lineno (int): Line number of node
+        """
+        self.tokens = tokens
+        self.lineno = lineno
         self.parsed = False
     
     def parse(self, scope):
+        """ Base parse function
+        args:
+            scope (Scope): Scope object
+        returns:
+            self
+        """
         return self
     
     def process(self, tokens, scope):
-        """
+        """ Process tokenslist, flattening and parsing it
+        args:
+            tokens (list): tokenlist
+            scope (Scope): Scope object
+        returns:
+            list
         """
         while True:
             tokens = list(utility.flatten(tokens))
@@ -29,7 +53,12 @@ class Node(object):
         return tokens
     
     def replace_variables(self, tokens, scope):
-        """
+        """ Replace variables in tokenlist
+        args:
+            tokens (list): tokenlist
+            scope (Scope): Scope object
+        returns:
+            list
         """
         return [scope.swap(t)
                 if utility.is_variable(t)
@@ -37,4 +66,10 @@ class Node(object):
                 for t in tokens]
 
     def fmt(self, fills):
+        """ Format node
+        args:
+            fills (dict): replacements
+        returns:
+            str
+        """
         raise ValueError('No defined format')
