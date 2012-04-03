@@ -77,7 +77,7 @@ class Expression(Node):
         returns:
             str
         """
-        if not val: return val
+        if not val: return str(val)
         if ua or ub:
             if ua and ub:
                 if ua == ub:
@@ -88,7 +88,7 @@ class Expression(Node):
                 return str(val) + ua
             elif ub:
                 return str(val) + ub
-        return val
+        return str(val)
     
     def operate(self, vala, valb, oper):
         """Perform operation

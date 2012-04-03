@@ -33,7 +33,7 @@ class String(Node):
         returns:
             str
         """
-        var = '@' + var
-        var = ''.join(utility.flatten(self.scope.swap(var)))
+        var = self.scope.swap('@' + var)
+        var = ''.join(utility.flatten(var))
         return var.strip("\"'")
     

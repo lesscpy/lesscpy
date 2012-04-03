@@ -29,12 +29,16 @@ class Deferred(Node):
         returns:
             mixed
         """
+        args = [p.parse(scope) 
+                if hasattr(p, 'parse')
+                else p
+                for p in self.args]
         if hasattr(self.mixin, 'call'):
-            return self.mixin.call(scope, self.args)
+            return self.mixin.call(scope, args)
         mixins = scope.mixins(self.mixin.raw())
         if not mixins: return mixins
         for mixin in mixins:
-            res = mixin.call(scope, self.args)
+            res = mixin.call(scope, args)
             if res: 
                 return res
         return False
