@@ -28,7 +28,7 @@ class Call(Node):
         the functions ~( and e( map to self.escape
         and %( maps to self.sformat
         args:
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         """
         if not self.parsed:
             name = ''.join(self.tokens[0])

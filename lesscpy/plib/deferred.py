@@ -25,7 +25,7 @@ class Deferred(Node):
     def parse(self, scope):
         """ Parse function.
         args:
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         returns:
             mixed
         """

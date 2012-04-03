@@ -23,7 +23,7 @@ class Node(object):
     def parse(self, scope):
         """ Base parse function
         args:
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         returns:
             self
         """
@@ -33,7 +33,7 @@ class Node(object):
         """ Process tokenslist, flattening and parsing it
         args:
             tokens (list): tokenlist
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         returns:
             list
         """
@@ -56,7 +56,7 @@ class Node(object):
         """ Replace variables in tokenlist
         args:
             tokens (list): tokenlist
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         returns:
             list
         """

@@ -1,11 +1,28 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.identifier
+    :synopsis: Identifier node.
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import re
 from .node import Node
 from lesscpy.lessc import utility
 class Identifier(Node):
+    """Identifier node. Represents block identifier.
+    """
+    
     def parse(self, scope):
-        """
+        """Parse node. Block identifiers are stored as
+        strings with spaces replaced with ?
+        args:
+            scope (Scope): Current scope
+        raises:
+            SyntaxError
+        returns:
+            self
         """
         names       = []
         name        = []
@@ -41,7 +58,12 @@ class Identifier(Node):
         return self
     
     def root(self, scope, names):
-        """
+        """Find root of identifier, from scope
+        args:
+            scope (Scope): current scope
+            names (list): identifier name list (, separated identifiers)
+        returns:
+            list
         """
         parent = scope.scopename
         if parent: 
@@ -73,14 +95,22 @@ class Identifier(Node):
         return parsed
     
     def raw(self, clean=False):
-        """
+        """Raw identifier.
+        args: 
+            clean (bool): clean name
+        returns:
+            str
         """
         if clean: return ''.join(''.join(p) for p in self.parsed).replace('?', ' ')
         return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
         
     
     def fmt(self, fills):
-        """
+        """Format identifier
+        args:
+            fills (dict): replacements
+        returns:
+            str (CSS)
         """
         name = ',$$'.join(''.join(p).strip() 
                           for p in self.parsed)

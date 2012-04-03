@@ -1,5 +1,11 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.mixin
+    :synopsis: Mixin node.
     
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import copy, itertools
 from .node import Node
@@ -9,8 +15,17 @@ from .variable import Variable
 from lesscpy.lessc import utility
 
 class Mixin(Node):
+    """ Mixin Node. Represents callable mixin types.
+    """
+    
     def parse(self, scope):
-        """
+        """Parse node
+        args:
+            scope (Scope): current scope
+        raises:
+            SyntaxError
+        returns:
+            self
         """
         self.name, args, self.guards = self.tokens[0]
         self.args = [a for a in args if a != ','] if args else []
@@ -19,12 +34,21 @@ class Mixin(Node):
         return self
     
     def raw(self):
-        """
+        """Raw mixin name
+        returns:
+            str
         """
         return self.name.raw()
     
     def parse_args(self, args, scope):
-        """
+        """Parse arguments to mixin. Add them to scope
+        as variables. Sets upp special variable @arguments
+        as well.
+        args:
+            args (list): arguments
+            scope (Scope): current scope
+        raises:
+            SyntaxError
         """
         arguments = args if args else None
         if self.args:
@@ -74,8 +98,13 @@ class Mixin(Node):
         return var
     
     def parse_guards(self, scope):
-        """
-        Parse guards on mixin.
+        """Parse guards on mixin.
+        args:
+            scope (Scope): current scope
+        raises:
+            SyntaxError
+        returns:
+            bool (passes guards)
         """
         if self.guards:
             cor = True if ',' in self.guards else False
@@ -91,9 +120,15 @@ class Mixin(Node):
         return True
     
     def call(self, scope, args=None):
-        """
-        Call mixin. Parses a copy of the mixins body
+        """Call mixin. Parses a copy of the mixins body
         in the current scope and returns it.
+        args:
+            scope (Scope): current scope
+            args (list): arguments
+        raises:
+            SyntaxError
+        returns:
+            list or False
         """
         try:
             self.parse_args(args, scope)

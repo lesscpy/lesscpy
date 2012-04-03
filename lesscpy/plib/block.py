@@ -22,7 +22,7 @@ class Block(Node):
     def parse(self, scope):
         """Parse block node.
         args:
-            scope (Scope): Scope object
+            scope (Scope): Current scope
         raises:
             SyntaxError
         returns:
@@ -91,7 +91,7 @@ class Block(Node):
         Renames inner block from current scope.
         Used for mixins.
         args: 
-            scope (Scope): Scope Object
+            scope (Scope): Current scope
         returns:
             list (block contents)
         """

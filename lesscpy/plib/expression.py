@@ -1,13 +1,29 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.expression
+    :synopsis: Expression node.
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.lessc import color
 
 class Expression(Node):
+    """Expression node. Parses all expression except
+    color expressions, (handled in the color class)
+    """
+    
     def parse(self, scope):
         """ Parse Node
-            @param list: current scope
+        args:
+            scope (Scope): Scope object
+        raises:
+            SyntaxError
+        returns:
+            str
         """
         assert(len(self.tokens) == 3)
         expr = self.process(self.tokens, scope)
@@ -31,36 +47,57 @@ class Expression(Node):
             out = int(out)
         return self.with_units(out, ua, ub)
     
-    def neg(self, t, scope):
+    def neg(self, value, scope):
+        """Apply negativity.
+        args:
+            value (mixed): test value
+            scope (Scope): Current scope
+        raises:
+            SyntaxError
+        returns:
+            str
         """
-        """
-        if t and type(t) is list and t[0] == '-':
-            v = t[1]
-            if len(t) > 1 and hasattr(t[1], 'parse'):
-                v = t[1].parse(scope)
-            if type(v) is str:
-                return '-' + v
-            return -v
-        return t
+        if value and type(value) is list and value[0] == '-':
+            val = value[1]
+            if len(value) > 1 and hasattr(value[1], 'parse'):
+                val = value[1].parse(scope)
+            if type(val) is str:
+                return '-' + val
+            return -val
+        return value
     
-    def with_units(self, v, ua, ub):
+    def with_units(self, val, ua, ub):
+        """Return value with unit. 
+        args:
+            val (mixed): result
+            ua (str): 1st unit
+            ub (str): 2nd unit
+        raises:
+            SyntaxError
+        returns:
+            str
         """
-        """
-        if not v: return v
+        if not val: return val
         if ua or ub:
             if ua and ub:
                 if ua == ub:
-                    return str(v) + ua
+                    return str(val) + ua
                 else:
                     raise SyntaxError("Error in expression %s != %s" % (ua, ub))
             elif ua:
-                return str(v) + ua
+                return str(val) + ua
             elif ub:
-                return str(v) + ub
-        return v
+                return str(val) + ub
+        return val
     
-    def operate(self, a, b, o):
-        """
+    def operate(self, vala, valb, oper):
+        """Perform operation
+        args:
+            vala (mixed): 1st value
+            valb (mixed): 2nd value
+            oper (str): operation
+        returns:
+            mixed
         """
         operation = {
             '+': '__add__',
@@ -74,13 +111,15 @@ class Expression(Node):
             '<=': '__le__',
             '!=': '__ne__',
             '<>': '__ne__',
-        }.get(o)
-        v = getattr(a, operation)(b)
-        if v is NotImplemented:
-            v = getattr(b, operation)(a)
-        return v
+        }.get(oper)
+        ret = getattr(vala, operation)(valb)
+        if ret is NotImplemented:
+            ret = getattr(valb, operation)(vala)
+        return ret
     
     def expression(self):
-        """
+        """Return str representation of expression
+        returns:
+            str
         """
         return utility.flatten(self.tokens)

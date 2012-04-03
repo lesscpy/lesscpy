@@ -1,11 +1,27 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.property
+    :synopsis: Property node.
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from .node import Node
 from lesscpy.lessc import utility
 
 class Property(Node):
+    """Represents CSS property declaration.
+    """
+    
     def parse(self, scope):
-        """
+        """Parse node
+        args:
+            scope (Scope): current scope
+        raises:
+            SyntaxError
+        returns:
+            self
         """
         if not self.parsed:
             if len(self.tokens) > 2:
@@ -22,8 +38,12 @@ class Property(Node):
         return self
     
     def preprocess(self, style):
-        """
-        Hackish preprocessing from font shorthand tags.
+        """Hackish preprocessing from font shorthand tags.
+        Skips expression parse on certain tags.
+        args: 
+            style (list): .
+        returns:
+            list
         """
         if self.property == 'font':
             style = [''.join(u.expression()) 
@@ -38,7 +58,11 @@ class Property(Node):
         return style
         
     def fmt(self, fills):
-        """
+        """ Format node
+        args:
+            fills (dict): replacements
+        returns:
+            str
         """
         f = "%(tab)s%(property)s:%(ws)s%(style)s%(important)s;%(nl)s"
         imp = ' !important' if self.important else ''
