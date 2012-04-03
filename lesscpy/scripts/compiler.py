@@ -17,6 +17,8 @@ from lesscpy.lessc import parser
 from lesscpy.lessc import lexer
 from lesscpy.lessc import formatter
 
+VERSION_STR = 'Lesscpy compiler 0.9a'
+
 def ldirectory(inpath, outpath, args, scope):
     """
     """
@@ -63,10 +65,12 @@ def ldirectory(inpath, outpath, args, scope):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 def run():
-    aparse = argparse.ArgumentParser(description='LessCss Compiler', epilog='<< jtm@robot.is @_o >>')
+    aparse = argparse.ArgumentParser(description='LessCss Compiler', 
+                                     epilog='<< jtm@robot.is @_o >>', 
+                                     version=VERSION_STR)
     aparse.add_argument('-I', '--include', action="store", type=str,
                         help="Included less-files (comma separated)")
-    aparse.add_argument('-v', '--verbose', action="store_true", 
+    aparse.add_argument('-V', '--verbose', action="store_true", 
                         default=False, help="Verbose mode")
     fgroup = aparse.add_argument_group('Formatting options')
     fgroup.add_argument('-x', '--minify', action="store_true", 
@@ -86,10 +90,10 @@ def run():
     dgroup.add_argument('-D', '--dry-run', action="store_true", 
                         default=False, help="Dry run, do not write files")
     group = aparse.add_argument_group('Debugging')
+    group.add_argument('-g', '--debug', action="store_true", 
+                        default=False, help="Debugging information")
     group.add_argument('-S', '--scopemap', action="store_true", 
                         default=False, help="Scopemap")
-    group.add_argument('-V', '--debug', action="store_true", 
-                        default=False, help="Debug mode")
     group.add_argument('-L', '--lex-only', action="store_true", 
                         default=False, help="Run lexer on target")
     group.add_argument('-N', '--no-css', action="store_true", 
