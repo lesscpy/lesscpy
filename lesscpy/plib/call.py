@@ -1,5 +1,11 @@
+# -*- coding: utf8 -*-
 """
-    Calls to builtin functions.
+.. module:: lesscpy.plib.call
+    :synopsis: Call parse node
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import re, math
 from urllib.parse import quote as urlquote, urlparse
@@ -9,17 +15,28 @@ import lesscpy.lessc.color as Color
 from lesscpy.lib.colors import lessColors
 
 class Call(Node):
+    """Call node. Node represents a function call.
+    All builtin none-color functions are in this node.
+    This node attempts calls on built-ins and lets non-builtins
+    through.
+    increment(3px) --> 4px
+    unknown(3px) -->  unknown(3px)
+    """
+    
     def parse(self, scope):
-        """
-        Parse Node within scope
+        """Parse Node within scope.
+        the functions ~( and e( map to self.escape
+        and %( maps to self.sformat
+        args:
+            scope (Scope): Scope object
         """
         if not self.parsed:
             name = ''.join(self.tokens[0])
             parsed = self.process(self.tokens[1:], scope)
             if name == '%(':
                 name = 'sformat'
-            elif name == '~':
-                name = 'e'
+            elif name in ('~', 'e'):
+                name = 'escape'
             color = Color.Color()
             args = [t for t in parsed 
                     if type(t) is not str or t not in '(),']
@@ -36,24 +53,29 @@ class Call(Node):
             self.parsed = name + ''.join([p for p in parsed])
         return self.parsed
     
-    def e(self, *args):
-        """ Less Escape.
-            @param string: value
-            @return string
+    def escape(self, string, *args):
+        """Less Escape.
+        args:
+            string (str): string to escape
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        return utility.destring(args[0].strip('~'))
+        return utility.destring(string.strip('~'))
     
-    def sformat(self, *args):
-        """ String format
-            @param list: values
-            @return string
+    def sformat(self, string, *args):
+        """ String format.
+        args:
+            string (str): string to format
+            args (list): format options
+        returns:
+            str
         """
-        format = args[0]
+        if not args:
+            raise SyntaxError('Not enough arguments...')
+        format = string
         items = []
         m = re.findall('(%[asdA])', format)
-        i = 1
+        i = 0
         for n in m:
             v = {
               '%d' : int,
@@ -65,30 +87,36 @@ class Call(Node):
         format = format.replace('%A', '%s')
         return format % tuple(items)
     
-    def isnumber(self, *args):
+    def isnumber(self, string, *args):
+        """Is number
+        args:
+            string (str): match
+        returns:
+            bool
         """
-        """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
         try:
-            n, u = utility.analyze_number(args[0])
+            n, u = utility.analyze_number(string)
         except SyntaxError as e:
             return False
         return True
     
-    def iscolor(self, *args):
+    def iscolor(self, string, *args):
+        """Is color
+        args:
+            string (str): match
+        returns:
+            bool
         """
-        """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        return (args[0] in lessColors)
+        return (string in lessColors)
     
-    def isurl(self, *args):
+    def isurl(self, string, *args):
+        """Is url
+        args:
+            string (str): match
+        returns:
+            bool
         """
-        """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        arg = utility.destring(args[0])
+        arg = utility.destring(string)
         regex = re.compile(r'^(?:http|ftp)s?://' # http:// or https://
                            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
                            r'localhost|' #localhost...
@@ -97,82 +125,93 @@ class Call(Node):
                            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         return regex.match(arg)
     
-    def isstring(self, *args):
+    def isstring(self, string, *args):
+        """Is string
+        args:
+            string (str): match
+        returns:
+            bool
         """
-        """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
         regex = re.compile(r'\'[^\']*\'|"[^"]*"')
-        return regex.match(args[0])
+        return regex.match(string)
     
-    def iskeyword(self, *args):
+    def iskeyword(self, string, *args):
+        """Is less keyword
+        args:
+            string (str): match
+        returns:
+            bool
         """
-        """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        return (args[0] in ('when', 'and', 'not'))
+        return (string in ('when', 'and', 'not'))
     
-    def increment(self, *args):
+    def increment(self, value, *args):
         """ Increment function
-            @param Mixed: value
-            @return: incremented value
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         return utility.with_unit(n+1, u)
     
-    def decrement(self, *args):
+    def decrement(self, value, *args):
         """ Decrement function
-            @param Mixed: value
-            @return: incremented value
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         return utility.with_unit(n-1, u)
     
     def add(self, *args):
         """ Add integers
-            @param list: values
-            @return: int
+        args:
+            args (list): target
+        returns:
+            str
         """
-        if(len(args) <= 1):
-            raise SyntaxError('Wrong number of arguments')
+        if(len(args) <= 1): return 0
         return sum([int(v) for v in args])
     
-    def round(self, *args):
+    def round(self, value, *args):
         """ Round number
-            @param Mixed: value
-            @return: rounded value
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         return utility.with_unit(round(float(n)), u)
     
-    def ceil(self, *args):
+    def ceil(self, value, *args):
         """ Ceil number
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         return utility.with_unit(math.ceil(n), u)
     
-    def floor(self, *args):
+    def floor(self, value, *args):
         """ Floor number
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         return utility.with_unit(math.floor(n), u)
     
-    def percentage(self, *args):
+    def percentage(self, value, *args):
         """ Return percentage value
+        args:
+            value (str): target
+        returns:
+            str
         """
-        if(len(args) > 1):
-            raise SyntaxError('Wrong number of arguments')
-        n, u = utility.analyze_number(args[0])
+        n, u = utility.analyze_number(value)
         n = int(n * 100.0)
         u = '%'
         return utility.with_unit(n, u)

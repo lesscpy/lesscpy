@@ -1,11 +1,32 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.plib.block
+    :synopsis: Block parse node.
+    
+    Copyright (c)
+    See LICENSE for details.
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import re, copy
 from .node import Node
 from lesscpy.lessc import utility
+
 class Block(Node):
+    """ Block node. Represents one parse-block.
+    Can contain property nodes or other block nodes.
+    identifier {
+        propertys
+        inner blocks
+    }
+    """
     def parse(self, scope):
-        """
+        """Parse block node.
+        args:
+            scope (Scope): Scope object
+        raises:
+            SyntaxError
+        returns:
+            self
         """
         if not self.parsed:
             self.name, inner = self.tokens
@@ -24,7 +45,11 @@ class Block(Node):
         return self
     
     def raw(self, clean=False):
-        """
+        """Raw block name
+        args:
+            clean (bool): clean name
+        returns:
+            str
         """
         try:
             return self.name.raw(clean)
@@ -32,7 +57,11 @@ class Block(Node):
             pass
     
     def fmt(self, fills):
-        """
+        """Format block (CSS)
+        args:
+            fills (dict): Fill elements
+        returns:
+            str (CSS)
         """
         f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
@@ -58,7 +87,13 @@ class Block(Node):
         return ''.join(out)
     
     def copy(self, scope):
-        """
+        """Copy block contents (properties, inner blocks). 
+        Renames inner block from current scope.
+        Used for mixins.
+        args: 
+            scope (Scope): Scope Object
+        returns:
+            list (block contents)
         """
         if self.tokens[1]:
             tokens = copy.deepcopy(self.tokens[1])

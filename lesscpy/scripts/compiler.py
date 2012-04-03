@@ -1,11 +1,13 @@
+# -*- coding: utf8 -*-
 """
+.. module:: lesscpy.scripts.compiler
     CSS/LESSCSS run script
 
     http://lesscss.org/#docs
     
     Copyright (c)
     See LICENSE for details
-    <jtm@robot.is>
+.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import os
 import sys
@@ -20,7 +22,12 @@ from lesscpy.lessc import formatter
 VERSION_STR = 'Lesscpy compiler 0.9a'
 
 def ldirectory(inpath, outpath, args, scope):
-    """
+    """Compile all *.less files in directory
+    Args:
+        inpath (str): Path to compile
+        outpath (str): Output directory
+        args (object): Argparse Object
+        scope (Scope): Scope object or None
     """
     yacctab = 'yacctab' if args.debug else None
     if not outpath:
@@ -65,6 +72,8 @@ def ldirectory(inpath, outpath, args, scope):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 def run():
+    """Run compiler
+    """
     aparse = argparse.ArgumentParser(description='LessCss Compiler', 
                                      epilog='<< jtm@robot.is @_o >>', 
                                      version=VERSION_STR)
