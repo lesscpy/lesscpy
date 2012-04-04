@@ -288,7 +288,7 @@ class LessParser(object):
         """
         p[1].parse(None)
         mixin = self.scope.mixins(p[1].raw())
-        res = None
+        res = False
         if mixin:
             for m in mixin:
                 try:
