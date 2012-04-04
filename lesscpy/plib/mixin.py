@@ -130,6 +130,7 @@ class Mixin(Node):
         returns:
             list or False
         """
+        ret = False
         variables = copy.deepcopy(scope[-1]['__variables__'])
         if args:
             args = [arg.parse(scope) 
@@ -138,13 +139,13 @@ class Mixin(Node):
         try:
             self.parse_args(args, scope)
         except SyntaxError:
-            return False
-        if self.parse_guards(scope):
-            body = copy.deepcopy(self.body)
-            scope.update([self.scope], -1)
-            body.parse(scope)
-            r = list(utility.flatten([body.parsed, body.inner]))
-            utility.rename(r, scope)
-            scope[-1]['__variables__'] = variables
-            return r
-        return False
+            pass
+        else:
+            if self.parse_guards(scope):
+                body = copy.deepcopy(self.body)
+                scope.update([self.scope], -1)
+                body.parse(scope)
+                ret = list(utility.flatten([body.parsed, body.inner]))
+                utility.rename(ret, scope)
+        scope[-1]['__variables__'] = variables
+        return ret

@@ -1,0 +1,15 @@
+/*
+	Recursive mixin calls ala bootstrap
+*/
+.span (@columns) {
+  width: (12px * @columns) + (12px * (@columns - 1));
+}
+.spanX (@index) when (@index > 0) {
+  (~".span@{index}") { .span(@index); }
+  .spanX(@index - 1);
+}
+.spanX (0) {}
+
+.a {
+	.spanX(12);
+}
