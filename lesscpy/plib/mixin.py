@@ -119,7 +119,7 @@ class Mixin(Node):
                         return False
         return True
     
-    def call(self, scope, args=None):
+    def call(self, scope, args=[]):
         """Call mixin. Parses a copy of the mixins body
         in the current scope and returns it.
         args:
@@ -130,6 +130,10 @@ class Mixin(Node):
         returns:
             list or False
         """
+        if args:
+            args = [arg.parse(scope) 
+                    if type(arg) is Expression 
+                    else arg for arg in args]
         try:
             self.parse_args(args, scope)
         except SyntaxError:

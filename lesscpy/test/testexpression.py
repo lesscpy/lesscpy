@@ -43,20 +43,13 @@ class TestExpression(unittest.TestCase):
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), str(test))
             
-#    def testnest(self):
-#        e = Expression(['2', '-', '-2'])
-#        f = Expression([['-', e], '*', '-3'])
-#        self.assertEqual(f.parse(None), 12)
-#        g = Expression(['2', '*', ['-', f]])
-#        self.assertEqual(g.parse(None), -24)
-#        h = Expression(['34', '-', ['-', g]])
-#        self.assertEqual(h.parse(None), 10)
-#        i = Expression([f, '-', h])
-#        self.assertEqual(i.parse(None), 2)
-            
-    def testdiv(self):
-        e = Expression(['1', '/', '3'])
-            
+    def testeq(self):
+        for test in [
+            ['0', '=', '0', True],
+        ]:
+            e = Expression(test[:3])
+            self.assertEqual(test[3], e.parse(None), test)
+        
     def testinput(self):
         e = Expression(['1a', '+', '1b'])
         self.assertRaises(SyntaxError, e.parse, None)

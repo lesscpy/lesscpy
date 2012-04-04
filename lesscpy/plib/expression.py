@@ -43,6 +43,8 @@ class Expression(Node):
         if ua == 'color' or ub == 'color':
             return color.Color().process((A, O, B))
         out = self.operate(a, b, O)
+        if type(out) is bool:
+            return out
         if type(a) is int and type(b) is int:
             out = int(out)
         return self.with_units(out, ua, ub)

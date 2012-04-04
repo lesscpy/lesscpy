@@ -78,3 +78,13 @@ a {
 	margin: 2px 4em 1 5pc;
 	padding: (2px + 4px) 1em 2px 2;
 }
+/*
+	As arguments to mixin
+*/
+.am(@index) {
+	padding: @index;
+}
+@index: 1px;
+.bm {
+	.am(@index - 1);
+}
