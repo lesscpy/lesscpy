@@ -130,6 +130,7 @@ class Mixin(Node):
         returns:
             list or False
         """
+        variables = copy.deepcopy(scope[-1]['__variables__'])
         if args:
             args = [arg.parse(scope) 
                     if type(arg) is Expression 
@@ -144,5 +145,6 @@ class Mixin(Node):
             body.parse(scope)
             r = list(utility.flatten([body.parsed, body.inner]))
             utility.rename(r, scope)
+            scope[-1]['__variables__'] = variables
             return r
         return False
