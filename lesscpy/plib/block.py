@@ -97,7 +97,6 @@ class Block(Node):
         """
         if self.tokens[1]:
             tokens = copy.deepcopy(self.tokens[1])
-            scope = copy.deepcopy(scope)
             out = [p for p in tokens if p]
             utility.rename(out, scope)
             return out
