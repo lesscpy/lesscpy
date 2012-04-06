@@ -316,7 +316,7 @@ class LessParser(object):
                     if res: break
                 except SyntaxError as e:
                     self.handle_error(e, p.lineno(2))
-        elif not p[3]:
+        elif not p[3] or not p[3][0]:
             # fallback to block. Allow calls of name() to blocks
             block = self.scope.blocks(p[1].raw())
             if block:
