@@ -130,3 +130,12 @@
 .arglist {
 	.box-shadow();
 }
+// Reversed
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+.a {
+	.border-radius(0 3px 3px 0);
+}

@@ -248,8 +248,8 @@ class LessParser(object):
         p[0] = None
 
     def p_open_mixin(self, p):
-        """ open_mixin                : identifier t_popen mixin_args t_pclose brace_open
-                                      | identifier t_popen mixin_args t_pclose mixin_guard brace_open
+        """ open_mixin                : identifier t_popen mixin_args_list t_pclose brace_open
+                                      | identifier t_popen mixin_args_list t_pclose mixin_guard brace_open
         """
         p[1].parse(self.scope)
         p[0] = [p[1], p[3]]
@@ -301,7 +301,7 @@ class LessParser(object):
         p[0] = ''.join(list(p)[1:])
         
     def p_call_mixin(self, p):
-        """ call_mixin                : identifier t_popen mixin_args t_pclose ';'
+        """ call_mixin                : identifier t_popen mixin_args_list t_pclose ';'
         """
         p[1].parse(None)
         mixin = self.scope.mixins(p[1].raw())
@@ -329,15 +329,23 @@ class LessParser(object):
         p[0] = res
             
     def p_mixin_args_arguments(self, p):
-        """ mixin_args                : less_arguments
+        """ mixin_args_list          : less_arguments
+        """
+        p[0] = [p[1]]
+        
+    def p_mixin_args_list_aux(self, p):
+        """ mixin_args_list          : mixin_args_list ',' mixin_args
+        """
+        p[1].extend([p[3]])
+        p[0] = p[1]
+        
+    def p_mixin_args_list(self, p):
+        """ mixin_args_list          : mixin_args
         """
         p[0] = [p[1]]
 
     def p_mixin_args_aux(self, p):
-        """ mixin_args                : mixin_args ',' argument
-                                      | mixin_args ',' mixin_kwarg
-                                      | mixin_args argument
-                                      | mixin_args mixin_kwarg
+        """ mixin_args                : mixin_args argument
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
@@ -359,13 +367,13 @@ class LessParser(object):
         p[0] = Variable(list(p)[1:], p.lineno(2))
         
     def p_margument_list_aux(self, p):
-        """ mixin_kwarg_arg_list    : mixin_kwarg_arg_list argument
+        """ mixin_kwarg_arg_list       : mixin_kwarg_arg_list argument
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
         
     def p_margument_list(self, p):
-        """ mixin_kwarg_arg_list     : argument
+        """ mixin_kwarg_arg_list      : argument
         """
         p[0] = [p[1]]
         

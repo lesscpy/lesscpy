@@ -33,6 +33,7 @@ class Call(Node):
         if not self.parsed:
             name = ''.join(self.tokens[0])
             parsed = self.process(self.tokens[1:], scope)
+
             if name == '%(':
                 name = 'sformat'
             elif name in ('~', 'e'):
@@ -45,6 +46,7 @@ class Call(Node):
                     return getattr(self, name)(*args)
                 except ValueError:
                     pass
+            
             if hasattr(color, name):
                 try:
                     return getattr(color, name)(*args)

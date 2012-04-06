@@ -28,7 +28,7 @@ class Mixin(Node):
             self
         """
         self.name, args, self.guards = self.tokens[0]
-        self.args = [a for a in args if a != ','] if args else []
+        self.args = list(utility.flatten(args)) if args else []
         self.body = Block([None, self.tokens[1]], 0)
         self.scope = copy.deepcopy(scope[-1])
         return self
@@ -50,21 +50,20 @@ class Mixin(Node):
         raises:
             SyntaxError
         """
-        arguments = args if args else None
+        arguments = zip(args, [' '] * len(args)) if args and args[0] else None
         if self.args:
             parsed = [v.parse(scope) 
                       if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
             args = args if type(args) is list else [args]
             vars = [self._parse_arg(var, arg, scope) 
-                    for arg, var in itertools.zip_longest([a for a in args if a != ','], parsed)]
+                    for arg, var in itertools.zip_longest([a for a in args], 
+                                                          parsed)]
             for var in vars:
                 if var: scope.add_variable(var)
             if not arguments:
                 arguments = [v.value for v in vars if v]
-        if arguments:
-            arguments = [' ' if a == ',' else a for a in arguments]
-        else:
+        if not arguments:
             arguments = ''
         scope.add_variable(Variable(['@arguments', 
                                      None, 
@@ -76,8 +75,8 @@ class Mixin(Node):
         if type(var) is Variable:
             # kwarg
             if arg:
-                if utility.is_variable(arg):
-                    tmp = scope.variables(arg)
+                if utility.is_variable(arg[0]):
+                    tmp = scope.variables(arg[0])
                     if not tmp: return None
                     var.value = tmp.value
                 else:
@@ -87,8 +86,8 @@ class Mixin(Node):
             if utility.is_variable(var):
                 if arg is None:
                     raise SyntaxError('Missing argument to mixin')
-                elif utility.is_variable(arg):
-                    tmp = scope.variables(arg)
+                elif utility.is_variable(arg[0]):
+                    tmp = scope.variables(arg[0])
                     if not tmp: return None
                     var = Variable([var, None, tmp.value]).parse(scope)
                 else:
@@ -133,9 +132,11 @@ class Mixin(Node):
         ret = False
         variables = copy.deepcopy(scope[-1]['__variables__'])
         if args:
-            args = [arg.parse(scope) 
-                    if type(arg) is Expression 
-                    else arg for arg in args]
+            args = [[a.parse(scope) 
+                    if type(a) is Expression
+                    else a for a in arg]
+                    if arg else arg
+                    for arg in args]
         try:
             self.parse_args(args, scope)
         except SyntaxError:
