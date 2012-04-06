@@ -354,9 +354,20 @@ class LessParser(object):
         p[0] = None
         
     def p_mixin_kwarg(self, p):
-        """ mixin_kwarg                : variable ':' argument
+        """ mixin_kwarg                : variable ':' mixin_kwarg_arg_list
         """
         p[0] = Variable(list(p)[1:], p.lineno(2))
+        
+    def p_margument_list_aux(self, p):
+        """ mixin_kwarg_arg_list    : mixin_kwarg_arg_list argument
+        """
+        p[1].extend(list(p)[2:])
+        p[0] = p[1]
+        
+    def p_margument_list(self, p):
+        """ mixin_kwarg_arg_list     : argument
+        """
+        p[0] = [p[1]]
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
