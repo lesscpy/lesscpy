@@ -45,4 +45,9 @@ class Deferred(Node):
             if res: return res
         return False
     
+    def fmt(self, fills):
+        """
+        """
+        return ''
+    
     

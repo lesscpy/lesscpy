@@ -73,8 +73,9 @@ class LessParser(object):
         
     def parse(self, filename='', debuglevel=0):
         """ Parse file.
-            @param string: Filename
-            @param int: Debuglevel
+        kwargs:
+            filename (str): File to parse
+            debuglevel (int): Parser debuglevel
         """
         if self.verbose: print('Compiling target: %s' % filename)
         self.scope.push()
@@ -82,16 +83,20 @@ class LessParser(object):
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
         self.post_parse(self.result)
         
-    def post_parse(self, ll):
+    def post_parse(self, lst):
+        """Post process stage. less.js seems to allow calls to mixins not
+        yet declared. Deferreds are used in place of real mixins. After
+        parsing we go over the parse tree and reparse deferred's.
+        args: 
+            lst (list): Parse list
         """
-        """
-        if type(ll) is list:
-            for u in ll: self.post_parse(u)
-        elif type(ll) is Block:
-            ll.parsed = list(utility.flatten([t.parse(self.scope) 
-                                              if type(t) is Deferred else t
-                                              for t in ll.parsed]))
-            self.post_parse(ll.parsed)
+        if type(lst) is list:
+            for u in lst: self.post_parse(u)
+        elif type(lst) is Block:
+            lst.parsed = list(utility.flatten([t.parse(self.scope) 
+                                               if type(t) is Deferred else t
+                                               for t in lst.parsed]))
+            self.post_parse(lst.parsed)
             
     def scopemap(self):
         """ Output scopemap.
@@ -321,10 +326,6 @@ class LessParser(object):
                 res = Deferred(p[1], p[3])
         if res is False:
             res = Deferred(p[1], p[3])
-#            args = ''.join([''.join(a) for a in p[3]]) if p[3] else ''
-#            self.handle_error('Call unknown mixin `%s(%s)`' % 
-#                              (p[1].raw(True), args), 
-#                              p.lineno(2))
         p[0] = res
             
     def p_mixin_args_arguments(self, p):
@@ -777,7 +778,8 @@ class LessParser(object):
 
     def p_error(self, t):
         """ Internal error handler
-            @param Lex token: Error token 
+        args:
+            t (Lex token): Error token 
         """
         if t and self.verbose: 
             print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m" 
@@ -793,9 +795,10 @@ class LessParser(object):
         
     def handle_error(self, e, line, t='E'):
         """ Custom error handler
-            @param Exception: Exception
-            @param Parser token: Parser token
-            @param string: Error level 
+        args:
+            e (Mixed): Exception or str
+            line (int): line number
+            t(str): Error type
         """
 #        print(e.trace())
         if self.verbose:
