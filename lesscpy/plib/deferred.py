@@ -39,10 +39,14 @@ class Deferred(Node):
         if hasattr(self.mixin, 'call'):
             return self.mixin.call(scope, args)
         mixins = scope.mixins(self.mixin.raw())
-        if not mixins: return mixins
+        if not mixins: return self #return mixins
         for mixin in mixins:
             res = mixin.call(scope, args)
-            if res: 
-                return res
-        return False
+            if res: return res
+        return self
+    
+#    def fmt(self, fills):
+#        """
+#        """
+#        return ''
     

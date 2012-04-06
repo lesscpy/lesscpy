@@ -80,6 +80,18 @@ class LessParser(object):
         self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
+        self.post_parse(self.result)
+        
+    def post_parse(self, ll):
+        """
+        """
+        if type(ll) is list:
+            for u in ll: self.post_parse(u)
+        elif type(ll) is Block:
+            ll.parsed = list(utility.flatten([t.parse(self.scope) 
+                                              if type(t) is Deferred else t
+                                              for t in ll.parsed]))
+            self.post_parse(ll.parsed)
             
     def scopemap(self):
         """ Output scopemap.
@@ -308,10 +320,11 @@ class LessParser(object):
             if self.scope.in_mixin:
                 res = Deferred(p[1], p[3])
         if res is False:
-            args = ''.join([''.join(a) for a in p[3]]) if p[3] else ''
-            self.handle_error('Call unknown mixin `%s(%s)`' % 
-                              (p[1].raw(True), args), 
-                              p.lineno(2))
+            res = Deferred(p[1], p[3])
+#            args = ''.join([''.join(a) for a in p[3]]) if p[3] else ''
+#            self.handle_error('Call unknown mixin `%s(%s)`' % 
+#                              (p[1].raw(True), args), 
+#                              p.lineno(2))
         p[0] = res
             
     def p_mixin_args_arguments(self, p):
