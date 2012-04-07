@@ -41,7 +41,7 @@ class Deferred(Node):
             res = self
         if error:
             raise SyntaxError('NameError `%s`' % self.mixin.raw(True))
-        return False
+        return res
     
     def fmt(self, fills):
         """

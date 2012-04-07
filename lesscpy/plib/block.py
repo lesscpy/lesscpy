@@ -69,7 +69,7 @@ class Block(Node):
         if self.parsed:
             fills.update({
                 'identifier': name,
-                'proplist': ''.join([p.fmt(fills) for p in self.parsed]),
+                'proplist': ''.join([p.fmt(fills) for p in self.parsed if p]),
             })
             out.append(f % fills)
         if self.inner:

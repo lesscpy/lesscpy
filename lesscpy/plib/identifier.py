@@ -68,11 +68,12 @@ class Identifier(Node):
         parent = scope.scopename
         if parent: 
             parent = parent[-1]
-            return [self._pscn(part, n) 
-                    if part[0] not in self._subp
-                    else n
-                    for part in parent.parsed
-                    for n in names]
+            if parent.parsed:
+                return [self._pscn(part, n) 
+                        if part[0] not in self._subp
+                        else n
+                        for part in parent.parsed
+                        for n in names]
         return names
     
     def _pscn(self, parent, name):

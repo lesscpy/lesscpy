@@ -113,3 +113,17 @@
 .deferred {
 	.gradientBar(#555, #964);
 }
+/*
+	Mixins called within own scope
+*/
+.callswithinscope {
+	.inner() {
+		.call(@index: 3px) {
+			padding: @index;
+		}
+		.call(6px);
+	}
+}
+span.callswithinscope {
+	.callswithinscope > .inner();
+}

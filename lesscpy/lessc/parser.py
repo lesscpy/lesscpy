@@ -94,17 +94,17 @@ class LessParser(object):
             for u in lst: self.post_parse(u)
         elif type(lst) is Block:
             try:
-                lst.parsed = list(utility.flatten([t.parse(self.scope, True) 
+                lst.parsed = list(utility.flatten([t.parse(self.scope, self.verbose) 
                                                    if type(t) is Deferred else t
                                                    for t in lst.parsed]))
             except SyntaxError as e:
-                self.handle_error(e, 0)
+                self.handle_error(e, 0, 'W')
             self.post_parse(lst.parsed)
         elif type(lst) is Deferred:
             try:
                 lst = lst.parse(self.scope, True) 
             except SyntaxError as e:
-                self.handle_error(e, lst.lineno)
+                self.handle_error(e, lst.lineno, 'W')
             
     def scopemap(self):
         """ Output scopemap.
@@ -311,8 +311,12 @@ class LessParser(object):
     def p_call_mixin(self, p):
         """ call_mixin                : identifier t_popen mixin_args_list t_pclose ';'
         """
-        p[1].parse(None)
+        # Try with scope first
+        p[1].parse(self.scope)
         mixin = self.scope.mixins(p[1].raw())
+        if not mixin:
+            p[1].parse(None)
+            mixin = self.scope.mixins(p[1].raw())
         res = False
         if mixin:
             for m in mixin:

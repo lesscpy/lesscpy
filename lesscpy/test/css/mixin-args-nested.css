@@ -71,3 +71,6 @@
 .deferred {
 	background-color: #705b4e;
 }
+span.callswithinscope {
+	padding: 6px;
+}
