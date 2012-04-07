@@ -10,7 +10,7 @@
 from .node import Node
 
 class Deferred(Node):
-    def __init__(self, mixin, args):
+    def __init__(self, mixin, args, lineno=0):
         """This node represents mixin calls 
         within the body of other mixins. The calls
         to these mixins are deferred until the parent
@@ -21,8 +21,9 @@ class Deferred(Node):
         """
         self.mixin = mixin
         self.args = args
+        self.lineno = lineno
     
-    def parse(self, scope):
+    def parse(self, scope, error=False):
         """ Parse function.
         args:
             scope (Scope): Current scope
@@ -32,11 +33,14 @@ class Deferred(Node):
         if hasattr(self.mixin, 'call'):
             return self.mixin.call(scope, self.args)
         mixins = scope.mixins(self.mixin.raw())
-        if not mixins: 
-            return self
-        for mixin in mixins:
-            res = mixin.call(scope, self.args)
-            if res: return res
+        if mixins:
+            for mixin in mixins:
+                res = mixin.call(scope, self.args)
+                if res: return res
+        else: 
+            res = self
+        if error:
+            raise SyntaxError('NameError `%s`' % self.mixin.raw(True))
         return False
     
     def fmt(self, fills):

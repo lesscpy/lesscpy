@@ -93,10 +93,18 @@ class LessParser(object):
         if type(lst) is list:
             for u in lst: self.post_parse(u)
         elif type(lst) is Block:
-            lst.parsed = list(utility.flatten([t.parse(self.scope) 
-                                               if type(t) is Deferred else t
-                                               for t in lst.parsed]))
+            try:
+                lst.parsed = list(utility.flatten([t.parse(self.scope, True) 
+                                                   if type(t) is Deferred else t
+                                                   for t in lst.parsed]))
+            except SyntaxError as e:
+                self.handle_error(e, 0)
             self.post_parse(lst.parsed)
+        elif type(lst) is Deferred:
+            try:
+                lst = lst.parse(self.scope, True) 
+            except SyntaxError as e:
+                self.handle_error(e, lst.lineno)
             
     def scopemap(self):
         """ Output scopemap.
@@ -310,12 +318,12 @@ class LessParser(object):
             for m in mixin:
                 try:
                     if self.scope.in_mixin:
-                        res = Deferred(m, p[3])
+                        res = Deferred(m, p[3], p.lineno(4))
                     else:
                         res = m.call(self.scope, p[3])
                     if res: break
                 except SyntaxError as e:
-                    self.handle_error(e, p.lineno(2))
+                    self.handle_error(e, p.lineno(4))
         elif not p[3] or not p[3][0]:
             # fallback to block. Allow calls of name() to blocks
             block = self.scope.blocks(p[1].raw())
@@ -323,9 +331,9 @@ class LessParser(object):
                 res = block.copy(self.scope)
         else:
             if self.scope.in_mixin:
-                res = Deferred(p[1], p[3])
+                res = Deferred(p[1], p[3], p.lineno(4))
         if res is False:
-            res = Deferred(p[1], p[3])
+            res = Deferred(p[1], p[3], p.lineno(4))
         p[0] = res
             
     def p_mixin_args_arguments(self, p):
