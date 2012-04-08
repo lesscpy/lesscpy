@@ -9,6 +9,7 @@
 """
 import re, copy
 from .node import Node
+from .deferred import Deferred
 from lesscpy.lessc import utility
 
 class Block(Node):
@@ -31,18 +32,13 @@ class Block(Node):
         if not self.parsed:
             scope.push()
             self.name, inner = self.tokens
+            scope.current = self.name
+            if not self.name.parsed:
+                self.name.parse(scope)
             if not inner: inner = []
-            self.parsed = [p.parse(scope) 
-                           for p in inner
-                           if p and type(p) is not type(self)]
-            self.parsed = [p for p in utility.flatten(self.parsed) if p]
-            if not inner: 
-                self.inner = []
-            else:
-               self. inner = [p for p in inner 
-                              if p and type(p) is type(self)]
-            if self.inner:
-                self.inner = [p.parse(scope) for p in self.inner]
+            inner = list(utility.flatten([p.parse(scope) for p in inner]))
+            self.parsed = [p for p in inner if p and type(p) is not Block]
+            self.inner = [p for p in inner if p and type(p) is Block]
             scope.pop()
         return self
     
@@ -54,8 +50,8 @@ class Block(Node):
             str
         """
         try:
-            return self.name.raw(clean)
-        except AttributeError:
+            return self.tokens[0].raw(clean)
+        except (AttributeError, TypeError):
             pass
     
     def fmt(self, fills):
@@ -100,6 +96,6 @@ class Block(Node):
         if self.tokens[1]:
             tokens = copy.deepcopy(self.tokens[1])
             out = [p for p in tokens if p]
-            utility.rename(out, scope)
+            utility.rename(out, scope, Block)
             return out
         return None

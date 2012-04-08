@@ -1,36 +1,36 @@
-.a .span1 {
-	width: 12px;
-}
-.a .span2 {
-	width: 36px;
-}
-.a .span3 {
-	width: 60px;
-}
-.a .span4 {
-	width: 84px;
-}
-.a .span5 {
-	width: 108px;
-}
-.a .span6 {
-	width: 132px;
-}
-.a .span7 {
-	width: 156px;
-}
-.a .span8 {
-	width: 180px;
-}
-.a .span9 {
-	width: 204px;
-}
-.a .span10 {
-	width: 228px;
+.a .span12 {
+	width: 276px;
 }
 .a .span11 {
 	width: 252px;
 }
-.a .span12 {
-	width: 276px;
+.a .span10 {
+	width: 228px;
+}
+.a .span9 {
+	width: 204px;
+}
+.a .span8 {
+	width: 180px;
+}
+.a .span7 {
+	width: 156px;
+}
+.a .span6 {
+	width: 132px;
+}
+.a .span5 {
+	width: 108px;
+}
+.a .span4 {
+	width: 84px;
+}
+.a .span3 {
+	width: 60px;
+}
+.a .span2 {
+	width: 36px;
+}
+.a .span1 {
+	width: 12px;
 }

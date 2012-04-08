@@ -39,7 +39,7 @@ def pairwise(lst):
         yield lst[i], lst[i+1]
     yield lst[-1], None
     
-def rename(blocks, scope):
+def rename(blocks, scope, stype):
     """ Rename all sub-blocks moved under another 
         block. (mixins)
     Args:
@@ -47,12 +47,12 @@ def rename(blocks, scope):
         scope (object): Scope object
     """
     for p in blocks:
-        if hasattr(p, 'inner'):
-            p.name.parse(scope)
-            if p.inner: 
+        if type(p) is stype:
+            p.tokens[0].parse(scope)
+            if p.tokens[1]: 
                 scope.push()
-                scope.current = p.name
-                rename(p.inner, scope)
+                scope.current = p.tokens[0]
+                rename(p.tokens[1], scope, stype)
                 scope.pop()
             
 def blocksearch(block, name):
@@ -62,8 +62,8 @@ def blocksearch(block, name):
     Returns:
         Block OR False
     """
-    for b in block.inner:
-        b = (b if b.raw() == name 
+    for b in block.tokens[1]:
+        b = (b if hasattr(b, 'raw') and b.raw() == name 
              else blocksearch(b, name))
         if b: return b
     return False

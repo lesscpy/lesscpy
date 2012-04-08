@@ -78,7 +78,7 @@ class Mixin(Node):
                     val = tmp.value
                 else:
                     val = arg
-            var = Variable(var.tokens[:-1] + [val])
+                var = Variable(var.tokens[:-1] + [val])
         else:
             #arg
             if utility.is_variable(var):
@@ -90,7 +90,7 @@ class Mixin(Node):
                     val = tmp.value
                 else:
                     val = arg
-                var = Variable([var, None, arg])
+                var = Variable([var, None, val])
             else:
                 return None
         return var
@@ -129,7 +129,6 @@ class Mixin(Node):
             list or False
         """
         ret = False
-        variables = copy.deepcopy(scope[-1]['__variables__'])
         if args:
             args = [[a.parse(scope) 
                     if type(a) is Expression
@@ -143,9 +142,6 @@ class Mixin(Node):
         else:
             if self.parse_guards(scope):
                 body = copy.deepcopy(self.body)
-                scope.update([self.scope], -1)
-                body.parse(scope)
-                ret = list(utility.flatten([body.parsed, body.inner]))
-                utility.rename(ret, scope)
-        scope[-1]['__variables__'] = variables
+                ret = body.tokens[1]
+                if ret: utility.rename(ret, scope, Block)
         return ret

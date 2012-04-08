@@ -32,20 +32,18 @@ class Deferred(Node):
         mixin, args = self.tokens
         if hasattr(mixin, 'call'):
             return mixin.call(scope, args)
+        res = False
         mixins = scope.mixins(mixin.raw())
         if mixins:
             for mixin in mixins:
                 res = mixin.call(scope, args)
-                if res: return res
-        else: 
-            res = self
-        if error:
+                if res: break
+            if res:
+                res = [p.parse(scope) for p in res]
+                while(any(t for t in res if type(t) is Deferred)):
+                    res = [p.parse(scope) for p in res]
+        if error and not res:
             raise SyntaxError('NameError `%s`' % mixin.raw(True))
         return res
-    
-    def fmt(self, fills):
-        """
-        """
-        return ''
     
     

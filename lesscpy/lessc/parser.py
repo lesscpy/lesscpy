@@ -86,11 +86,13 @@ class LessParser(object):
     def post_parse(self):
         """
         """
+        out = []
         for pu in self.result:
             try:
-                pu.parse(self.scope)
+                out.append(pu.parse(self.scope))
             except SyntaxError as e:
                 self.handle_error(e, 0)
+        self.result = utility.flatten(out)
             
     def scopemap(self):
         """ Output scopemap.
