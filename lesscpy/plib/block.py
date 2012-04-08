@@ -29,12 +29,13 @@ class Block(Node):
             self
         """
         if not self.parsed:
+            scope.push()
             self.name, inner = self.tokens
             if not inner: inner = []
             self.parsed = [p.parse(scope) 
                            for p in inner
                            if p and type(p) is not type(self)]
-            self.parsed = list(utility.flatten(self.parsed))
+            self.parsed = [p for p in utility.flatten(self.parsed) if p]
             if not inner: 
                 self.inner = []
             else:
@@ -42,6 +43,7 @@ class Block(Node):
                               if p and type(p) is type(self)]
             if self.inner:
                 self.inner = [p.parse(scope) for p in self.inner]
+            scope.pop()
         return self
     
     def raw(self, clean=False):
@@ -72,7 +74,7 @@ class Block(Node):
                 'proplist': ''.join([p.fmt(fills) for p in self.parsed if p]),
             })
             out.append(f % fills)
-        if self.inner:
+        if hasattr(self, 'inner'):
             if self.name.subparse: # @media
                 inner = ''.join([p.fmt(fills) for p in self.inner])
                 inner = inner.replace(fills['nl'], 

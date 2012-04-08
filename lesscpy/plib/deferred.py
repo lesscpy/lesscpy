@@ -19,8 +19,7 @@ class Deferred(Node):
             mixin (Mixin): Mixin object
             args (list): Call arguments
         """
-        self.mixin = mixin
-        self.args = args
+        self.tokens = [mixin, args]
         self.lineno = lineno
     
     def parse(self, scope, error=False):
@@ -30,17 +29,18 @@ class Deferred(Node):
         returns:
             mixed
         """
-        if hasattr(self.mixin, 'call'):
-            return self.mixin.call(scope, self.args)
-        mixins = scope.mixins(self.mixin.raw())
+        mixin, args = self.tokens
+        if hasattr(mixin, 'call'):
+            return mixin.call(scope, args)
+        mixins = scope.mixins(mixin.raw())
         if mixins:
             for mixin in mixins:
-                res = mixin.call(scope, self.args)
+                res = mixin.call(scope, args)
                 if res: return res
         else: 
             res = self
         if error:
-            raise SyntaxError('NameError `%s`' % self.mixin.raw(True))
+            raise SyntaxError('NameError `%s`' % mixin.raw(True))
         return res
     
     def fmt(self, fills):

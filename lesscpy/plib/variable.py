@@ -17,13 +17,15 @@ class Variable(Node):
         returns:
             self
         """
-        self.name = self.tokens.pop(0)
-        self.value = self.tokens[1]
+        self.name, _, self.value = self.tokens
         if type(self.name) is tuple:
             if len(self.name) > 1:
                 self.name, pad = self.name
                 self.value.append(pad)
             else:
                 self.name = self.name[0]
-        return self
+        scope.add_variable(self)
+    
+    def fmt(self, fills):
+        return ''
         

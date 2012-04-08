@@ -28,7 +28,7 @@ class Mixin(Node):
             self
         """
         self.name, args, self.guards = self.tokens[0]
-        self.args = list(utility.flatten(args)) if args else []
+        self.args = [a for a in utility.flatten(args) if a]
         self.body = Block([None, self.tokens[1]], 0)
         self.scope = copy.deepcopy(scope[-1])
         return self
@@ -52,22 +52,19 @@ class Mixin(Node):
         """
         arguments = zip(args, [' '] * len(args)) if args and args[0] else None
         if self.args:
-            parsed = [v.parse(scope) 
-                      if hasattr(v, 'parse') else v
+            parsed = [v if hasattr(v, 'parse') else v
                       for v in copy.deepcopy(self.args)]
             args = args if type(args) is list else [args]
             vars = [self._parse_arg(var, arg, scope) 
                     for arg, var in itertools.zip_longest([a for a in args], 
                                                           parsed)]
-            for var in vars:
-                if var: scope.add_variable(var)
+            for var in vars: 
+                if var: var.parse(scope)
             if not arguments:
                 arguments = [v.value for v in vars if v]
         if not arguments:
             arguments = ''
-        scope.add_variable(Variable(['@arguments', 
-                                     None, 
-                                     arguments]).parse(scope))
+        Variable(['@arguments', None, arguments]).parse(scope)
         
     def _parse_arg(self, var, arg, scope):
         """
@@ -78,9 +75,10 @@ class Mixin(Node):
                 if utility.is_variable(arg[0]):
                     tmp = scope.variables(arg[0])
                     if not tmp: return None
-                    var.value = tmp.value
+                    val = tmp.value
                 else:
-                    var.value = arg
+                    val = arg
+            var = Variable(var.tokens[:-1] + [val])
         else:
             #arg
             if utility.is_variable(var):
@@ -89,9 +87,10 @@ class Mixin(Node):
                 elif utility.is_variable(arg[0]):
                     tmp = scope.variables(arg[0])
                     if not tmp: return None
-                    var = Variable([var, None, tmp.value]).parse(scope)
+                    val = tmp.value
                 else:
-                    var = Variable([var, None, arg]).parse(scope)
+                    val = arg
+                var = Variable([var, None, arg])
             else:
                 return None
         return var

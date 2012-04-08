@@ -64,7 +64,7 @@ class Scope(list):
         Args:
             mixin (Mixin): Mixin object
         """
-        raw = mixin.name.raw()
+        raw = mixin.tokens[0][0].raw()
         if raw in self._mixins:
             self._mixins[raw].append(mixin)
         else:

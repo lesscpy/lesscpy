@@ -81,30 +81,16 @@ class LessParser(object):
         self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
-        self.post_parse(self.result)
+        self.post_parse()
         
-    def post_parse(self, lst):
-        """Post process stage. less.js seems to allow calls to mixins not
-        yet declared. Deferreds are used in place of real mixins. After
-        parsing we go over the parse tree and reparse deferred's.
-        args: 
-            lst (list): Parse list
+    def post_parse(self):
         """
-        if type(lst) is list:
-            for u in lst: self.post_parse(u)
-        elif type(lst) is Block:
+        """
+        for pu in self.result:
             try:
-                lst.parsed = list(utility.flatten([t.parse(self.scope, self.verbose) 
-                                                   if type(t) is Deferred else t
-                                                   for t in lst.parsed]))
+                pu.parse(self.scope)
             except SyntaxError as e:
-                self.handle_error(e, 0, 'W')
-            self.post_parse(lst.parsed)
-        elif type(lst) is Deferred:
-            try:
-                lst = lst.parse(self.scope, True) 
-            except SyntaxError as e:
-                self.handle_error(e, lst.lineno, 'W')
+                self.handle_error(e, 0)
             
     def scopemap(self):
         """ Output scopemap.
@@ -195,16 +181,9 @@ class LessParser(object):
     def p_block(self, p):
         """ block_decl               : block_open declaration_list brace_close
         """
-        try:
-            block = Block(list(p)[1:-1], p.lineno(3))
-            if not self.scope.in_mixin:
-                block.parse(self.scope)
-            p[0] = block
-        except SyntaxError as e:
-            self.handle_error(e, p.lineno(3))
-            p[0] = None
+        p[0] = Block(list(p)[1:-1], p.lineno(3))
         self.scope.pop()
-        self.scope.add_block(block)
+        self.scope.add_block(p[0])
             
     def p_block_replace(self, p):
         """ block_decl               : identifier ';'
@@ -215,18 +194,7 @@ class LessParser(object):
             p[0] = block.copy(self.scope)
         else:
             # fallback to mixin. Allow calls to mixins without parens
-            mixin = self.scope.mixins(m.raw())
-            if mixin:
-                res = None
-                for m in mixin:
-                    try:
-                        res = m.call(self.scope)
-                    except SyntaxError as e:
-                        self.handle_error(e, p.lineno(2))
-                    if res: break
-                p[0] = res
-            else:
-                self.handle_error('Call unknown block `%s`' % m.raw(True), p.lineno(2))
+            p[0] = Deferred(p[1], None, p.lineno(2))
         
     def p_block_open(self, p):
         """ block_open                : identifier brace_open
@@ -242,11 +210,11 @@ class LessParser(object):
         """ block_open                : css_font_face t_ws brace_open
         """
         p[0] = Identifier([p[1], p[2]]).parse(self.scope)
-        
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
+
     def p_mixin(self, p):
         """ mixin_decl                : open_mixin declaration_list brace_close
         """
@@ -311,34 +279,8 @@ class LessParser(object):
     def p_call_mixin(self, p):
         """ call_mixin                : identifier t_popen mixin_args_list t_pclose ';'
         """
-        # Try with scope first
-        p[1].parse(self.scope)
-        mixin = self.scope.mixins(p[1].raw())
-        if not mixin:
-            p[1].parse(None)
-            mixin = self.scope.mixins(p[1].raw())
-        res = False
-        if mixin:
-            for m in mixin:
-                try:
-                    if self.scope.in_mixin:
-                        res = Deferred(m, p[3], p.lineno(4))
-                    else:
-                        res = m.call(self.scope, p[3])
-                    if res: break
-                except SyntaxError as e:
-                    self.handle_error(e, p.lineno(4))
-        elif not p[3] or not p[3][0]:
-            # fallback to block. Allow calls of name() to blocks
-            block = self.scope.blocks(p[1].raw())
-            if block:
-                res = block.copy(self.scope)
-        else:
-            if self.scope.in_mixin:
-                res = Deferred(p[1], p[3], p.lineno(4))
-        if res is False:
-            res = Deferred(p[1], p[3], p.lineno(4))
-        p[0] = res
+        p[1].parse(None)
+        p[0] = Deferred(p[1], p[3], p.lineno(4))
             
     def p_mixin_args_arguments(self, p):
         """ mixin_args_list          : less_arguments
@@ -418,13 +360,7 @@ class LessParser(object):
     def p_variable_decl(self, p):
         """ variable_decl            : variable ':' style_list ';'
         """
-        try:
-            v = Variable(list(p)[1:], p.lineno(4))
-            v.parse(self.scope)
-            self.scope.add_variable(v)
-        except SyntaxError as e:
-            self.handle_error(e, p.lineno(2))
-        p[0] = None
+        p[0] = Variable(list(p)[1:-1], p.lineno(4))
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
