@@ -26,15 +26,18 @@ def create_test (args):
             p.parse(filename=lessf)
             f = formatter.Formatter(Opt())
             pout = f.format(p).split('\n')
+            pl = len(pout)
             i = 0
             with open(cssf) as cssf:
                 for line in cssf.readlines():
+                    if i >= pl:
+                        self.fail("%s: result has less lines (%d < %d)" % (cssf, i, pl))
                     line = line.rstrip()
                     if not line: continue
                     self.assertEqual(line, pout[i], '%s: Line %d' % (cssf, i+1))
                     i += 1
-            if len(pout) > i and i:
-                self.fail("%s: result has more lines (%d < %d)" % (cssf, i, len(pout)))
+            if pl > i and i:
+                self.fail("%s: result has more lines (%d > %d)" % (cssf, i, pl))
         else:
             self.fail("%s not found..." % cssf)
         if os.path.exists(minf):
@@ -44,13 +47,16 @@ def create_test (args):
             p.parse(filename=lessf)
             f = formatter.Formatter(opt)
             mout = f.format(p).split('\n')
+            ml = len(mout)
             i = 0
             with open(minf) as cssf:
                 for line in cssf.readlines():
+                    if i >= ml:
+                        self.fail("%s: result has less lines (%d < %d)" % (minf, i, ml))
                     self.assertEqual(line.rstrip(), mout[i], '%s: Line %d' % (minf, i+1))
                     i += 1
-            if len(mout) > i and i:
-                self.fail("%s: result has more lines (%d < %d)" % (minf, i, len(mout)))
+            if ml > i and i:
+                self.fail("%s: result has more lines (%d > %d)" % (minf, i, ml))
         else:
             self.fail("%s not found..." % minf)
     return do_test_expected

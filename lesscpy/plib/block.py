@@ -9,7 +9,6 @@
 """
 import re, copy
 from .node import Node
-from .deferred import Deferred
 from lesscpy.lessc import utility
 
 class Block(Node):
@@ -36,7 +35,7 @@ class Block(Node):
             if not self.name.parsed:
                 self.name.parse(scope)
             if not inner: inner = []
-            inner = list(utility.flatten([p.parse(scope) for p in inner]))
+            inner = list(utility.flatten([p.parse(scope) for p in inner if p]))
             self.parsed = [p for p in inner if p and type(p) is not Block]
             self.inner = [p for p in inner if p and type(p) is Block]
             scope.pop()

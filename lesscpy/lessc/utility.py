@@ -62,10 +62,11 @@ def blocksearch(block, name):
     Returns:
         Block OR False
     """
-    for b in block.tokens[1]:
-        b = (b if hasattr(b, 'raw') and b.raw() == name 
-             else blocksearch(b, name))
-        if b: return b
+    if hasattr(block, 'tokens'):
+        for b in block.tokens[1]:
+            b = (b if hasattr(b, 'raw') and b.raw() == name 
+                 else blocksearch(b, name))
+            if b: return b
     return False
 
 def reverse_guard(lst):

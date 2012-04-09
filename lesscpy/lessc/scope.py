@@ -20,7 +20,7 @@ class Scope(list):
         super().__init__()
         self._mixins = {}
         if init: self.push()
-        self.in_mixin = False
+        self.deferred = False
         
     def push(self):
         """Push level on scope

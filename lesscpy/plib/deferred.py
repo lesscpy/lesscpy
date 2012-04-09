@@ -8,6 +8,7 @@
 .. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 from .node import Node
+from lesscpy.lessc import utility
 
 class Deferred(Node):
     def __init__(self, mixin, args, lineno=0):
@@ -29,19 +30,31 @@ class Deferred(Node):
         returns:
             mixed
         """
-        mixin, args = self.tokens
-        if hasattr(mixin, 'call'):
-            return mixin.call(scope, args)
         res = False
-        mixins = scope.mixins(mixin.raw())
+        ident, args = self.tokens
+#        if hasattr(mixin, 'call'):
+#            return mixin.call(scope, args)
+        ident.parse(scope)
+        mixins = scope.mixins(ident.raw())
+        if not mixins:
+            ident.parse(None)
+            mixins = scope.mixins(ident.raw())
+        if not mixins:
+            if scope.deferred:
+                scope.current = scope.deferred
+                ident.parse(scope)
+                mixins = scope.mixins(ident.raw())
+                scope.current = None
         if mixins:
             for mixin in mixins:
                 res = mixin.call(scope, args)
                 if res: break
             if res:
-                res = [p.parse(scope) for p in res]
+                scope.deferred = ident
+                res = [p.parse(scope) for p in res if p]
                 while(any(t for t in res if type(t) is Deferred)):
-                    res = [p.parse(scope) for p in res]
+                    res = [p.parse(scope) for p in res if p]
+                scope.deferred = None
         if error and not res:
             raise SyntaxError('NameError `%s`' % mixin.raw(True))
         return res

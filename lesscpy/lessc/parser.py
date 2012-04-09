@@ -92,7 +92,7 @@ class LessParser(object):
                 out.append(pu.parse(self.scope))
             except SyntaxError as e:
                 self.handle_error(e, 0)
-        self.result = utility.flatten(out)
+        self.result = list(utility.flatten(out))
             
     def scopemap(self):
         """ Output scopemap.
@@ -222,7 +222,6 @@ class LessParser(object):
         """
         self.scope.add_mixin(Mixin(list(p)[1:], p.lineno(3)).parse(self.scope))
         self.scope.pop()
-        self.scope.in_mixin = False
         p[0] = None
 
     def p_open_mixin(self, p):
@@ -230,12 +229,12 @@ class LessParser(object):
                                       | identifier t_popen mixin_args_list t_pclose mixin_guard brace_open
         """
         p[1].parse(self.scope)
+        self.scope.current = p[1]
         p[0] = [p[1], p[3]]
         if len(p) > 6:
             p[0].append(p[5])
         else:
             p[0].append(None)
-        self.scope.in_mixin = True
         
     def p_mixin_guard(self, p):
         """ mixin_guard               : less_when mixin_guard_cond_list
