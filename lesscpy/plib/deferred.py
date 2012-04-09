@@ -12,10 +12,9 @@ from lesscpy.lessc import utility
 
 class Deferred(Node):
     def __init__(self, mixin, args, lineno=0):
-        """This node represents mixin calls 
-        within the body of other mixins. The calls
-        to these mixins are deferred until the parent
-        mixin is called.
+        """This node represents mixin calls. The calls
+        to these mixins are deferred until the second 
+        parse cycle.
         args:
             mixin (Mixin): Mixin object
             args (list): Call arguments
@@ -24,7 +23,11 @@ class Deferred(Node):
         self.lineno = lineno
     
     def parse(self, scope, error=False):
-        """ Parse function.
+        """ Parse function. We search for mixins
+        first within current scope then fallback
+        to global scope. The special scope.deferred
+        is used when local scope mixins are called 
+        within parent mixins. 
         args:
             scope (Scope): Current scope
         returns:
@@ -32,8 +35,6 @@ class Deferred(Node):
         """
         res = False
         ident, args = self.tokens
-#        if hasattr(mixin, 'call'):
-#            return mixin.call(scope, args)
         ident.parse(scope)
         mixins = scope.mixins(ident.raw())
         if not mixins:
