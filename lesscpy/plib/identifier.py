@@ -32,7 +32,9 @@ class Identifier(Node):
             '@-ms-keyframes'
         )
         if self.tokens and hasattr(self.tokens, 'parse'):
-            self.tokens = self.tokens.parse(scope)
+            self.tokens = list(utility.flatten([id.split() + [','] 
+                                                for id in self.tokens.parse(scope).split(',')]))
+            self.tokens.pop()
         if self.tokens and self.tokens[0] in self._subp:
             name = list(utility.flatten(self.tokens))
             self.subparse = True
