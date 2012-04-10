@@ -140,6 +140,10 @@ class LessLexer:
         t.value = t.value.strip()
         return t
     
+    def t_less_variable(self, t):
+        r'@\w+'
+        return t
+    
     def t_css_color(self, t):
         r'\#[0-9]([0-9a-f]{5}|[0-9a-f]{2})'
         return t
