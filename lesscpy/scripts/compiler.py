@@ -128,16 +128,19 @@ def run():
     scope = None
     if args.include:
         for u in args.include.split(','):
-            p = parser.LessParser(yacc_debug=(args.debug),
-                                  lex_optimize=True,
-                                  yacc_optimize=(not args.debug),
-                                  tabfile=yacctab,
-                                  verbose=args.verbose)
-            p.parse(filename=u, debuglevel=0)
-            if not scope:
-                scope = p.scope
+            if os.path.exists(u):
+                p = parser.LessParser(yacc_debug=(args.debug),
+                                      lex_optimize=True,
+                                      yacc_optimize=(not args.debug),
+                                      tabfile=yacctab,
+                                      verbose=args.verbose)
+                p.parse(filename=u, debuglevel=0)
+                if not scope:
+                    scope = p.scope
+                else:
+                    scope.update(p.scope)
             else:
-                scope.update(p.scope)
+                sys.exit('included file `%s` not found ...')
     p = None
     f = formatter.Formatter(args)
     if not os.path.exists(args.target):
