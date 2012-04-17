@@ -140,7 +140,7 @@ def run():
                 else:
                     scope.update(p.scope)
             else:
-                sys.exit('included file `%s` not found ...')
+                sys.exit('included file `%s` not found ...' % u)
     p = None
     f = formatter.Formatter(args)
     if not os.path.exists(args.target):
