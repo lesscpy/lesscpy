@@ -12,6 +12,7 @@
 .. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
 import os
+import sys
 import copy
 import ply.yacc
 from . import lexer
@@ -175,6 +176,7 @@ class LessParser(object):
         else:
             p[0] = Statement(list(p)[1:], p.lineno(1))
             p[0].parse(None)
+        sys.stdout.flush()
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

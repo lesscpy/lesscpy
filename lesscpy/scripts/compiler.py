@@ -62,6 +62,7 @@ def ldirectory(inpath, outpath, args, scope):
                 with open(outf, 'w') as outfile:
                     outfile.write(css)
         elif args.verbose: print('skipping %s, not modified' % lf)
+        sys.stdout.flush()
     if args.recurse:
         [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope) 
          for name in os.listdir(inpath) 
@@ -109,57 +110,61 @@ def run():
                         default=False, help="No css output")
     aparse.add_argument('target', help="less file or directory")
     args = aparse.parse_args()
-    #
-    #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # 
-    if args.lex_only:
-        lex = lexer.LessLexer()
-        ll = lex.file(args.target)
-        while True:
-            tok = ll.token()
-            if not tok: break
-            print(tok)
-        print('EOF')
-        sys.exit()
-    #
-    #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # 
-    yacctab = 'yacctab' if args.debug else None
-    scope = None
-    if args.include:
-        for u in args.include.split(','):
-            if os.path.exists(u):
-                p = parser.LessParser(yacc_debug=(args.debug),
-                                      lex_optimize=True,
-                                      yacc_optimize=(not args.debug),
-                                      tabfile=yacctab,
-                                      verbose=args.verbose)
-                p.parse(filename=u, debuglevel=0)
-                if not scope:
-                    scope = p.scope
+    try:
+        #
+        #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 
+        if args.lex_only:
+            lex = lexer.LessLexer()
+            ll = lex.file(args.target)
+            while True:
+                tok = ll.token()
+                if not tok: break
+                print(tok)
+            print('EOF')
+            sys.exit()
+        #
+        #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 
+        yacctab = 'yacctab' if args.debug else None
+        scope = None
+        if args.include:
+            for u in args.include.split(','):
+                if os.path.exists(u):
+                    p = parser.LessParser(yacc_debug=(args.debug),
+                                          lex_optimize=True,
+                                          yacc_optimize=(not args.debug),
+                                          tabfile=yacctab,
+                                          verbose=args.verbose)
+                    p.parse(filename=u, debuglevel=0)
+                    if not scope:
+                        scope = p.scope
+                    else:
+                        scope.update(p.scope)
                 else:
-                    scope.update(p.scope)
-            else:
-                sys.exit('included file `%s` not found ...' % u)
-    p = None
-    f = formatter.Formatter(args)
-    if not os.path.exists(args.target):
-        sys.exit("Target not found '%s' ..." % args.target)
-    if os.path.isdir(args.target):
-        ldirectory(args.target, args.out, args, scope)     
-        if args.dry_run:
-            print('Dry run, nothing done.')  
-    else:
-        p = parser.LessParser(yacc_debug=(args.debug),
-                              lex_optimize=True,
-                              yacc_optimize=(not args.debug),
-                              scope=copy.deepcopy(scope),
-                              verbose=args.verbose)
-        p.parse(filename=args.target, debuglevel=0)
-        if args.scopemap:
-            args.no_css = True
-            p.scopemap()
-        if not args.no_css and p:
-            out = f.format(p)
-            print(out)
+                    sys.exit('included file `%s` not found ...' % u)
+                sys.stdout.flush()
+        p = None
+        f = formatter.Formatter(args)
+        if not os.path.exists(args.target):
+            sys.exit("Target not found '%s' ..." % args.target)
+        if os.path.isdir(args.target):
+            ldirectory(args.target, args.out, args, scope)     
+            if args.dry_run:
+                print('Dry run, nothing done.')  
+        else:
+            p = parser.LessParser(yacc_debug=(args.debug),
+                                  lex_optimize=True,
+                                  yacc_optimize=(not args.debug),
+                                  scope=copy.deepcopy(scope),
+                                  verbose=args.verbose)
+            p.parse(filename=args.target, debuglevel=0)
+            if args.scopemap:
+                args.no_css = True
+                p.scopemap()
+            if not args.no_css and p:
+                out = f.format(p)
+                print(out)
+    except (KeyboardInterrupt, SystemExit, IOError):
+        sys.exit('\nAborting...')
     
