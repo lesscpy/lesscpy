@@ -7,6 +7,7 @@
     See LICENSE for details.
 .. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
+import re
 from .node import Node
 from lesscpy.lessc import utility
 
@@ -75,6 +76,8 @@ class Property(Node):
                          if hasattr(p, 'fmt') 
                          else str(p)
                          for p in self.parsed])
+        # IE cannot handle no space after url()
+        style = re.sub("(url\(.*\))([^\s,])", "\\1 \\2", style)
         fills.update({
             'property': self.property,
             'style': style.strip(),

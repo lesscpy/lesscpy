@@ -20,3 +20,6 @@
 	image: url(http://), "}", url("http://}");
 	image: url(http://tooks.com);
 }
+.uri_2 {
+	background-image: url('images/image.jpg') top left repeat-x #002e55;
+}
