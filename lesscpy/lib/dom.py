@@ -132,6 +132,7 @@ html5 = [
     'section',
     'source',
     'summary',
+    'svg',
     'time',
     'track',
     'video',
