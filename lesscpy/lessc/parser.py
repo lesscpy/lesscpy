@@ -130,6 +130,7 @@ class LessParser(object):
                                      | block_decl
                                      | mixin_decl
                                      | call_mixin
+                                     | import_statement
         """
         p[0] = p[1]
         
@@ -151,7 +152,7 @@ class LessParser(object):
         p[0].parse(None)
         
     def p_statement_import(self, p):
-        """ statement            : css_import t_ws css_string ';'
+        """ import_statement     : css_import t_ws css_string ';'
                                  | css_import t_ws css_string dom ';'
         """
         if self.importlvl > 8:
@@ -354,6 +355,7 @@ class LessParser(object):
                                        | block_decl
                                        | mixin_decl
                                        | call_mixin
+                                       | import_statement
         """
         p[0] = p[1] if type(p[1]) is list else [p[1]]
         

@@ -1,0 +1,5 @@
+@media print {
+	.mixin {
+		color: red;
+	}
+}
