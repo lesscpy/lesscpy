@@ -74,9 +74,11 @@ class Block(Node):
                 inner = ''.join([p.fmt(fills) for p in self.inner])
                 inner = inner.replace(fills['nl'], 
                                       fills['nl'] + fills['tab']).rstrip(fills['tab'])
+                if not fills['nl']:
+                    inner = inner.strip()
                 fills.update({
                     'identifier': name,
-                    'proplist': fills['tab'] + inner,
+                    'proplist': fills['tab'] + inner
                 })
                 out.append(f % fills)
             else:
