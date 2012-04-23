@@ -37,15 +37,24 @@ class Deferred(Node):
         ident, args = self.tokens
         ident.parse(scope)
         mixins = scope.mixins(ident.raw())
+        
         if not mixins:
             ident.parse(None)
             mixins = scope.mixins(ident.raw())
+            
         if not mixins:
-            if scope.deferred:
+            store = [t for t in scope.deferred.tokens]
+            while scope.deferred.tokens:
                 scope.current = scope.deferred
                 ident.parse(scope)
                 mixins = scope.mixins(ident.raw())
                 scope.current = None
+                if mixins:
+                    scope.deferred.tokens = store
+                    break
+                scope.deferred.tokens.pop()
+                scope.deferred.parse(None)
+                
         if mixins:
             for mixin in mixins:
                 res = mixin.call(scope, args)
