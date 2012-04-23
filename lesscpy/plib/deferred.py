@@ -42,18 +42,18 @@ class Deferred(Node):
             ident.parse(None)
             mixins = scope.mixins(ident.raw())
             
-            
         if not mixins:
-            store = [t for t in scope.deferred.parsed[-1]]
-            while scope.deferred.parsed[-1]:
-                scope.current = scope.deferred
-                ident.parse(scope)
-                mixins = scope.mixins(ident.raw())
-                scope.current = None
-                if mixins:
-                    break
-                scope.deferred.parsed[-1].pop()
-            scope.deferred.parsed[-1] = store
+            if scope.deferred:
+                store = [t for t in scope.deferred.parsed[-1]]
+                while scope.deferred.parsed[-1]:
+                    scope.current = scope.deferred
+                    ident.parse(scope)
+                    mixins = scope.mixins(ident.raw())
+                    scope.current = None
+                    if mixins:
+                        break
+                    scope.deferred.parsed[-1].pop()
+                scope.deferred.parsed[-1] = store
                 
         if mixins:
             for mixin in mixins:
