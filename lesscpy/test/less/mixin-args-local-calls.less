@@ -19,3 +19,35 @@ span {
 	.a .c();	// 2px
 	.a .d();	// 1px
 }
+/*
+	Bootstrap style funkyness
+*/
+@gridColumnWidth: 20;
+@gridGutterWidth: 20;
+@gridColumns: 12;
+
+#grid {
+  .input(@gridColumnWidthx, @gridGutterWidthx) {
+
+    .spanX (@index) when (@index > 0) {
+      (~"input.span@{index}, textarea.span@{index}, .uneditable-input.span@{index}") { .span(@index); }
+      .spanX(@index - 1);
+    }
+    .spanX (0) {}
+
+    .span(@columns) {
+      width: ((@gridColumnWidthx) * @columns) + (@gridGutterWidthx * (@columns - 1)) - 10;
+    }
+
+    input,
+    textarea,
+    .uneditable-input {
+      margin-left: 0; // override margin-left from core grid system
+    }
+
+    // generate .spanX
+    .spanX (@gridColumns);
+
+  }
+}
+#grid > .input (12, 20);

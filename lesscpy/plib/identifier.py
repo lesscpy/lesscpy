@@ -72,7 +72,7 @@ class Identifier(Node):
             parent = parent[-1]
             if parent.parsed:
                 return [self._pscn(part, n) 
-                        if part[0] not in self._subp
+                        if part and part[0] not in self._subp
                         else n
                         for part in parent.parsed
                         for n in names]
