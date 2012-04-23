@@ -19,7 +19,7 @@ from lesscpy.lessc import parser
 from lesscpy.lessc import lexer
 from lesscpy.lessc import formatter
 
-VERSION_STR = 'Lesscpy compiler 0.9a'
+VERSION_STR = 'Lesscpy compiler 0.9c'
 
 def ldirectory(inpath, outpath, args, scope):
     """Compile all *.less files in directory

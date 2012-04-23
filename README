@@ -2,7 +2,7 @@
 * LESSCPY *
 *
 python LessCss Compiler.
-v0.9a
+v0.9c
 
 A compiler written in python 3 for the lesscss language. 
 For those of us not willing/able to have node.js installed in our environment. 
