@@ -2,7 +2,7 @@
 * LESSCPY *
 *
 python LessCss Compiler.
-v0.9d
+v0.9e
 
 A compiler written in python 3 for the lesscss language. 
 For those of us not willing/able to have node.js installed in our environment. 
@@ -40,8 +40,8 @@ or simply place the package into your python path.
 Compiler script Usage
 =====================
  
-usage: lesscpy [-h] [-I INCLUDE] [-v] [-x] [-X] [-t] [-s SPACES] [-o OUT] [-r]
-               [-f] [-m] [-D] [-S] [-V] [-L] [-N]
+usage: lesscpy [-h] [-v] [-I INCLUDE] [-V] [-x] [-X] [-t] [-s SPACES] [-o OUT]
+               [-r] [-f] [-m] [-D] [-g] [-S] [-L] [-N]
                target
 
 LessCss Compiler
@@ -51,9 +51,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
   -I INCLUDE, --include INCLUDE
                         Included less-files (comma separated)
-  -v, --verbose         Verbose mode
+  -V, --verbose         Verbose mode
 
 Formatting options:
   -x, --minify          Minify output
@@ -73,8 +74,8 @@ Directory options:
   -D, --dry-run         Dry run, do not write files
 
 Debugging:
+  -g, --debug           Debugging information
   -S, --scopemap        Scopemap
-  -V, --debug           Debug mode
   -L, --lex-only        Run lexer on target
   -N, --no-css          No css output
 
