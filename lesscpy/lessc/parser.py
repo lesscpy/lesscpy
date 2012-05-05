@@ -13,7 +13,6 @@
 """
 import os
 import sys
-import copy
 import ply.yacc
 from . import lexer
 from . import utility
@@ -197,7 +196,7 @@ class LessParser(object):
         m = p[1].parse(None)
         block = self.scope.blocks(m.raw())
         if block:
-            p[0] = block.copy(self.scope)
+            p[0] = block.copy_inner(self.scope)
         else:
             # fallback to mixin. Allow calls to mixins without parens
             p[0] = Deferred(p[1], None, p.lineno(2))

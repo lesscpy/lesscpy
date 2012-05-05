@@ -84,3 +84,11 @@ class Property(Node):
             'important': imp
         })
         return f % fills
+    
+    def copy(self):
+        """
+        """
+        return Property([t for t in self.tokens], 0)
+        new.property = self.property
+        new.parsed = [u for u in self.parsed]
+        return new

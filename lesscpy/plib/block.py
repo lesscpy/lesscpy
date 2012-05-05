@@ -7,7 +7,7 @@
     See LICENSE for details.
 .. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
 """
-import re, copy
+import re
 from .node import Node
 from lesscpy.lessc import utility
 
@@ -85,7 +85,19 @@ class Block(Node):
                 out.append(''.join([p.fmt(fills) for p in self.inner]))
         return ''.join(out)
     
-    def copy(self, scope):
+    def copy(self):
+        """ Return a full copy of self
+        returns: Block object
+        """
+        name, inner = self.tokens
+        if inner:
+            inner = [u.copy() if u else u
+                     for u in inner]
+        if name:
+            name = name.copy()
+        return Block([name, inner], 0)
+    
+    def copy_inner(self, scope):
         """Copy block contents (properties, inner blocks). 
         Renames inner block from current scope.
         Used for mixins.
@@ -95,7 +107,8 @@ class Block(Node):
             list (block contents)
         """
         if self.tokens[1]:
-            tokens = copy.deepcopy(self.tokens[1])
+            tokens = [u.copy() if u else u
+                      for u in self.tokens[1]]
             out = [p for p in tokens if p]
             utility.rename(out, scope, Block)
             return out

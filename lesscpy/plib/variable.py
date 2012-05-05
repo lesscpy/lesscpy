@@ -25,6 +25,9 @@ class Variable(Node):
             else:
                 self.name = self.name[0]
         scope.add_variable(self)
+        
+    def copy(self):
+        return Variable([t for t in self.tokens])
     
     def fmt(self, fills):
         return ''

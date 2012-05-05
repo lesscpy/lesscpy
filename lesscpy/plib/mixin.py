@@ -141,7 +141,7 @@ class Mixin(Node):
             pass
         else:
             if self.parse_guards(scope):
-                body = copy.deepcopy(self.body)
+                body = self.body.copy()
                 ret = body.tokens[1]
                 if ret: utility.rename(ret, scope, Block)
         return ret

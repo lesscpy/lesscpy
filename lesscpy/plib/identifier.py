@@ -106,6 +106,12 @@ class Identifier(Node):
         """
         if clean: return ''.join(''.join(p) for p in self.parsed).replace('?', ' ')
         return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
+    
+    def copy(self):
+        """
+        """
+        tokens = [t for t in self.tokens] if type(self.tokens) is list else self.tokens
+        return Identifier(tokens, 0)
         
     
     def fmt(self, fills):

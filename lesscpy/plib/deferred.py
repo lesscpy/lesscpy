@@ -69,4 +69,7 @@ class Deferred(Node):
             raise SyntaxError('NameError `%s`' % mixin.raw(True))
         return res
     
+    def copy(self):
+        return self
+    
     
