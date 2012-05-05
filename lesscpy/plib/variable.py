@@ -27,6 +27,10 @@ class Variable(Node):
         scope.add_variable(self)
         
     def copy(self):
+        """ Return a copy of self
+        Returns:
+            Variable object
+        """
         return Variable([t for t in self.tokens])
     
     def fmt(self, fills):

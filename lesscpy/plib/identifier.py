@@ -108,9 +108,13 @@ class Identifier(Node):
         return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
     
     def copy(self):
+        """ Return copy of self
+        Returns:
+            Identifier object
         """
-        """
-        tokens = [t for t in self.tokens] if type(self.tokens) is list else self.tokens
+        tokens = ([t for t in self.tokens] 
+                  if type(self.tokens) is list 
+                  else self.tokens)
         return Identifier(tokens, 0)
         
     

@@ -70,6 +70,10 @@ class Deferred(Node):
         return res
     
     def copy(self):
+        """ Returns self (used when Block objects are copyd)
+        returns:
+            self
+        """
         return self
     
     

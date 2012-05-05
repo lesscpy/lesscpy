@@ -86,7 +86,9 @@ class Property(Node):
         return f % fills
     
     def copy(self):
-        """
+        """ Return a full copy of self
+        Returns:
+            Property object
         """
         return Property([t for t in self.tokens], 0)
         new.property = self.property
