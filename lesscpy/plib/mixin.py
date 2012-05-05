@@ -30,7 +30,7 @@ class Mixin(Node):
         self.name, args, self.guards = self.tokens[0]
         self.args = [a for a in utility.flatten(args) if a]
         self.body = Block([None, self.tokens[1]], 0)
-        self.scope = copy.deepcopy(scope[-1])
+        self.scope = scope
         return self
     
     def raw(self):
@@ -53,7 +53,7 @@ class Mixin(Node):
         arguments = zip(args, [' '] * len(args)) if args and args[0] else None
         if self.args:
             parsed = [v if hasattr(v, 'parse') else v
-                      for v in copy.deepcopy(self.args)]
+                      for v in copy.copy(self.args)]
             args = args if type(args) is list else [args]
             vars = [self._parse_arg(var, arg, scope) 
                     for arg, var in itertools.zip_longest([a for a in args], 
