@@ -366,6 +366,8 @@ class LessParser(object):
         """ variable_decl            : variable ':' style_list ';'
         """
         p[0] = Variable(list(p)[1:-1], p.lineno(4))
+        p[0].parse(self.scope)
+        self.scope.add_variable(p[0])
         
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

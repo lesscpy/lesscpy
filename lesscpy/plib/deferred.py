@@ -60,6 +60,7 @@ class Deferred(Node):
                 res = mixin.call(scope, args)
                 if res: break
             if res:
+                [scope.add_variable(v) for v in mixin.vars]
                 scope.deferred = ident
                 res = [p.parse(scope) for p in res if p]
                 while(any(t for t in res if type(t) is Deferred)):
