@@ -14,7 +14,8 @@ class Deferred(Node):
     def __init__(self, mixin, args, lineno=0):
         """This node represents mixin calls. The calls
         to these mixins are deferred until the second 
-        parse cycle.
+        parse cycle. lessc.js allows calls to mixins not 
+        yet defined or known.
         args:
             mixin (Mixin): Mixin object
             args (list): Call arguments
@@ -28,6 +29,12 @@ class Deferred(Node):
         to global scope. The special scope.deferred
         is used when local scope mixins are called 
         within parent mixins. 
+        If nothing is found we fallback to block-mixin
+        as lessc.js allows calls to blocks and mixins to
+        be inter-changable.
+        clx: This method is a HACK that stems from 
+        poor design elsewhere. I will fix it 
+        when I have more time.
         args:
             scope (Scope): Current scope
         returns:
@@ -65,6 +72,8 @@ class Deferred(Node):
             for mixin in mixins:
                 res = mixin.call(scope, args)
                 if res: 
+                    # Add variables to scope to support
+                    # closures
                     [scope.add_variable(v) for v in mixin.vars]
                     scope.deferred = ident
                     break
@@ -79,7 +88,7 @@ class Deferred(Node):
         return res
     
     def copy(self):
-        """ Returns self (used when Block objects are copyd)
+        """ Returns self (used when Block objects are copy'd)
         returns:
             self
         """

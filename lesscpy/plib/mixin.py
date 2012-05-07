@@ -69,7 +69,13 @@ class Mixin(Node):
         Variable(['@arguments', None, arguments]).parse(scope)
         
     def _parse_arg(self, var, arg, scope):
-        """
+        """ Parse a single argument to mixin.
+        args:
+            var (Variable object): variable
+            arg (mixed): argument
+            scope (Scope object): current scope
+        returns:
+            Variable object or None
         """
         if type(var) is Variable:
             # kwarg
