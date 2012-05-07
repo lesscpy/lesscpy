@@ -19,8 +19,8 @@ class Call(Node):
     All builtin none-color functions are in this node.
     This node attempts calls on built-ins and lets non-builtins
     through.
-    increment(3px) --> 4px
-    unknown(3px) -->  unknown(3px)
+    increment(3px)     --> 4px
+    unknown(3px)       -->  unknown(3px)
     """
     
     def parse(self, scope):
@@ -119,11 +119,12 @@ class Call(Node):
             bool
         """
         arg = utility.destring(string)
-        regex = re.compile(r'^(?:http|ftp)s?://' # http:// or https://
-                           r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-                           r'localhost|' #localhost...
-                           r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-                           r'(?::\d+)?' # optional port
+        regex = re.compile(r'^(?:http|ftp)s?://'                    # http:// or https://
+                           r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
+                           r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'   #domain...
+                           r'localhost|'                            #localhost...
+                           r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # ...or ip
+                           r'(?::\d+)?'                             # optional port
                            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         return regex.match(arg)
     
