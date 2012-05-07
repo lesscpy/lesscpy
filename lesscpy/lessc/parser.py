@@ -84,7 +84,9 @@ class LessParser(object):
         self.post_parse()
         
     def post_parse(self):
-        """
+        """ Post parse cycle. nodejs version allows calls to mixins
+        not yet defined or known to the parser. We defer all calls 
+        to mixins until after first cycle when all names are known.
         """
         if self.result:
             out = []
