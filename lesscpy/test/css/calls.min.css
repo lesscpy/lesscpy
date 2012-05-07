@@ -2,3 +2,4 @@
 #escapes{escaped:-Some::weird(#thing, y);escaped1:-Some::weird(#thing, z);eformat:rgb(32, 128, 64);}
 #format{format:"rgb(32, 128, 64)";format-string:"hello world";format-multiple:"hello earth 2";format-url-encode:'red is %23ff0000';}
 #more{width:1px;height:1px;top:50%;}
+#colors{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#333333', GradientType=1);}

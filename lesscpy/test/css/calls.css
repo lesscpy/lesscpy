@@ -23,3 +23,6 @@
 	height: 1px;
 	top: 50%;
 }
+#colors {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#333333', GradientType=1);
+}

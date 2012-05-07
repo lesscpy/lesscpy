@@ -80,13 +80,13 @@ class Call(Node):
         i = 0
         for n in m:
             v = {
-              '%d' : int,
               '%A' : urlquote,
               '%s' : utility.destring,
             }.get(n, str)(args[i])
             items.append(v)
             i += 1
         format = format.replace('%A', '%s')
+        format = format.replace('%d', '%s')
         return format % tuple(items)
     
     def isnumber(self, string, *args):
