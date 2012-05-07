@@ -106,3 +106,17 @@ div.nest {
 	// Same
 	.outer > .inner;
 }
+//
+// Fallbacks
+//
+.clear {
+	padding: -100px;
+	&:before {
+		display: table;
+    	content: "";
+	}
+}
+.fallback {
+	margin: 2px;
+	.clear();
+}

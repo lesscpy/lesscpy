@@ -54,17 +54,25 @@ class Deferred(Node):
                         break
                     scope.deferred.parsed[-1].pop()
                 scope.deferred.parsed[-1] = store
+    
+        if not mixins:
+            # Fallback to blocks
+            block = scope.blocks(ident.raw())
+            if block:
+                res = block.copy_inner(scope)
                 
         if mixins:
             for mixin in mixins:
                 res = mixin.call(scope, args)
-                if res: break
-            if res:
-                [scope.add_variable(v) for v in mixin.vars]
-                scope.deferred = ident
+                if res: 
+                    [scope.add_variable(v) for v in mixin.vars]
+                    scope.deferred = ident
+                    break
+                
+        if res:
+            res = [p.parse(scope) for p in res if p]
+            while(any(t for t in res if type(t) is Deferred)):
                 res = [p.parse(scope) for p in res if p]
-                while(any(t for t in res if type(t) is Deferred)):
-                    res = [p.parse(scope) for p in res if p]
                 
         if error and not res:
             raise SyntaxError('NameError `%s`' % mixin.raw(True))
