@@ -86,6 +86,7 @@ Supported features
 * Mixins
 * mixins (Nested)
 * mixins (Nested (Calls))
+* mixins (closures)
 * Guard expressions
 * Parametered mixins (class)
 * Parametered mixins (id)
@@ -123,10 +124,8 @@ Differences from lessc.js
 * All colors are auto-formatted to #nnnnnn. eg, #f7e923
 * Does not preserve css comments
 
-Not supported (yet)
+Not supported
 ===================
-* mixins (closures)
-* Pattern-matching
 * JavaScript evaluation
 
 License
