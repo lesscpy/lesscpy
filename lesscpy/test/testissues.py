@@ -40,25 +40,6 @@ def create_test (args):
                 self.fail("%s: result has more lines (%d > %d)" % (cssf, i, pl))
         else:
             self.fail("%s not found..." % cssf)
-        if os.path.exists(minf):
-            p = parser.LessParser()
-            opt = Opt()
-            opt.minify = True
-            p.parse(filename=lessf)
-            f = formatter.Formatter(opt)
-            mout = f.format(p).split('\n')
-            ml = len(mout)
-            i = 0
-            with open(minf) as cssf:
-                for line in cssf.readlines():
-                    if i >= ml:
-                        self.fail("%s: result has less lines (%d < %d)" % (minf, i, ml))
-                    self.assertEqual(line.rstrip(), mout[i], '%s: Line %d' % (minf, i+1))
-                    i += 1
-            if ml > i and i:
-                self.fail("%s: result has more lines (%d > %d)" % (minf, i, ml))
-        else:
-            self.fail("%s not found..." % minf)
     return do_test_expected
 
 LESS = glob.glob( os.path.join('less/issues', '*.less'))
