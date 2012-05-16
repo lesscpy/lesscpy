@@ -18,11 +18,10 @@ setup(
                 'lesscpy/scripts',
                 'lesscpy/test'],
       scripts = ['bin/lesscpy'],
-      package_data={'lesscpy': ['lesscpy/less.ast', 
-                                'lesscpy/test/css/*.css', 
+      package_data={'lesscpy': ['lesscpy/test/css/*.css', 
                                 'lesscpy/test/css/issues/*.css',
                                 'lesscpy/test/less/*.less',
                                 'lesscpy/test/less/issues/*.less',]},
-      license='LICENSE',
+      license=open('LICENSE').read(),
       long_description=open('README').read(),
 )
