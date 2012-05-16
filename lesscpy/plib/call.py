@@ -49,7 +49,11 @@ class Call(Node):
             
             if hasattr(color, name):
                 try:
-                    return getattr(color, name)(*args)
+                    result = getattr(color, name)(*args)
+                    try:
+                        return result + ' '
+                    except TypeError:
+                        return result
                 except ValueError:
                     pass
             self.parsed = name + ''.join([p for p in parsed])
