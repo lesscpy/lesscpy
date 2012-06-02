@@ -11,7 +11,7 @@ from .node import Node
 from lesscpy.lessc import utility
 
 class Deferred(Node):
-    def __init__(self, mixin, args, lineno=0):
+    def __init__(self, mixin, args, lineno=0, caller=None):
         """This node represents mixin calls. The calls
         to these mixins are deferred until the second 
         parse cycle. lessc.js allows calls to mixins not 
@@ -22,6 +22,7 @@ class Deferred(Node):
         """
         self.tokens = [mixin, args]
         self.lineno = lineno
+        self.caller = caller
     
     def parse(self, scope, error=False):
         """ Parse function. We search for mixins
@@ -65,8 +66,14 @@ class Deferred(Node):
         if not mixins:
             # Fallback to blocks
             block = scope.blocks(ident.raw())
+            if not block:
+                ident.parse(None)
+                self.caller.parse(None)
+                block = scope.blocks(ident.raw())
             if block:
+                scope.current = self.caller
                 res = block.copy_inner(scope)
+                scope.current = None
                 
         if mixins:
             for mixin in mixins:
