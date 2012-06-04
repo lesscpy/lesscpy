@@ -286,7 +286,7 @@ class LessParser(object):
         """ call_mixin                : identifier t_popen mixin_args_list t_pclose ';'
         """
         p[1].parse(None)
-        p[0] = Deferred(p[1], p[3], p.lineno(4), self.scope.current)
+        p[0] = Deferred(p[1], p[3], p.lineno(4))
             
     def p_mixin_args_arguments(self, p):
         """ mixin_args_list          : less_arguments

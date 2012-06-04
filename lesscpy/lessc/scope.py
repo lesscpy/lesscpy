@@ -21,6 +21,7 @@ class Scope(list):
         self._mixins = {}
         if init: self.push()
         self.deferred = False
+        self.real = []
         
     def push(self):
         """Push level on scope

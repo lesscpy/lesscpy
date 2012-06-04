@@ -32,12 +32,14 @@ class Block(Node):
             scope.push()
             self.name, inner = self.tokens
             scope.current = self.name
+            scope.real.append(self.name)
             if not self.name.parsed:
                 self.name.parse(scope)
             if not inner: inner = []
             inner = list(utility.flatten([p.parse(scope) for p in inner if p]))
             self.parsed = [p for p in inner if p and type(p) is not Block]
             self.inner = [p for p in inner if p and type(p) is Block]
+            scope.real.pop()
             scope.pop()
         return self
     
