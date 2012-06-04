@@ -31,3 +31,10 @@
 #colors {
 	filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",#fff,#333));
 }
+#gradient(@startColor, @endColor) {
+	background-image: linear-gradient(top, @startColor, @endColor);
+}
+a {
+	#gradient(#fff, #333);
+	#gradient(#a6a6a6, #000);
+}

@@ -30,34 +30,32 @@ class Call(Node):
         args:
             scope (Scope): Current scope
         """
-        if not self.parsed:
-            name = ''.join(self.tokens[0])
-            parsed = self.process(self.tokens[1:], scope)
+        name = ''.join(self.tokens[0])
+        parsed = self.process(self.tokens[1:], scope)
 
-            if name == '%(':
-                name = 'sformat'
-            elif name in ('~', 'e'):
-                name = 'escape'
-            color = Color.Color()
-            args = [t for t in parsed 
-                    if type(t) is not str or t not in '(),']
-            if hasattr(self, name):
+        if name == '%(':
+            name = 'sformat'
+        elif name in ('~', 'e'):
+            name = 'escape'
+        color = Color.Color()
+        args = [t for t in parsed 
+                if type(t) is not str or t not in '(),']
+        if hasattr(self, name):
+            try:
+                return getattr(self, name)(*args)
+            except ValueError:
+                pass
+        
+        if hasattr(color, name):
+            try:
+                result = getattr(color, name)(*args)
                 try:
-                    return getattr(self, name)(*args)
-                except ValueError:
-                    pass
-            
-            if hasattr(color, name):
-                try:
-                    result = getattr(color, name)(*args)
-                    try:
-                        return result + ' '
-                    except TypeError:
-                        return result
-                except ValueError:
-                    pass
-            self.parsed = name + ''.join([p for p in parsed])
-        return self.parsed
+                    return result + ' '
+                except TypeError:
+                    return result
+            except ValueError:
+                pass
+        return name + ''.join([p for p in parsed])
     
     def escape(self, string, *args):
         """Less Escape.

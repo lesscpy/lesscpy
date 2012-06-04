@@ -3,3 +3,4 @@
 #format{format:"rgb(32, 128, 64)";format-string:"hello world";format-multiple:"hello earth 2";format-url-encode:'red is %23ff0000';}
 #more{width:1px;height:1px;top:50%;}
 #colors{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#333333', GradientType=1);}
+a{background-image:linear-gradient(top,#ffffff,#333333);background-image:linear-gradient(top,#a6a6a6,#000000);}

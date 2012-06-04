@@ -26,3 +26,7 @@
 #colors {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#333333', GradientType=1);
 }
+a {
+	background-image: linear-gradient(top,#ffffff,#333333);
+	background-image: linear-gradient(top,#a6a6a6,#000000);
+}
