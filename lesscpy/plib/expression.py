@@ -45,8 +45,6 @@ class Expression(Node):
         out = self.operate(a, b, O)
         if type(out) is bool:
             return out
-        if type(a) is int and type(b) is int:
-            out = int(out)
         return self.with_units(out, ua, ub)
     
     def neg(self, value, scope):
