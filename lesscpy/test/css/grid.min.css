@@ -25,7 +25,7 @@
 .offset11{margin-left:900px;}
 .row{margin-left:-1.7;}
 [class*="span"]{float:left;margin-left:1.7;}
-.span1{width:27.0;}
+.span1{width:27;}
 .span2{width:55.7;}
 .span3{width:84.4;}
 .span4{width:113.1;}
@@ -35,7 +35,7 @@
 .span8{width:227.9;}
 .span9{width:256.6;}
 .span10{width:285.3;}
-.span11{width:314.0;}
+.span11{width:314;}
 .span12,.container{width:342.7;}
 .offset1{margin-left:30.4;}
 .offset2{margin-left:59.1;}
@@ -45,6 +45,6 @@
 .offset6{margin-left:173.9;}
 .offset7{margin-left:202.6;}
 .offset8{margin-left:231.3;}
-.offset9{margin-left:260.0;}
+.offset9{margin-left:260;}
 .offset10{margin-left:288.7;}
 .offset11{margin-left:317.4;}

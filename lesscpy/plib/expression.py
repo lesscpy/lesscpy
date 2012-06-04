@@ -117,6 +117,12 @@ class Expression(Node):
         ret = getattr(vala, operation)(valb)
         if ret is NotImplemented:
             ret = getattr(valb, operation)(vala)
+        if oper in '+-*/':
+            try:
+                if int(ret) == ret:
+                    return int(ret)
+            except ValueError:
+                pass
         return ret
     
     def expression(self):
