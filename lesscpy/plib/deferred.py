@@ -45,9 +45,6 @@ class Deferred(Node):
         ident.parse(scope)
         mixins = scope.mixins(ident.raw())
         
-#        if scope.real:
-#            print(scope.real[-1].raw())
-        
         if not mixins:
             ident.parse(None)
             mixins = scope.mixins(ident.raw())
@@ -78,6 +75,7 @@ class Deferred(Node):
                 
         if mixins:
             for mixin in mixins:
+                scope.current = scope.real[-1] if scope.real else None
                 res = mixin.call(scope, args)
                 if res: 
                     # Add variables to scope to support

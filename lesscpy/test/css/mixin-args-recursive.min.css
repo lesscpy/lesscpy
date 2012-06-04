@@ -10,3 +10,14 @@
 .a .span3{width:60px;}
 .a .span2{width:36px;}
 .a .span1{width:12px;}
+.span3{width:60px;}
+.span2{width:36px;}
+.span1{width:12px;}
+.nested{padding:1px;}
+.nested .span3{width:60px;}
+.nested .span2{width:36px;}
+.nested .span1{width:12px;}
+.nested .deep{padding:1px;}
+.nested .deep .span3{width:60px;}
+.nested .deep .span2{width:36px;}
+.nested .deep .span1{width:12px;}
