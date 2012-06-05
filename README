@@ -2,7 +2,7 @@
 * LESSCPY *
 *
 python LessCss Compiler.
-v0.9e
+v0.9f
 
 A compiler written in python 3 for the lesscss language. 
 For those of us not willing/able to have node.js installed in our environment. 
@@ -87,6 +87,7 @@ Supported features
 * mixins (Nested)
 * mixins (Nested (Calls))
 * mixins (closures)
+* mixins (recursive)
 * Guard expressions
 * Parametered mixins (class)
 * Parametered mixins (id)
