@@ -74,11 +74,11 @@ class Call(Node):
         returns:
             str
         """
-        if not args:
-            raise SyntaxError('Not enough arguments...')
         format = string
         items = []
         m = re.findall('(%[asdA])', format)
+        if m and not args:
+            raise SyntaxError('Not enough arguments...')
         i = 0
         for n in m:
             v = {
