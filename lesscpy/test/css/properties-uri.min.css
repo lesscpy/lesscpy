@@ -3,5 +3,5 @@
     k//+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4U
     kg9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC);background-image:url(data:image/x-png,f9difSSFIIGFIFJD1f982FSDKAA9==);}
 #svg-data-uri{background:transparent url('data:image/svg+xml, <svg version="1.1"><g></g></svg>');}
-.uri_test{background-image:url(images/image.jpg);background-image:url(../some/path);background-image:url(./../some/path);background-image:url(./images/image.jpg);background-image:url(http://some/path/img.jpeg);background-image:url(https://some.server.com:9696/path/img.jpeg);behavior:url(border-radius.htc);background-image:url(fonts.svg#MyGeometricModern);image:url(http://),"}",url("http://}");image:url(http://tooks.com);}
+.uri_test{background-image:url(images/image.jpg);background-image:url(../some/path);background-image:url(./../some/path);background-image:url(./images/image.jpg);background-image:url(http://some/path/img.jpeg);background-image:url(https://some.server.com:9696/path/img.jpeg);behavior:url(border-radius.htc);background-image:url(fonts.svg#MyGeometricModern);image:url(http://),"}",url("http://}");image:url(http://tooks.com);background:url(/static/dashboard/img/search.png) no-repeat 195px 5px;}
 .uri_2{background-image:url('images/image.jpg') top left repeat-x #002e55;}
