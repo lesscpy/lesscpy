@@ -498,6 +498,7 @@ class LessParser(object):
         
     def p_ident_media(self, p):
         """ ident_parts               : css_media t_ws
+                                      | css_media t_ws t_popen word ':' number t_pclose
         """
         p[0] = list(p)[1:]
         
