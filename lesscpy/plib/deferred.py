@@ -85,12 +85,14 @@ class Deferred(Node):
                     break
                 
         if res:
+            store = [t for t in scope.deferred.parsed[-1]] if scope.deferred else False
             res = [p.parse(scope) for p in res if p]
             while(any(t for t in res if type(t) is Deferred)):
                 res = [p.parse(scope) for p in res if p]
+            if store: scope.deferred.parsed[-1] = store
                 
         if error and not res:
-            raise SyntaxError('NameError `%s`' % mixin.raw(True))
+            raise SyntaxError('NameError `%s`' % ident.raw(True))
         return res
     
     def copy(self):
