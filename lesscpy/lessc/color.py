@@ -9,6 +9,7 @@
 """
 import colorsys
 from . import utility
+from lesscpy.lib import colors
 
 class Color():
     def process(self, expression):
@@ -332,6 +333,8 @@ class Color():
                                  for h in rgba]
                                 ])
     def _hextorgb(self, hex):    
+        if hex.lower() in colors.lessColors:
+            hex = colors.lessColors[hex.lower()]
         hex = hex.strip()
         if hex[0] == '#':
             hex = hex.strip('#').strip(';')
