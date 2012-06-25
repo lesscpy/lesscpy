@@ -518,6 +518,11 @@ class LessParser(object):
         """
         p[0] = p[1]
         
+    def p_ident_part_aux(self, p):
+        """ ident_part                : combinator vendor_property
+        """
+        p[0] = [p[1], p[2]]
+        
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  

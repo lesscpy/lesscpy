@@ -211,3 +211,9 @@ section {
 .class_no_3 {
 	padding: -3px;
 }
+.label-important, .badge-important {
+	background-color: #ff0000;
+}
+.label-important[href], .badge-important[href] {
+	background-color: #cc0000;
+}

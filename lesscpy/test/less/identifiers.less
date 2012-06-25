@@ -134,3 +134,12 @@ footer, header, hgroup, menu, nav, section {
 (~".class_no_@{var}") {
 	padding: @var * -1px;
 }
+/*
+
+*/
+.label,
+.badge {
+	// Composite identifiers
+	&-important         { background-color: #F00; }
+	&-important[href]   { background-color: darken(#F00, 10%);}
+}
