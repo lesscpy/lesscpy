@@ -83,7 +83,11 @@ class Expression(Node):
                 if ua == ub:
                     return str(val) + ua
                 else:
-                    raise SyntaxError("Error in expression %s != %s" % (ua, ub))
+                    # Nodejs version does not seem to mind mismatched 
+                    # units within expressions. So we choose the first
+                    # as they do
+                    # raise SyntaxError("Error in expression %s != %s" % (ua, ub))
+                    return str(val) + ua
             elif ua:
                 return str(val) + ua
             elif ub:

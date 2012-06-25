@@ -50,10 +50,6 @@ class TestExpression(unittest.TestCase):
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), test)
         
-    def testinput(self):
-        e = Expression(['1a', '+', '1b'])
-        self.assertRaises(SyntaxError, e.parse, None)
-
 
 if __name__ == '__main__':
     unittest.main()
