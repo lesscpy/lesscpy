@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
       name='lesscpy',
-      version='0.9f',
+      version='0.9g',
       description='Lesscss compiler.',
       author='Jóhann T Maríusson',
       author_email='jtm@robot.is',
