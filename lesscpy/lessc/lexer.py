@@ -60,6 +60,7 @@ class LessLexer:
         '@-moz-keyframes' : 'css_keyframes',
         '@-webkit-keyframes' : 'css_keyframes',
         '@-ms-keyframes' : 'css_keyframes',
+        '@-o-keyframes' : 'css_keyframes',
         
         '@arguments': 'less_arguments',
     }
