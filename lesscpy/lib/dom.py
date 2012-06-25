@@ -126,6 +126,7 @@ html5 = [
     'nav',
     'output',
     'progress',
+   ' progress-bar-stripes',
     'rp',
     'rt',
     'ruby',
