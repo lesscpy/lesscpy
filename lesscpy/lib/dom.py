@@ -101,6 +101,7 @@ html4 = [
     'print',
     'screen',
     'all',
+    'only',
     'projection',
     'from',
     'to'
