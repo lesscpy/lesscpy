@@ -77,7 +77,7 @@ class LessParser(object):
             filename (str): File to parse
             debuglevel (int): Parser debuglevel
         """
-        if self.verbose: print('Compiling target: %s' % filename)
+        if self.verbose: print('Compiling target: %s' % filename, file=sys.stderr)
         self.scope.push()
         self.target = filename
         self.result = self.parser.parse(filename, lexer=self.lex, debug=debuglevel)
@@ -763,9 +763,9 @@ class LessParser(object):
         args:
             t (Lex token): Error token 
         """
-        if t and self.verbose: 
+        if t: 
             print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m" 
-                  % (self.target, t.lineno, t.type, t.value))
+                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -783,7 +783,6 @@ class LessParser(object):
             t(str): Error type
         """
 #        print(e.trace())
-        if self.verbose:
-            color = '\x1b[31m' if t == 'E' else '\x1b[33m'
-            print("%s%s: line: %d: %s\n" % (color, t, line, e), end='\x1b[0m')
+        color = '\x1b[31m' if t == 'E' else '\x1b[33m'
+        print("%s%s: line: %d: %s\n" % (color, t, line, e), end='\x1b[0m', file=sys.stderr)
             

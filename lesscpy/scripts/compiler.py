@@ -35,7 +35,7 @@ def ldirectory(inpath, outpath, args, scope):
     else:
         if not os.path.isdir(outpath):
             if args.verbose:
-                print("Creating '%s'" % outpath)
+                print("Creating '%s'" % outpath, file=sys.stderr)
             if not args.dry_run:
                 os.mkdir(outpath)
     less = glob.glob(os.path.join(inpath, '*.less'))
@@ -61,7 +61,7 @@ def ldirectory(inpath, outpath, args, scope):
             if not args.dry_run:
                 with open(outf, 'w') as outfile:
                     outfile.write(css)
-        elif args.verbose: print('skipping %s, not modified' % lf)
+        elif args.verbose: print('skipping %s, not modified' % lf, file=sys.stderr)
         sys.stdout.flush()
     if args.recurse:
         [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope) 
@@ -151,7 +151,7 @@ def run():
         if os.path.isdir(args.target):
             ldirectory(args.target, args.out, args, scope)     
             if args.dry_run:
-                print('Dry run, nothing done.')  
+                print('Dry run, nothing done.', file=sys.stderr)  
         else:
             p = parser.LessParser(yacc_debug=(args.debug),
                                   lex_optimize=True,
