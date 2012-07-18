@@ -5,7 +5,7 @@
     
     Copyright (c)
     See LICENSE for details.
-.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
+.. moduleauthor:: Johann T. Maríusson <jtm@robot.is>
 """
 __all__ = [
    'Block', 

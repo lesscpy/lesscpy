@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: utf8 -*-
 """
 .. module:: lesscpy.scripts.compiler
@@ -7,7 +8,7 @@
     
     Copyright (c)
     See LICENSE for details
-.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
+.. moduleauthor:: Johann T. Maríusson <jtm@robot.is>
 """
 import os
 import sys
