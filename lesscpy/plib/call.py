@@ -5,7 +5,7 @@
     
     Copyright (c)
     See LICENSE for details.
-.. moduleauthor:: Johann T. Maríusson <jtm@robot.is>
+.. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 import re, math
 from urllib.parse import quote as urlquote, urlparse
