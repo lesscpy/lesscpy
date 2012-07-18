@@ -17,7 +17,7 @@ class Scope(list):
         Args:
             init (bool): Initiate scope
         """
-        super(Scope).__init__()
+        super(Scope, self).__init__()
         self._mixins = {}
         if init: self.push()
         self.deferred = False
