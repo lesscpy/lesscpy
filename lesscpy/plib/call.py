@@ -11,7 +11,7 @@ import re, math
 try:
     from urllib.parse import quote as urlquote, urlparse
 except ImportError:
-    from urllib import quote as urlquote, urlparse
+    from urllib import quote as urlquote
 from .node import Node
 import lesscpy.lessc.utility as utility
 import lesscpy.lessc.color as Color
