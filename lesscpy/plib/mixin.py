@@ -58,7 +58,7 @@ class Mixin(Node):
                       for v in copy.copy(self.args)]
             args = args if type(args) is list else [args]
             vars = [self._parse_arg(var, arg, scope) 
-                    for arg, var in itertools.zip_longest([a for a in args], 
+                    for arg, var in itertools.izip_longest([a for a in args], 
                                                           parsed)]
             for var in vars: 
                 if var: var.parse(scope)
