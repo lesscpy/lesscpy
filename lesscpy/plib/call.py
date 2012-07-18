@@ -5,10 +5,13 @@
     
     Copyright (c)
     See LICENSE for details.
-.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
+.. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 import re, math
-from urllib.parse import quote as urlquote, urlparse
+try:
+    from urllib.parse import quote as urlquote, urlparse
+except ImportError:
+    from urllib import quote as urlquote
 from .node import Node
 import lesscpy.lessc.utility as utility
 import lesscpy.lessc.color as Color

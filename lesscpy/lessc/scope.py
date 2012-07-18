@@ -5,7 +5,7 @@
     
     Copyright (c)
     See LICENSE for details.
-.. moduleauthor:: Jóhann T. Maríusson <jtm@robot.is>
+.. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 from . import utility
 
@@ -17,7 +17,7 @@ class Scope(list):
         Args:
             init (bool): Initiate scope
         """
-        super().__init__()
+        super(Scope, self).__init__()
         self._mixins = {}
         if init: self.push()
         self.deferred = False

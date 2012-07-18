@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 """
@@ -18,6 +19,7 @@ setup(
                 'lesscpy/scripts',
                 'lesscpy/test'],
       scripts = ['bin/lesscpy'],
+      install_requires=["ply"],
       package_data={'lesscpy': ['lesscpy/test/css/*.css', 
                                 'lesscpy/test/css/issues/*.css',
                                 'lesscpy/test/less/*.less',
