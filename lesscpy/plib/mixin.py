@@ -7,7 +7,7 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-import copy, itertools
+import sys, copy, itertools
 from .node import Node
 from .block import Block
 from .expression import Expression
@@ -53,13 +53,13 @@ class Mixin(Node):
             SyntaxError
         """
         arguments = zip(args, [' '] * len(args)) if args and args[0] else None
+        zl = itertools.zip_longest if sys.version_info[0] == 3 else itertools.izip_longest
         if self.args:
             parsed = [v if hasattr(v, 'parse') else v
                       for v in copy.copy(self.args)]
             args = args if type(args) is list else [args]
             vars = [self._parse_arg(var, arg, scope) 
-                    for arg, var in itertools.izip_longest([a for a in args], 
-                                                          parsed)]
+                    for arg, var in zl([a for a in args], parsed)]
             for var in vars: 
                 if var: var.parse(scope)
             if not arguments:

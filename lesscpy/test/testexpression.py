@@ -43,9 +43,15 @@ class TestExpression(unittest.TestCase):
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), str(test))
             
-    def testeq(self):
+    def testop(self):
         for test in [
             ['0', '=', '0', True],
+            ['1', '>', '2', False],
+            ['1', '<', '2', True],
+            ['1', '>=', '2', False],
+            ['1', '<=', '2', True],
+            ['1', '!=', '2', True],
+            ['1', '<>', '2', True],
         ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), test)

@@ -7,6 +7,7 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+import sys
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.lessc import color
@@ -116,7 +117,10 @@ class Expression(Node):
             '!=': '__ne__',
             '<>': '__ne__',
         }.get(oper)
-        ret = getattr(vala, operation)(valb)
+        if sys.version_info[0] < 3:
+            ret = self.py2op(vala, operation, valb)
+        else:
+            ret = getattr(vala, operation)(valb)
         if ret is NotImplemented:
             ret = getattr(valb, operation)(vala)
         if oper in '+-*/':
@@ -125,6 +129,25 @@ class Expression(Node):
                     return int(ret)
             except ValueError:
                 pass
+        return ret
+    
+    def py2op(self, vala, operation, valb):
+        """ Python2 operators
+        """
+        if   operation == '__lt__':
+            ret = (vala < valb)
+        elif operation == '__gt__':
+            ret = (vala > valb)
+        elif operation == '__eq__':
+            ret = (vala == valb)
+        elif operation == '__ge__':
+            ret = (vala >= valb)
+        elif operation == '__le__':
+            ret = (vala <= valb)
+        elif operation == '__ne__':
+            ret = (vala != valb)
+        else:
+            ret = getattr(vala, operation)(valb)
         return ret
     
     def expression(self):
