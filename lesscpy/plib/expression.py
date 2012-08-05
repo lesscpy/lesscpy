@@ -8,6 +8,8 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 import sys
+import operator
+
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.lessc import color
@@ -105,31 +107,20 @@ class Expression(Node):
             mixed
         """
         operation = {
-            '+': '__add__',
-            '-': '__sub__',
-            '*': '__mul__',
-            '/': '__truediv__',
-            '=': '__eq__',
-            '>': '__gt__',
-            '<': '__lt__',
-            '>=': '__ge__',
-            '<=': '__le__',
-            '!=': '__ne__',
-            '<>': '__ne__',
+            '+': operator.add,
+            '-': operator.sub,
+            '*': operator.mul,
+            '/': operator.truediv,
+            '=': operator.eq,
+            '>': operator.gt,
+            '<': operator.lt,
+            '>=': operator.ge,
+            '<=': operator.le,
+            '!=': operator.ne,
+            '<>': operator.ne,
         }.get(oper)
-        if sys.version_info[0] < 3:
-            ret = self.py2op(vala, operation, valb)
-        else:
-            ret = getattr(vala, operation)(valb)
-        if ret is NotImplemented:
-            ret = getattr(valb, operation)(vala)
-        if oper in '+-*/':
-            try:
-                if int(ret) == ret:
-                    return int(ret)
-            except ValueError:
-                pass
-        return ret
+
+        return operation(vala, valb)
     
     def py2op(self, vala, operation, valb):
         """ Python2 operators
