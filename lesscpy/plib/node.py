@@ -2,14 +2,16 @@
 """
 .. module:: lesscpy.plib.node
     :synopsis: Base Node
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 from lesscpy.lessc import utility
 
+
 class Node(object):
+
     def __init__(self, tokens, lineno=0):
         """ Base Node
         args:
@@ -19,7 +21,7 @@ class Node(object):
         self.tokens = tokens
         self.lineno = lineno
         self.parsed = False
-    
+
     def parse(self, scope):
         """ Base parse function
         args:
@@ -28,7 +30,7 @@ class Node(object):
             self
         """
         return self
-    
+
     def process(self, tokens, scope):
         """ Process tokenslist, flattening and parsing it
         args:
@@ -41,17 +43,18 @@ class Node(object):
             tokens = list(utility.flatten(tokens))
             done = True
             if any(t for t in tokens if hasattr(t, 'parse')):
-                tokens = [t.parse(scope) 
-                          if hasattr(t, 'parse') 
+                tokens = [t.parse(scope)
+                          if hasattr(t, 'parse')
                           else t
                           for t in tokens]
                 done = False
             if any(t for t in tokens if utility.is_variable(t)):
                 tokens = self.replace_variables(tokens, scope)
                 done = False
-            if done: break
+            if done:
+                break
         return tokens
-    
+
     def replace_variables(self, tokens, scope):
         """ Replace variables in tokenlist
         args:
@@ -62,7 +65,7 @@ class Node(object):
         """
         return [scope.swap(t)
                 if utility.is_variable(t)
-                else t 
+                else t
                 for t in tokens]
 
     def fmt(self, fills):

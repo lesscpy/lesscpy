@@ -1,26 +1,30 @@
-from __future__ import print_function
 # -*- coding: utf8 -*-
 """
 .. module:: lesscpy.scripts.compiler
     CSS/LESSCSS run script
 
     http://lesscss.org/#docs
-    
+
     Copyright (c)
     See LICENSE for details
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+from __future__ import print_function
+
 import os
 import sys
 import glob
 import copy
 import argparse
+
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from lesscpy.lessc import parser
 from lesscpy.lessc import lexer
 from lesscpy.lessc import formatter
 
 VERSION_STR = 'Lesscpy compiler 0.9h'
+
 
 def ldirectory(inpath, outpath, args, scope):
     """Compile all *.less files in directory
@@ -44,10 +48,10 @@ def ldirectory(inpath, outpath, args, scope):
     for lf in less:
         outf = os.path.splitext(os.path.basename(lf))
         minx = '.min' if args.min_ending else ''
-        outf = "%s/%s%s.css" % (outpath, outf[0], minx) 
+        outf = "%s/%s%s.css" % (outpath, outf[0], minx)
         if not args.force and os.path.exists(outf):
             recompile = os.path.getmtime(outf) < os.path.getmtime(lf)
-        else: 
+        else:
             recompile = True
         if recompile:
             print('%s -> %s' % (lf, outf))
@@ -62,71 +66,78 @@ def ldirectory(inpath, outpath, args, scope):
             if not args.dry_run:
                 with open(outf, 'w') as outfile:
                     outfile.write(css)
-        elif args.verbose: print('skipping %s, not modified' % lf, file=sys.stderr)
+        elif args.verbose:
+            print('skipping %s, not modified' % lf, file=sys.stderr)
         sys.stdout.flush()
     if args.recurse:
-        [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope) 
-         for name in os.listdir(inpath) 
+        [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope)
+         for name in os.listdir(inpath)
          if os.path.isdir(os.path.join(inpath, name))
          and not name.startswith('.')
          and not name == outpath]
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 
+#
+
+
 def run():
     """Run compiler
     """
-    aparse = argparse.ArgumentParser(description='LessCss Compiler', 
-                                     epilog='<< jtm@robot.is @_o >>', 
+    aparse = argparse.ArgumentParser(description='LessCss Compiler',
+                                     epilog='<< jtm@robot.is @_o >>',
                                      version=VERSION_STR)
     aparse.add_argument('-I', '--include', action="store", type=str,
                         help="Included less-files (comma separated)")
-    aparse.add_argument('-V', '--verbose', action="store_true", 
+    aparse.add_argument('-V', '--verbose', action="store_true",
                         default=False, help="Verbose mode")
     fgroup = aparse.add_argument_group('Formatting options')
-    fgroup.add_argument('-x', '--minify', action="store_true", 
+    fgroup.add_argument('-x', '--minify', action="store_true",
                         default=False, help="Minify output")
-    fgroup.add_argument('-X', '--xminify', action="store_true", 
+    fgroup.add_argument('-X', '--xminify', action="store_true",
                         default=False, help="Minify output, no end of block newlines")
     fgroup.add_argument('-t', '--tabs', help="Use tabs", action="store_true")
-    fgroup.add_argument('-s', '--spaces', help="Number of startline spaces (default 2)", default=2)
-    dgroup = aparse.add_argument_group('Directory options', 
+    fgroup.add_argument(
+        '-s', '--spaces', help="Number of startline spaces (default 2)", default=2)
+    dgroup = aparse.add_argument_group('Directory options',
                                        'Compiles all *.less files in directory that '
                                        'have a newer timestamp than it\'s css file.')
     dgroup.add_argument('-o', '--out', action="store", help="Output directory")
-    dgroup.add_argument('-r', '--recurse', action="store_true", help="Recursive into subdirectorys")
-    dgroup.add_argument('-f', '--force', action="store_true", help="Force recompile on all files")
-    dgroup.add_argument('-m', '--min-ending', action="store_true", 
+    dgroup.add_argument(
+        '-r', '--recurse', action="store_true", help="Recursive into subdirectorys")
+    dgroup.add_argument(
+        '-f', '--force', action="store_true", help="Force recompile on all files")
+    dgroup.add_argument('-m', '--min-ending', action="store_true",
                         default=False, help="Add '.min' into output filename. eg, name.min.css")
-    dgroup.add_argument('-D', '--dry-run', action="store_true", 
+    dgroup.add_argument('-D', '--dry-run', action="store_true",
                         default=False, help="Dry run, do not write files")
     group = aparse.add_argument_group('Debugging')
-    group.add_argument('-g', '--debug', action="store_true", 
-                        default=False, help="Debugging information")
-    group.add_argument('-S', '--scopemap', action="store_true", 
-                        default=False, help="Scopemap")
-    group.add_argument('-L', '--lex-only', action="store_true", 
-                        default=False, help="Run lexer on target")
-    group.add_argument('-N', '--no-css', action="store_true", 
-                        default=False, help="No css output")
+    group.add_argument('-g', '--debug', action="store_true",
+                       default=False, help="Debugging information")
+    group.add_argument('-S', '--scopemap', action="store_true",
+                       default=False, help="Scopemap")
+    group.add_argument('-L', '--lex-only', action="store_true",
+                       default=False, help="Run lexer on target")
+    group.add_argument('-N', '--no-css', action="store_true",
+                       default=False, help="No css output")
     aparse.add_argument('target', help="less file or directory")
     args = aparse.parse_args()
     try:
         #
         #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # 
+        #
         if args.lex_only:
             lex = lexer.LessLexer()
             ll = lex.file(args.target)
             while True:
                 tok = ll.token()
-                if not tok: break
+                if not tok:
+                    break
                 print(tok)
             print('EOF')
             sys.exit()
         #
         #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # 
+        #
         yacctab = 'yacctab' if args.debug else None
         scope = None
         if args.include:
@@ -150,9 +161,9 @@ def run():
         if not os.path.exists(args.target):
             sys.exit("Target not found '%s' ..." % args.target)
         if os.path.isdir(args.target):
-            ldirectory(args.target, args.out, args, scope)     
+            ldirectory(args.target, args.out, args, scope)
             if args.dry_run:
-                print('Dry run, nothing done.', file=sys.stderr)  
+                print('Dry run, nothing done.', file=sys.stderr)
         else:
             p = parser.LessParser(yacc_debug=(args.debug),
                                   lex_optimize=True,
@@ -168,4 +179,3 @@ def run():
                 print(out)
     except (KeyboardInterrupt, SystemExit, IOError):
         sys.exit('\nAborting...')
-    

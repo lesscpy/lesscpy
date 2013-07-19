@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.plib.string
     :synopsis: Less interpolated string node.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -11,7 +11,9 @@ import re
 from .node import Node
 from lesscpy.lessc import utility
 
+
 class String(Node):
+
     def parse(self, scope):
         """Parse node
         args:
@@ -23,7 +25,7 @@ class String(Node):
         """
         self.scope = scope
         return re.sub(r'@\{([^\}]+)\}', lambda m: self.swap(m.group(1)), self.tokens)
-    
+
     def swap(self, var):
         """ Replace variable
         args:
@@ -36,4 +38,3 @@ class String(Node):
         var = self.scope.swap('@' + var)
         var = ''.join(utility.flatten(var))
         return var.strip("\"'")
-    

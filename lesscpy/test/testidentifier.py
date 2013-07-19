@@ -4,7 +4,9 @@ if __name__ == '__main__':
 from lesscpy.lessc.scope import Scope
 from lesscpy.plib.identifier import Identifier
 
-class TestIdentifier(unittest.TestCase):    
+
+class TestIdentifier(unittest.TestCase):
+
     def test_basic(self):
         fl = {'ws': ' '}
         for i in [
@@ -19,7 +21,7 @@ class TestIdentifier(unittest.TestCase):
             t, r = i
             id = Identifier(t, 0)
             self.assertEqual(id.parse(None).fmt(fl), r, i)
-            
+
     def test_scope(self):
         fl = {'ws': ' '}
         sc = Scope()
@@ -36,7 +38,7 @@ class TestIdentifier(unittest.TestCase):
             t, r = i
             id = Identifier(t, 0)
             self.assertEqual(id.parse(sc).fmt(fl), r, i)
-            
+
     def test_combinators(self):
         fl = {'ws': ' '}
         sc = Scope()
@@ -46,8 +48,9 @@ class TestIdentifier(unittest.TestCase):
             (['&', '.scope', ' ', 'a'], '.current.scope a'),
             (['.scope', '&', ' ', 'a'], '.scope.current a'),
             (['.scope', ' ', 'a', '&'], '.scope a.current'),
-            (['&', '>' ,'.scope', ' ', 'a'], '.current > .scope a'),
-            (['.span', '&', '.scope', ' ', 'a', '&'], '.span.current.scope a.current'),
+            (['&', '>', '.scope', ' ', 'a'], '.current > .scope a'),
+            (['.span', '&', '.scope', ' ', 'a', '&'],
+             '.span.current.scope a.current'),
         ]:
             t, r = i
             id = Identifier(t, 0)
@@ -56,17 +59,17 @@ class TestIdentifier(unittest.TestCase):
         sc.current = Identifier(['&', '.next'], 0).parse(sc)
         id = Identifier(['&', '.top'], 0)
         self.assertEqual(id.parse(sc).fmt(fl), '.current.next.top')
-            
+
     def test_groups(self):
         fl = {'ws': ' '}
         sc = Scope()
         sc.push()
-        sc.current = Identifier(['.a', ',',  '.b'], 0).parse(sc)
+        sc.current = Identifier(['.a', ',', '.b'], 0).parse(sc)
         for i in [
             (['&', '.scope', ' ', 'a'], '.a.scope a, .b.scope a'),
             (['.scope', '&', ' ', 'a'], '.scope.a a, .scope.b a'),
             (['.scope', ' ', 'a', '&'], '.scope a.a, .scope a.b'),
-            (['>' ,'&', '.scope', ' ', 'a'], ' > .a.scope a, > .b.scope a'),
+            (['>', '&', '.scope', ' ', 'a'], ' > .a.scope a, > .b.scope a'),
         ]:
             t, r = i
             id = Identifier(t, 0)
@@ -76,18 +79,19 @@ class TestIdentifier(unittest.TestCase):
         sc.current = Identifier(['.c', ',', '.d'], 0).parse(sc)
         id = Identifier(['.deep'], 0)
         self.assertEqual(id.parse(sc).fmt(fl), '.a .next .c .deep, '
-                                                  '.a .next .d .deep, '
-                                                  '.b .next .c .deep, '
-                                                  '.b .next .d .deep')
+                         '.a .next .d .deep, '
+                         '.b .next .c .deep, '
+                         '.b .next .d .deep')
         self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%.a%'
                                    ' %.next% %.d% %.deep%.b% %.next%'
                                    ' %.c% %.deep%.b% %.next% %.d% %.deep')
-    
+
     def test_media(self):
         fl = {'ws': ' '}
         sc = Scope()
         sc.push()
-        sc.current = Identifier(['@media', ' ', 'screen', ',',  'projection'], 0).parse(sc) 
+        sc.current = Identifier(
+            ['@media', ' ', 'screen', ',', 'projection'], 0).parse(sc)
         self.assertEqual(sc.current.fmt(fl), '@media screen,projection')
         for i in [
             (['html'], 'html'),
@@ -95,7 +99,6 @@ class TestIdentifier(unittest.TestCase):
             t, r = i
             id = Identifier(t, 0)
             self.assertEqual(id.parse(sc).fmt(fl), r, i)
-            
+
 if __name__ == '__main__':
     unittest.main()
-    
