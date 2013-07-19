@@ -7,6 +7,9 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+from __future__ import print_function
+
 import collections
 import re
 

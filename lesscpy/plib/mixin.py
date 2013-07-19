@@ -56,7 +56,7 @@ class Mixin(Node):
         raises:
             SyntaxError
         """
-        arguments = zip(args, [' '] * len(args)) if args and args[0] else None
+        arguments = list(zip(args, [' '] * len(args))) if args and args[0] else None
         zl = itertools.zip_longest if sys.version_info[
             0] == 3 else itertools.izip_longest
         if self.args:

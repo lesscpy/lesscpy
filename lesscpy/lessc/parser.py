@@ -1,4 +1,3 @@
-from __future__ import print_function
 # -*- coding: utf8 -*-
 """
 .. module:: lesscpy.lessc.parser
@@ -12,9 +11,13 @@ from __future__ import print_function
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+from __future__ import print_function
+
 import os
 import sys
 import ply.yacc
+
 from . import lexer
 from . import utility
 from .scope import Scope

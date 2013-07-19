@@ -84,7 +84,7 @@ class LessLexer:
     def __init__(self):
         self.build(reflags=re.UNICODE | re.IGNORECASE)
         self.last = None
-        self.next = None
+        self.next_ = None
         self.pretok = True
 
     def t_css_filter(self, t):
@@ -256,9 +256,9 @@ class LessLexer:
             2.  Strips out whitespace from nonsignificant locations
                 to ease parsing.
         """
-        if self.next:
-            t = self.next
-            self.next = None
+        if self.next_:
+            t = self.next_
+            self.next_ = None
             return t
         while True:
             t = self.lexer.token()
@@ -270,7 +270,7 @@ class LessLexer:
                 continue
             self.pretok = False
             if t.type == '}' and self.last and self.last.type not in '{;}':
-                self.next = t
+                self.next_ = t
                 tok = lex.LexToken()
                 tok.type = ';'
                 tok.value = ';'

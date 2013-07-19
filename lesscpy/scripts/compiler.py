@@ -1,4 +1,3 @@
-from __future__ import print_function
 # -*- coding: utf8 -*-
 """
 .. module:: lesscpy.scripts.compiler
@@ -10,11 +9,15 @@ from __future__ import print_function
     See LICENSE for details
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+from __future__ import print_function
+
 import os
 import sys
 import glob
 import copy
 import argparse
+
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from lesscpy.lessc import parser
 from lesscpy.lessc import lexer

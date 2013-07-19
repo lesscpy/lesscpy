@@ -62,7 +62,7 @@ class Color():
             return self.rgba(*args)
         elif len(args) == 3:
             try:
-                return self._rgbatohex(map(int, args))
+                return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
                         if a[-1] == '%'
@@ -80,7 +80,7 @@ class Color():
         """
         if len(args) == 4:
             try:
-                return self._rgbatohex(map(int, args))
+                return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
                         if a[-1] == '%'
