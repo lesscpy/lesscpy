@@ -6,3 +6,4 @@ parser.out
 build
 dist
 *.pyc
+MANIFEST

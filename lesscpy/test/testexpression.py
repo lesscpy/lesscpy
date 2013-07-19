@@ -3,7 +3,9 @@ if __name__ == '__main__':
     import bootstrap
 from lesscpy.plib.expression import Expression
 
-class TestExpression(unittest.TestCase):        
+
+class TestExpression(unittest.TestCase):
+
     def test_basic(self):
         for test in [
             ['0', '+', '0', '0'],
@@ -18,10 +20,10 @@ class TestExpression(unittest.TestCase):
             ['2.0px', '+', '2', '4px'],
             [('2px', ' '), '+', '2.0', '4px'],
             ['2.0px', '+', '2.0', '4px'],
-                        ]:
+        ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), str(test))
-            
+
     def test_neg(self):
         for test in [
             ['-0', '+', '0', '0'],
@@ -42,7 +44,7 @@ class TestExpression(unittest.TestCase):
         ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), str(test))
-            
+
     def testop(self):
         for test in [
             ['0', '=', '0', True],
@@ -55,7 +57,7 @@ class TestExpression(unittest.TestCase):
         ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), test)
-        
+
 
 if __name__ == '__main__':
     unittest.main()

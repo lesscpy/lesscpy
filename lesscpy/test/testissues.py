@@ -9,16 +9,20 @@ import bootstrap
 from lesscpy.lessc import parser
 from lesscpy.lessc import formatter
 
+
 class TestCase(unittest.TestCase):
     pass
 
+
 class Opt(object):
+
     def __init__(self):
         self.minify = False
         self.xminify = False
         self.tabs = True
 
-def create_test (args):
+
+def create_test(args):
     def do_test_expected(self):
         lessf, cssf, minf = args
         if os.path.exists(cssf):
@@ -31,18 +35,22 @@ def create_test (args):
             with open(cssf) as cssf:
                 for line in cssf.readlines():
                     if i >= pl:
-                        self.fail("%s: result has less lines (%d < %d)" % (cssf, i, pl))
+                        self.fail(
+                            "%s: result has less lines (%d < %d)" % (cssf, i, pl))
                     line = line.rstrip()
-                    if not line: continue
-                    self.assertEqual(line, pout[i], '%s: Line %d' % (cssf, i+1))
+                    if not line:
+                        continue
+                    self.assertEqual(
+                        line, pout[i], '%s: Line %d' % (cssf, i + 1))
                     i += 1
             if pl > i and i:
-                self.fail("%s: result has more lines (%d > %d)" % (cssf, i, pl))
+                self.fail(
+                    "%s: result has more lines (%d > %d)" % (cssf, i, pl))
         else:
             self.fail("%s not found..." % cssf)
     return do_test_expected
 
-LESS = glob.glob( os.path.join('less/issues', '*.less'))
+LESS = glob.glob(os.path.join('less/issues', '*.less'))
 for less in LESS:
     lessf = less.split('.')[0].split('/')[-1]
     css = 'css/issues/' + lessf + '.css'
@@ -51,5 +59,5 @@ for less in LESS:
     test_method.__name__ = 'test_%s' % less.replace('./-', '_')
     setattr(TestCase, test_method.__name__, test_method)
 
-if __name__=="__main__":
+if __name__ == "__main__":
     unittest.main()

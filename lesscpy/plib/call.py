@@ -2,12 +2,13 @@
 """
 .. module:: lesscpy.plib.call
     :synopsis: Call parse node
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-import re, math
+import re
+import math
 try:
     from urllib.parse import quote as urlquote, urlparse
 except ImportError:
@@ -17,7 +18,9 @@ import lesscpy.lessc.utility as utility
 import lesscpy.lessc.color as Color
 from lesscpy.lib.colors import lessColors
 
+
 class Call(Node):
+
     """Call node. Node represents a function call.
     All builtin none-color functions are in this node.
     This node attempts calls on built-ins and lets non-builtins
@@ -25,7 +28,7 @@ class Call(Node):
     increment(3px)     --> 4px
     unknown(3px)       -->  unknown(3px)
     """
-    
+
     def parse(self, scope):
         """Parse Node within scope.
         the functions ~( and e( map to self.escape
@@ -41,14 +44,14 @@ class Call(Node):
         elif name in ('~', 'e'):
             name = 'escape'
         color = Color.Color()
-        args = [t for t in parsed 
-                if type(t) is not str or t not in '(),']
+        args = [t for t in parsed
+                if not isinstance(t, str) or t not in '(),']
         if hasattr(self, name):
             try:
                 return getattr(self, name)(*args)
             except ValueError:
                 pass
-        
+
         if hasattr(color, name):
             try:
                 result = getattr(color, name)(*args)
@@ -59,7 +62,7 @@ class Call(Node):
             except ValueError:
                 pass
         return name + ''.join([p for p in parsed])
-    
+
     def escape(self, string, *args):
         """Less Escape.
         args:
@@ -68,7 +71,7 @@ class Call(Node):
             str
         """
         return utility.destring(string.strip('~'))
-    
+
     def sformat(self, string, *args):
         """ String format.
         args:
@@ -85,15 +88,15 @@ class Call(Node):
         i = 0
         for n in m:
             v = {
-              '%A' : urlquote,
-              '%s' : utility.destring,
+                '%A': urlquote,
+                '%s': utility.destring,
             }.get(n, str)(args[i])
             items.append(v)
             i += 1
         format = format.replace('%A', '%s')
         format = format.replace('%d', '%s')
         return format % tuple(items)
-    
+
     def isnumber(self, string, *args):
         """Is number
         args:
@@ -106,7 +109,7 @@ class Call(Node):
         except SyntaxError as e:
             return False
         return True
-    
+
     def iscolor(self, string, *args):
         """Is color
         args:
@@ -115,7 +118,7 @@ class Call(Node):
             bool
         """
         return (string in lessColors)
-    
+
     def isurl(self, string, *args):
         """Is url
         args:
@@ -126,13 +129,15 @@ class Call(Node):
         arg = utility.destring(string)
         regex = re.compile(r'^(?:http|ftp)s?://'                    # http:// or https://
                            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
-                           r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'   #domain...
-                           r'localhost|'                            #localhost...
+                           r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+                           # localhost...
+                           r'localhost|'
                            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # ...or ip
-                           r'(?::\d+)?'                             # optional port
+                           # optional port
+                           r'(?::\d+)?'
                            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         return regex.match(arg)
-    
+
     def isstring(self, string, *args):
         """Is string
         args:
@@ -142,7 +147,7 @@ class Call(Node):
         """
         regex = re.compile(r'\'[^\']*\'|"[^"]*"')
         return regex.match(string)
-    
+
     def iskeyword(self, string, *args):
         """Is less keyword
         args:
@@ -151,7 +156,7 @@ class Call(Node):
             bool
         """
         return (string in ('when', 'and', 'not'))
-    
+
     def increment(self, value, *args):
         """ Increment function
         args:
@@ -160,8 +165,8 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(n+1, u)
-    
+        return utility.with_unit(n + 1, u)
+
     def decrement(self, value, *args):
         """ Decrement function
         args:
@@ -170,8 +175,8 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(n-1, u)
-    
+        return utility.with_unit(n - 1, u)
+
     def add(self, *args):
         """ Add integers
         args:
@@ -179,9 +184,10 @@ class Call(Node):
         returns:
             str
         """
-        if(len(args) <= 1): return 0
+        if(len(args) <= 1):
+            return 0
         return sum([int(v) for v in args])
-    
+
     def round(self, value, *args):
         """ Round number
         args:
@@ -191,7 +197,7 @@ class Call(Node):
         """
         n, u = utility.analyze_number(value)
         return utility.with_unit(round(float(n)), u)
-    
+
     def ceil(self, value, *args):
         """ Ceil number
         args:
@@ -201,7 +207,7 @@ class Call(Node):
         """
         n, u = utility.analyze_number(value)
         return utility.with_unit(math.ceil(n), u)
-    
+
     def floor(self, value, *args):
         """ Floor number
         args:
@@ -211,7 +217,7 @@ class Call(Node):
         """
         n, u = utility.analyze_number(value)
         return utility.with_unit(math.floor(n), u)
-    
+
     def percentage(self, value, *args):
         """ Return percentage value
         args:

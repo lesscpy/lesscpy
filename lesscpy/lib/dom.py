@@ -1,6 +1,6 @@
 """
     HTML DOM names
-    
+
     Copyright (c)
     See LICENSE for details.
     <jtm@robot.is>
@@ -58,7 +58,7 @@ html4 = [
     'label',
     'legend',
     'li',
-#    'link',
+    #    'link',
     'map',
     'mark',
     'menu',
@@ -97,7 +97,7 @@ html4 = [
     'u',
     'ul',
     'var',
-    
+
     'print',
     'screen',
     'all',
@@ -127,7 +127,7 @@ html5 = [
     'nav',
     'output',
     'progress',
-   ' progress-bar-stripes',
+    ' progress-bar-stripes',
     'rp',
     'rt',
     'ruby',

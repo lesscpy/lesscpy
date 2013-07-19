@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.plib.expression
     :synopsis: Expression node.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -12,11 +12,13 @@ from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.lessc import color
 
+
 class Expression(Node):
+
     """Expression node. Parses all expression except
     color expressions, (handled in the color class)
     """
-    
+
     def parse(self, scope):
         """ Parse Node
         args:
@@ -29,9 +31,9 @@ class Expression(Node):
         assert(len(self.tokens) == 3)
         expr = self.process(self.tokens, scope)
         expr = [self.neg(t, scope) for t in expr]
-        A, O, B = [e[0] 
-                   if type(e) is tuple 
-                   else e 
+        A, O, B = [e[0]
+                   if isinstance(e, tuple)
+                   else e
                    for e in expr
                    if str(e).strip()]
         try:
@@ -44,10 +46,10 @@ class Expression(Node):
         if ua == 'color' or ub == 'color':
             return color.Color().process((A, O, B))
         out = self.operate(a, b, O)
-        if type(out) is bool:
+        if isinstance(out, bool):
             return out
         return self.with_units(out, ua, ub)
-    
+
     def neg(self, value, scope):
         """Apply negativity.
         args:
@@ -58,17 +60,17 @@ class Expression(Node):
         returns:
             str
         """
-        if value and type(value) is list and value[0] == '-':
+        if value and isinstance(value, list) and value[0] == '-':
             val = value[1]
             if len(value) > 1 and hasattr(value[1], 'parse'):
                 val = value[1].parse(scope)
-            if type(val) is str:
+            if isinstance(val, str):
                 return '-' + val
             return -val
         return value
-    
+
     def with_units(self, val, ua, ub):
-        """Return value with unit. 
+        """Return value with unit.
         args:
             val (mixed): result
             ua (str): 1st unit
@@ -78,13 +80,14 @@ class Expression(Node):
         returns:
             str
         """
-        if not val: return str(val)
+        if not val:
+            return str(val)
         if ua or ub:
             if ua and ub:
                 if ua == ub:
                     return str(val) + ua
                 else:
-                    # Nodejs version does not seem to mind mismatched 
+                    # Nodejs version does not seem to mind mismatched
                     # units within expressions. So we choose the first
                     # as they do
                     # raise SyntaxError("Error in expression %s != %s" % (ua, ub))
@@ -94,7 +97,7 @@ class Expression(Node):
             elif ub:
                 return str(val) + ub
         return str(val)
-    
+
     def operate(self, vala, valb, oper):
         """Perform operation
         args:
@@ -130,11 +133,11 @@ class Expression(Node):
             except ValueError:
                 pass
         return ret
-    
+
     def py2op(self, vala, operation, valb):
         """ Python2 operators
         """
-        if   operation == '__lt__':
+        if operation == '__lt__':
             ret = (vala < valb)
         elif operation == '__gt__':
             ret = (vala > valb)
@@ -149,7 +152,7 @@ class Expression(Node):
         else:
             ret = getattr(vala, operation)(valb)
         return ret
-    
+
     def expression(self):
         """Return str representation of expression
         returns:

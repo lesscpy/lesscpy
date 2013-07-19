@@ -3,7 +3,9 @@ if __name__ == '__main__':
     import bootstrap
 import lesscpy.lessc.utility as utility
 
-class TestUtility(unittest.TestCase):  
+
+class TestUtility(unittest.TestCase):
+
     def testanalyze(self):
         test = utility.analyze_number
         self.assertEqual((0, ''), test('0'))
@@ -23,7 +25,7 @@ class TestUtility(unittest.TestCase):
         self.assertRaises(SyntaxError, test, 'gg')
         self.assertRaises(SyntaxError, test, '-o')
         self.assertRaises(SyntaxError, test, '')
-        
+
     def testsplit_unit(self):
         test = utility.split_unit
         self.assertEqual(('', ''), test(None))
@@ -33,7 +35,7 @@ class TestUtility(unittest.TestCase):
         self.assertEqual(('1', ''), test('1'))
         self.assertEqual(('1', 'px'), test('1px'))
         self.assertEqual(('-1', 'px'), test('-1px'))
-    
+
     def testis_int(self):
         test = utility.is_int
         self.assertTrue(test(1))
@@ -43,7 +45,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test(False))
         self.assertFalse(test(None))
         self.assertFalse(test(0.0))
-        
+
     def testis_float(self):
         test = utility.is_float
         self.assertFalse(test(1))
@@ -54,7 +56,7 @@ class TestUtility(unittest.TestCase):
         self.assertTrue(test(-0.0))
         self.assertTrue(test('77.0565'))
         self.assertTrue(test('-0.0'))
-        
+
     def testis_color(self):
         test = utility.is_color
         self.assertTrue(test('#123'))
@@ -69,7 +71,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test('.925'))
         self.assertFalse(test(False))
         self.assertFalse(test([]))
-        
+
     def testis_variable(self):
         test = utility.is_variable
         self.assertTrue(test('@var'))
@@ -78,7 +80,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test(''))
         self.assertFalse(test(False))
         self.assertFalse(test([]))
-        
+
     def testwith_unit(self):
         test = utility.with_unit
         self.assertEqual('1px', test((1, 'px')))
@@ -89,8 +91,7 @@ class TestUtility(unittest.TestCase):
         self.assertEqual('1', test(1))
         self.assertEqual('1', test(1, None))
         self.assertEqual('1', test(1,))
-        
-    
-    
+
+
 if __name__ == '__main__':
     unittest.main()

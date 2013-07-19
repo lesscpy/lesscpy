@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.plib.block
     :synopsis: Block parse node.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -11,7 +11,9 @@ import re
 from .node import Node
 from lesscpy.lessc import utility
 
+
 class Block(Node):
+
     """ Block node. Represents one parse-block.
     Can contain property nodes or other block nodes.
     identifier {
@@ -19,6 +21,7 @@ class Block(Node):
         inner blocks
     }
     """
+
     def parse(self, scope):
         """Parse block node.
         args:
@@ -35,14 +38,15 @@ class Block(Node):
             scope.real.append(self.name)
             if not self.name.parsed:
                 self.name.parse(scope)
-            if not inner: inner = []
+            if not inner:
+                inner = []
             inner = list(utility.flatten([p.parse(scope) for p in inner if p]))
-            self.parsed = [p for p in inner if p and type(p) is not Block]
-            self.inner = [p for p in inner if p and type(p) is Block]
+            self.parsed = [p for p in inner if p and not isinstance(p, Block)]
+            self.inner = [p for p in inner if p and isinstance(p, Block)]
             scope.real.pop()
             scope.pop()
         return self
-    
+
     def raw(self, clean=False):
         """Raw block name
         args:
@@ -54,7 +58,7 @@ class Block(Node):
             return self.tokens[0].raw(clean)
         except (AttributeError, TypeError):
             pass
-    
+
     def fmt(self, fills):
         """Format block (CSS)
         args:
@@ -72,9 +76,9 @@ class Block(Node):
             })
             out.append(f % fills)
         if hasattr(self, 'inner'):
-            if self.name.subparse: # @media
+            if self.name.subparse:  # @media
                 inner = ''.join([p.fmt(fills) for p in self.inner])
-                inner = inner.replace(fills['nl'], 
+                inner = inner.replace(fills['nl'],
                                       fills['nl'] + fills['tab']).rstrip(fills['tab'])
                 if not fills['nl']:
                     inner = inner.strip()
@@ -86,7 +90,7 @@ class Block(Node):
             else:
                 out.append(''.join([p.fmt(fills) for p in self.inner]))
         return ''.join(out)
-    
+
     def copy(self):
         """ Return a full copy of self
         returns: Block object
@@ -98,12 +102,12 @@ class Block(Node):
         if name:
             name = name.copy()
         return Block([name, inner], 0)
-    
+
     def copy_inner(self, scope):
-        """Copy block contents (properties, inner blocks). 
+        """Copy block contents (properties, inner blocks).
         Renames inner block from current scope.
         Used for mixins.
-        args: 
+        args:
             scope (Scope): Current scope
         returns:
             list (block contents)
