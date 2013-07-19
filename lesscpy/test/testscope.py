@@ -4,7 +4,8 @@ if __name__ == '__main__':
 from lesscpy.lessc.scope import Scope
 from lesscpy.plib.identifier import Identifier
 
-class TestIdentifier(unittest.TestCase):   
+
+class TestIdentifier(unittest.TestCase):
     pass
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.plib.statement
     :synopsis: Statement node.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -10,10 +10,12 @@
 from .node import Node
 from lesscpy.lessc import utility
 
+
 class Statement(Node):
+
     """Represents CSS statement (@import, @charset...)
     """
-    
+
     def parse(self, scope):
         """Parse node
         args:
@@ -29,7 +31,7 @@ class Statement(Node):
                 # Media @import
                 self.parsed.insert(3, ' ')
         return self
-    
+
     def fmt(self, fills):
         """ Format node
         args:
@@ -38,4 +40,3 @@ class Statement(Node):
             str
         """
         return ''.join(self.parsed) + fills['eb']
-    

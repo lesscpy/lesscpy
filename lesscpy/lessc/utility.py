@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.lessc.utility
     :synopsis: various utility functions
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -10,11 +10,12 @@
 import collections
 import re
 
+
 def flatten(lst):
     """Flatten list.
     Args:
         lst (list): List to flatten
-    Returns: 
+    Returns:
         generator
     """
     for elm in lst:
@@ -23,7 +24,8 @@ def flatten(lst):
                 yield sub
         else:
             yield elm
-            
+
+
 def pairwise(lst):
     """ yield item i and item i+1 in lst. e.g.
         (lst[0], lst[1]), (lst[1], lst[2]), ..., (lst[-1], None)
@@ -32,29 +34,31 @@ def pairwise(lst):
     Returns:
         list
     """
-    if not lst: 
+    if not lst:
         return
     length = len(lst)
-    for i in range(length-1):
-        yield lst[i], lst[i+1]
+    for i in range(length - 1):
+        yield lst[i], lst[i + 1]
     yield lst[-1], None
-    
+
+
 def rename(blocks, scope, stype):
-    """ Rename all sub-blocks moved under another 
+    """ Rename all sub-blocks moved under another
         block. (mixins)
     Args:
         lst (list): block list
         scope (object): Scope object
     """
     for p in blocks:
-        if type(p) is stype:
+        if isinstance(p, stype):
             p.tokens[0].parse(scope)
-            if p.tokens[1]: 
+            if p.tokens[1]:
                 scope.push()
                 scope.current = p.tokens[0]
                 rename(p.tokens[1], scope, stype)
                 scope.pop()
-            
+
+
 def blocksearch(block, name):
     """ Recursive search for name in block (inner blocks)
     Args:
@@ -64,13 +68,15 @@ def blocksearch(block, name):
     """
     if hasattr(block, 'tokens'):
         for b in block.tokens[1]:
-            b = (b if hasattr(b, 'raw') and b.raw() == name 
+            b = (b if hasattr(b, 'raw') and b.raw() == name
                  else blocksearch(b, name))
-            if b: return b
+            if b:
+                return b
     return False
 
+
 def reverse_guard(lst):
-    """ Reverse guard expression. not 
+    """ Reverse guard expression. not
         (@a > 5) ->  (@a <= 5)
     Args:
         lst (list): Expression
@@ -87,6 +93,7 @@ def reverse_guard(lst):
     }
     return [rev[l] if l in rev else l for l in lst]
 
+
 def debug_print(lst, lvl=0):
     """ Print scope tree
     args:
@@ -99,8 +106,9 @@ def debug_print(lst, lvl=0):
         for p in lst:
             debug_print(p, lvl)
     elif hasattr(lst, 'tokens'):
-        print(pad, t) 
-        debug_print(list(flatten(lst.tokens)), lvl+1)
+        print(pad, t)
+        debug_print(list(flatten(lst.tokens)), lvl + 1)
+
 
 def destring(value):
     """ Strip quotes from string
@@ -110,6 +118,7 @@ def destring(value):
         str
     """
     return value.strip('"\'')
+
 
 def analyze_number(var, err=''):
     """ Analyse number for type and split from unit
@@ -124,7 +133,7 @@ def analyze_number(var, err=''):
         tuple
     """
     n, u = split_unit(var)
-    if type(var) is not str:
+    if not isinstance(var, str):
         return (var, u)
     if is_color(var):
         return (var, 'color')
@@ -136,6 +145,7 @@ def analyze_number(var, err=''):
         raise SyntaxError('%s ´%s´' % (err, var))
     return (n, u)
 
+
 def with_unit(number, unit=None):
     """ Return number with unit
     args:
@@ -144,17 +154,18 @@ def with_unit(number, unit=None):
     returns:
         str
     """
-    if type(number) is tuple:
+    if isinstance(number, tuple):
         number, unit = number
-    if number == 0: 
+    if number == 0:
         return '0'
     if unit:
         number = str(number)
         if number.startswith('.'):
             number = '0' + number
         return "%s%s" % (number, unit)
-    return number if type(number) is str else str(number)
-            
+    return number if isinstance(number, str) else str(number)
+
+
 def is_color(value):
     """ Is string CSS color
     args:
@@ -162,7 +173,7 @@ def is_color(value):
     returns:
         bool
     """
-    if not value or type(value) is not str: 
+    if not value or not isinstance(value, str):
         return False
     if value[0] == '#' and len(value) in [4, 5, 7, 9]:
         try:
@@ -171,7 +182,8 @@ def is_color(value):
         except ValueError:
             pass
     return False
-            
+
+
 def is_variable(value):
     """ Check if string is LESS variable
     args:
@@ -179,12 +191,13 @@ def is_variable(value):
     returns:
         bool
     """
-    if type(value) is str:
+    if isinstance(value, str):
         return (value.startswith('@') or value.startswith('-@'))
-    elif type(value) is tuple:
+    elif isinstance(value, tuple):
         value = ''.join(value)
         return (value.startswith('@') or value.startswith('-@'))
     return False
+
 
 def is_int(value):
     """ Is value integer
@@ -199,6 +212,7 @@ def is_int(value):
     except (ValueError, TypeError):
         pass
     return False
+
 
 def is_float(value):
     """ Is value float
@@ -215,6 +229,7 @@ def is_float(value):
             pass
     return False
 
+
 def split_unit(value):
     """ Split a number from its unit
         1px -> (q, 'px')
@@ -224,7 +239,4 @@ def split_unit(value):
         tuple
     """
     r = re.search('^(\-?[\d\.]+)(.*)$', str(value))
-    return r.groups() if r else ('','')
-    
-    
-            
+    return r.groups() if r else ('', '')

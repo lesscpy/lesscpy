@@ -2,21 +2,24 @@
 """
 .. module:: lesscpy.lessc.formatter
     :synopsis: CSS Formatter class.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+
 class Formatter(object):
+
     def __init__(self, args):
         self.args = args
-        
+
     def format(self, parse):
         """
         """
         if not parse.result:
             return ''
-        eb = '\n' 
+        eb = '\n'
         if self.args.xminify:
             eb = ''
             self.args.minify = True
@@ -36,9 +39,7 @@ class Formatter(object):
                 'ws': ' ',
                 'eb': eb
             })
-        self.out = [u.fmt(self.items) 
-                    for u in parse.result 
+        self.out = [u.fmt(self.items)
+                    for u in parse.result
                     if u]
         return ''.join(self.out).strip()
-        
-    

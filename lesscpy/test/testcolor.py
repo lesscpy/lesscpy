@@ -8,49 +8,50 @@ from lesscpy.lessc import color
 
 
 class TestLessColor(unittest.TestCase):
+
     def setUp(self):
         self.color = color.Color()
-        
+
     def test_rgb(self):
         test = self.color.rgb
         for r, g, b, v in [
-            (255,255,255,'#ffffff'),
-            (100,100,100,'#646464'),
-            (0,0,0,'#000000'),
-            ('70%','70%','70%', '#b2b2b2'),
-            ('1%','1%','1%', '#020202'),
-            ('100%','100%','100%', '#ffffff'),
-            ('0%','0%','0%', '#000000'),
+            (255, 255, 255, '#ffffff'),
+            (100, 100, 100, '#646464'),
+            (0, 0, 0, '#000000'),
+            ('70%', '70%', '70%', '#b2b2b2'),
+            ('1%', '1%', '1%', '#020202'),
+            ('100%', '100%', '100%', '#ffffff'),
+            ('0%', '0%', '0%', '#000000'),
         ]:
             self.assertEqual(test(r, g, b), v)
         for args in [
-            (255,255,256),
-            (0,-1,0),
+            (255, 255, 256),
+            (0, -1, 0),
             ('100%', '100%', 200),
             ('100%', '100%', '200%'),
         ]:
-           self.assertRaises(ValueError, test, args) 
-           
+            self.assertRaises(ValueError, test, args)
+
     def test_rgba(self):
         test = self.color.rgba
         for r, g, b, a, v in [
-            (255,255,255,255,'#ffffffff'),
-            (100,100,100,100,'#64646464'),
-            (0,0,0,0,'#00000000'),
-            ('70%','70%','70%', '70%', '#b2b2b2b2'),
-            ('1%','1%','1%', '1%', '#02020202'),
-            ('100%','100%','100%','100%', '#ffffffff'),
-            ('0%','0%','0%','0%', '#00000000'),
+            (255, 255, 255, 255, '#ffffffff'),
+            (100, 100, 100, 100, '#64646464'),
+            (0, 0, 0, 0, '#00000000'),
+            ('70%', '70%', '70%', '70%', '#b2b2b2b2'),
+            ('1%', '1%', '1%', '1%', '#02020202'),
+            ('100%', '100%', '100%', '100%', '#ffffffff'),
+            ('0%', '0%', '0%', '0%', '#00000000'),
         ]:
             self.assertEqual(test(r, g, b, a), v)
         for args in [
-            (255,255,255,256),
-            (0,0,0,-1),
+            (255, 255, 255, 256),
+            (0, 0, 0, -1),
             ('100%', '100%', '100%', 200),
             ('100%', '100%', '100%', '200%'),
         ]:
-           self.assertRaises(ValueError, test, args) 
-           
+            self.assertRaises(ValueError, test, args)
+
     def test_hsl(self):
         """
         """
@@ -63,7 +64,7 @@ class TestLessColor(unittest.TestCase):
             (100, '0%', '0%', '#000000'),
         ]:
             self.assertEqual(test(h, s, l), v)
-            
+
     def test_hsla(self):
         test = self.color.hsla
         for h, s, l, a, v in [
@@ -74,7 +75,7 @@ class TestLessColor(unittest.TestCase):
             (31, '100%', '4%', '100%', 'rgba(20.0,11.0,0.0,1.0)'),
         ]:
             self.assertEqual(test(h, s, l, a), v)
-        
+
     def test_fmt(self):
         test = self.color.fmt
         self.assertEqual(test('#000'), '#000000')
@@ -88,7 +89,7 @@ class TestLessColor(unittest.TestCase):
         self.assertRaises(ValueError, test, None)
         self.assertRaises(ValueError, test, 'aabbcc')
         self.assertRaises(ValueError, test, '#4aabbcc')
-        
+
     def test_saturate(self):
         test = self.color.saturate
         for c, p, v in [
@@ -108,10 +109,10 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#174533'),
             ('#29332f', '60%', '#0d4f35'),
             ('#29332f', '100%', '#005c37'),
-            
+
         ]:
             self.assertEqual(test(c, p), v, v)
-            
+
     def test_desaturate(self):
         test = self.color.desaturate
         for c, p, v in [
@@ -131,10 +132,10 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#2e2e2e'),
             ('#29332f', '60%', '#2e2e2e'),
             ('#29332f', '100%', '#2e2e2e'),
-            
+
         ]:
             self.assertEqual(test(c, p), v, v)
-            
+
     def test_spin(self):
         test = self.color.spin
         for c, p, v in [
@@ -154,9 +155,9 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#293033'),
             ('#29332f', '60%', '#292d33'),
             ('#29332f', '100%', '#2c2933'),
-            
+
         ]:
             self.assertEqual(test(c, p), v, v)
-            
+
 if __name__ == '__main__':
     unittest.main()

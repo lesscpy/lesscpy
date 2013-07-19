@@ -7,6 +7,7 @@ import re
 
 import bootstrap
 
+
 def find():
     svn = re.compile('\.svn')
     test = re.compile('test.+\.py$')
@@ -22,4 +23,3 @@ def find():
 
 if __name__ == '__main__':
     unittest.main(defaultTest='find')
-    

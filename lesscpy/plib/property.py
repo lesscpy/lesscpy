@@ -2,7 +2,7 @@
 """
 .. module:: lesscpy.plib.property
     :synopsis: Property node.
-    
+
     Copyright (c)
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
@@ -11,10 +11,12 @@ import re
 from .node import Node
 from lesscpy.lessc import utility
 
+
 class Property(Node):
+
     """Represents CSS property declaration.
     """
-    
+
     def parse(self, scope):
         """Parse node
         args:
@@ -37,17 +39,17 @@ class Property(Node):
                 style = self.preprocess(style)
                 self.parsed = self.process(style, scope)
         return self
-    
+
     def preprocess(self, style):
         """Hackish preprocessing from font shorthand tags.
         Skips expression parse on certain tags.
-        args: 
+        args:
             style (list): .
         returns:
             list
         """
         if self.property == 'font':
-            style = [''.join(u.expression()) 
+            style = [''.join(u.expression())
                      if hasattr(u, 'expression')
                      else u
                      for u in style]
@@ -57,7 +59,7 @@ class Property(Node):
                      else u
                      for u in style]
         return style
-        
+
     def fmt(self, fills):
         """ Format node
         args:
@@ -70,10 +72,10 @@ class Property(Node):
         if fills['nl']:
             self.parsed = [',%s' % fills['ws']
                            if p == ','
-                           else p 
+                           else p
                            for p in self.parsed]
-        style = ''.join([p.fmt(fills) 
-                         if hasattr(p, 'fmt') 
+        style = ''.join([p.fmt(fills)
+                         if hasattr(p, 'fmt')
                          else str(p)
                          for p in self.parsed])
         # IE cannot handle no space after url()
@@ -84,7 +86,7 @@ class Property(Node):
             'important': imp
         })
         return f % fills
-    
+
     def copy(self):
         """ Return a full copy of self
         Returns:
