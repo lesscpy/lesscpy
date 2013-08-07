@@ -140,5 +140,24 @@ html5 = [
     'video',
     'wbr',
 ]
+svg = [
+    'altGlyph',
+    'altGlyphDef',
+    'altGlyphItem',
+    'circle',
+    'desc',
+    'ellipse',
+    'glyphRef',
+    'line',
+    'path',
+    'polygon',
+    'polyline',
+    'rect',
+    'text',
+    'textPath',
+    'tref',
+    'tspan',
+]
 html = html4
 html.extend(html5)
+html.extend(svg)

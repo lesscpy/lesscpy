@@ -272,6 +272,52 @@ css3 = [
     'word-break',
     'word-wrap'
 ]
+# SVG only includes style not present in either css2 or css3:
+svg = [
+    # clipping / masking / compositing:
+    'clip-path',
+    'clip-rule',
+    'mask',
+    # filter effects:
+    'enable-background',
+    'filter',
+    'flood-color',
+    'flood-opacity',
+    'lightning-color',
+    # gradient:
+    'stop-color',
+    'stop-opacity',
+    # interactivity:
+    'pointer-events',
+    # color / painting:
+    'color-interpolation',
+    'color-interpolation-filters',
+    'color-rendering',
+    'fill',
+    'fill-opacity',
+    'fill-rule',
+    'image-rendering',
+    'marker',
+    'marker-end',
+    'marker-mid',
+    'marker-start',
+    'shape-rendering',
+    'stroke',
+    'stroke-dasharray',
+    'stroke-dashoffset',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'stroke-miterlimit',
+    'stroke-opacity',
+    'stroke-width',
+    'text-rendering',
+    # text:
+    'glyph-orientation-horizontal',
+    'glyph-orientation-vertical',
+    'kerning',
+    'text-anchor',
+    'writing-mode',
+]
 vendor_prefix = [
     '-ms-',
     '-moz-',
@@ -284,10 +330,8 @@ vendor_prefix = [
     'mso-',
 ]
 vendor_ugly = [
-    'filter',
     'accelerator',
     'behavior',
-    'filter',
     'zoom',
 ]
-propertys = css2 + css3 + vendor_ugly
+propertys = css2 + css3 + svg + vendor_ugly
