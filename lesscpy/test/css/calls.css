@@ -6,6 +6,8 @@
 	decrement: 9;
 	rounded: 11;
 	roundedpx: 3px;
+	round25: 3;
+	round15: 2;
 }
 #escapes {
 	escaped: -Some::weird(#thing, y);
@@ -19,7 +21,7 @@
 	format-url-encode: 'red is %23ff0000';
 }
 #more {
-	width: 1px;
+	width: 2px;
 	height: 1px;
 	top: 50%;
 }

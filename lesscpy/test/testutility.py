@@ -92,6 +92,20 @@ class TestUtility(unittest.TestCase):
         self.assertEqual('1', test(1, None))
         self.assertEqual('1', test(1,))
 
+    def test_convergent_round(self):
+        test = utility.convergent_round
+        self.assertEqual(-4, test(-4.5))
+        self.assertEqual(-4, test(-3.5))
+        self.assertEqual(-2, test(-2.5))
+        self.assertEqual(-2, test(-1.5))
+        self.assertEqual(0, test(-0.5))
+        self.assertEqual(0, test(0.5))
+        self.assertEqual(2, test(1.5))
+        self.assertEqual(2, test(2.5))
+        self.assertEqual(3.0, test(10.0 / 3, 0))
+        self.assertEqual(4, test(3.5))
+        self.assertEqual(4, test(4.5))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -105,7 +105,7 @@ class Color():
             if isinstance(s, str):
                 s = int(s.strip('%'))
             rgb = colorsys.hls_to_rgb(int(h) / 360.0, l / 100.0, s / 100.0)
-            color = (round(c * 255) for c in rgb)
+            color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
         raise ValueError('Illegal color values')
 
@@ -123,8 +123,8 @@ class Color():
             if isinstance(s, str):
                 s = int(s.strip('%'))
             rgb = colorsys.hls_to_rgb(int(h) / 360.0, l / 100.0, s / 100.0)
-            color = [float(round(c * 255)) for c in rgb]
-            color.append(round(float(a[:-1]) / 100.0, 2))
+            color = [float(utility.convergent_round(c * 255)) for c in rgb]
+            color.append(utility.convergent_round(float(a[:-1]) / 100.0, 2))
             return "rgba(%s,%s,%s,%s)" % tuple(color)
         raise ValueError('Illegal color values')
 
@@ -139,7 +139,7 @@ class Color():
         """
         if color:
             h, l, s = self._hextohls(color)
-            return round(h * 360.0, 3)
+            return utility.convergent_round(h * 360.0, 3)
         raise ValueError('Illegal color values')
 
     def saturation(self, color, *args):
@@ -260,7 +260,7 @@ class Color():
             h = ((h * 360.0) + degree) % 360.0
             h = 360.0 + h if h < 0 else h
             rgb = colorsys.hls_to_rgb(h / 360.0, l, s)
-            color = (round(c * 255) for c in rgb)
+            color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
         raise ValueError('Illegal color values')
 
@@ -364,5 +364,5 @@ class Color():
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(getattr(hls[idx], op)(diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)
-        color = (round(c * 255) for c in rgb)
+        color = (utility.away_from_zero_round(c * 255) for c in rgb)
         return self._rgbatohex(color)
