@@ -96,7 +96,7 @@ class Expression(Node):
                 return str(val) + ua
             elif ub:
                 return str(val) + ub
-        return str(val)
+        return repr(val)
 
     def operate(self, vala, valb, oper):
         """Perform operation
