@@ -6,6 +6,8 @@
 	decrement: 9;
 	rounded: 11;
 	roundedpx: 3px;
+	round25: 3;
+	round15: 2;
 }
 #escapes {
 	escaped: -Some::weird(#thing, y);
