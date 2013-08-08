@@ -196,7 +196,7 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(round(float(n)), u)
+        return utility.with_unit(int(round(float(n))), u)
 
     def ceil(self, value, *args):
         """ Ceil number
@@ -206,7 +206,7 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(math.ceil(n), u)
+        return utility.with_unit(int(math.ceil(n)), u)
 
     def floor(self, value, *args):
         """ Floor number
@@ -216,7 +216,7 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(math.floor(n), u)
+        return utility.with_unit(int(math.floor(n)), u)
 
     def percentage(self, value, *args):
         """ Return percentage value
