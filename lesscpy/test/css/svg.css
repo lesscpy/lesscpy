@@ -51,3 +51,12 @@ tspan {
 text tspan {
 	font-weight: bold;
 }
+textPath {
+	font-weight: bold;
+}
+text textPath {
+	font-weight: bold;
+}
+svg text textPath {
+	font-weight: bold;
+}
