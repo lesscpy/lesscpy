@@ -13,6 +13,7 @@ from __future__ import print_function
 import collections
 import math
 import re
+import sys
 
 
 def flatten(lst):
@@ -244,6 +245,18 @@ def split_unit(value):
     """
     r = re.search('^(\-?[\d\.]+)(.*)$', str(value))
     return r.groups() if r else ('', '')
+
+
+def away_from_zero_round(value, ndigits=0):
+    """Round half-way away from zero.
+
+    Python2's round() method.
+    """
+    if sys.version_info[0] >= 3:
+        p = 10 ** ndigits
+        return float(math.floor((value * p) + math.copysign(0.5, value))) / p
+    else:
+        return round(value, ndigits)
 
 
 def convergent_round(value, ndigits=0):

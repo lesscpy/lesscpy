@@ -364,5 +364,5 @@ class Color():
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(getattr(hls[idx], op)(diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)
-        color = (utility.convergent_round(c * 255) for c in rgb)
+        color = (utility.away_from_zero_round(c * 255) for c in rgb)
         return self._rgbatohex(color)
