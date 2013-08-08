@@ -125,7 +125,9 @@ class Expression(Node):
         else:
             ret = getattr(vala, operation)(valb)
         if ret is NotImplemented:
-            ret = getattr(valb, operation)(vala)
+            # __truediv__(int, float) isn't implemented, but __truediv__(float, float) is.
+            # __add__(int, float) is similar. Simply cast vala to float:
+            ret = getattr(float(vala), operation)(valb)
         if oper in '+-*/':
             try:
                 if int(ret) == ret:
