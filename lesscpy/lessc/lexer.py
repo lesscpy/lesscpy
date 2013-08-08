@@ -129,7 +129,7 @@ class LessLexer:
         elif v in css.propertys:
             t.type = 'css_property'
             t.value = t.value.strip()
-        elif v.lower() in dom.html:
+        elif v in dom.html or v.lower() in dom.html:
             t.type = 'css_dom'
         elif c == '@':
             v = v.lower()

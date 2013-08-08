@@ -51,12 +51,16 @@ def create_test(args):
     return do_test_expected
 
 LESS = glob.glob(os.path.join('less/issues', '*.less'))
+_less_path = os.path.join(os.path.dirname(__file__), 'less', 'issues')
+_css_path = os.path.join(os.path.dirname(__file__), 'css', 'issues')
+
+LESS = glob.glob(os.path.join(_less_path, '*.less'))
 for less in LESS:
     lessf = less.split('.')[0].split('/')[-1]
-    css = 'css/issues/' + lessf + '.css'
-    mincss = 'css/issues/' + lessf + '.min.css'
+    css = os.path.join(_css_path, lessf + '.css')
+    mincss = os.path.join(_css_path, lessf + '.min.css')
     test_method = create_test((less, css, mincss))
-    test_method.__name__ = 'test_%s' % less.replace('./-', '_')
+    test_method.__name__ = 'test_%s' % "_".join(reversed(os.path.basename(less).split('.')))
     setattr(TestCase, test_method.__name__, test_method)
 
 if __name__ == "__main__":

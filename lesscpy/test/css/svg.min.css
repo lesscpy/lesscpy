@@ -1,0 +1,18 @@
+svg{color:red;}
+circle{stroke:#006600;fill:#00cc00;}
+circle .green{stroke:#006600;stroke-width:9;fill:#00cc00;}
+rect{fill:blue;fill-opacity:0.1;stroke:green;opacity:0.5;}
+ellipse{fill:yellow;}
+line{stroke:red;}
+path{stroke:blue;}
+polygon{fill:lime;fill-rule:nonzero;}
+polygon{fill:lime;fill-rule:evenodd;}
+polyline{fill:none;}
+.node text{font:12px sans-serif;}
+tref{font-weight:bold;}
+text tref{font-weight:bold;}
+tspan{font-weight:bold;}
+text tspan{font-weight:bold;}
+textPath{font-weight:bold;}
+text textPath{font-weight:bold;}
+svg text textPath{font-weight:bold;}
