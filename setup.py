@@ -24,6 +24,6 @@ setup(
                                 'lesscpy/test/css/issues/*.css',
                                 'lesscpy/test/less/*.less',
                                 'lesscpy/test/less/issues/*.less',]},
-      license=open('LICENSE').read(),
-      long_description=open('README.rst').read(),
+      license=open('LICENSE', encoding="utf-8").read(),
+      long_description=open('README.rst', encoding="utf-8").read(),
 )
