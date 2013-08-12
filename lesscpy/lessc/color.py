@@ -7,6 +7,9 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+import operator
+
 import colorsys
 from . import utility
 from lesscpy.lib import colors
@@ -44,12 +47,12 @@ class Color():
             str
         """
         operation = {
-            '+': '__add__',
-            '-': '__sub__',
-            '*': '__mul__',
-            '/': '__truediv__'
+            '+': operator.add,
+            '-': operator.sub,
+            '*': operator.mul,
+            '/': operator.truediv
         }.get(operation)
-        return getattr(left, operation)(right)
+        return operation(left, right)
 
     def rgb(self, *args):
         """ Translate rgb(...) to color string
@@ -184,7 +187,7 @@ class Color():
             str
         """
         if color and diff:
-            return self._ophsl(color, diff, 1, '__add__')
+            return self._ophsl(color, diff, 1, operator.add)
         raise ValueError('Illegal color values')
 
     def darken(self, color, diff, *args):
@@ -196,7 +199,7 @@ class Color():
             str
         """
         if color and diff:
-            return self._ophsl(color, diff, 1, '__sub__')
+            return self._ophsl(color, diff, 1, operator.sub)
         raise ValueError('Illegal color values')
 
     def saturate(self, color, diff, *args):
@@ -208,7 +211,7 @@ class Color():
             str
         """
         if color and diff:
-            return self._ophsl(color, diff, 2, '__add__')
+            return self._ophsl(color, diff, 2, operator.add)
         raise ValueError('Illegal color values')
 
     def desaturate(self, color, diff, *args):
@@ -220,7 +223,7 @@ class Color():
             str
         """
         if color and diff:
-            return self._ophsl(color, diff, 2, '__sub__')
+            return self._ophsl(color, diff, 2, operator.sub)
         raise ValueError('Illegal color values')
 
     def _clamp(self, value):
@@ -358,11 +361,11 @@ class Color():
         rgb = self._hextorgb(hex)
         return colorsys.rgb_to_hls(*[c / 255.0 for c in rgb])
 
-    def _ophsl(self, color, diff, idx, op):
+    def _ophsl(self, color, diff, idx, operation):
         if isinstance(diff, str):
             diff = int(diff.strip('%'))
         hls = list(self._hextohls(color))
-        hls[idx] = self._clamp(getattr(hls[idx], op)(diff / 100.0))
+        hls[idx] = self._clamp(operation(hls[idx], diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)
         color = (utility.away_from_zero_round(c * 255) for c in rgb)
         return self._rgbatohex(color)

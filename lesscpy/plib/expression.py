@@ -7,7 +7,10 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
+import operator
 import sys
+
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.lessc import color
@@ -108,51 +111,21 @@ class Expression(Node):
             mixed
         """
         operation = {
-            '+': '__add__',
-            '-': '__sub__',
-            '*': '__mul__',
-            '/': '__truediv__',
-            '=': '__eq__',
-            '>': '__gt__',
-            '<': '__lt__',
-            '>=': '__ge__',
-            '<=': '__le__',
-            '!=': '__ne__',
-            '<>': '__ne__',
+            '+': operator.add,
+            '-': operator.sub,
+            '*': operator.mul,
+            '/': operator.truediv,
+            '=': operator.eq,
+            '>': operator.gt,
+            '<': operator.lt,
+            '>=': operator.ge,
+            '<=': operator.le,
+            '!=': operator.ne,
+            '<>': operator.ne,
         }.get(oper)
-        if sys.version_info[0] < 3:
-            ret = self.py2op(vala, operation, valb)
-        else:
-            ret = getattr(vala, operation)(valb)
-        if ret is NotImplemented:
-            # __truediv__(int, float) isn't implemented, but __truediv__(float, float) is.
-            # __add__(int, float) is similar. Simply cast vala to float:
-            ret = getattr(float(vala), operation)(valb)
-        if oper in '+-*/':
-            try:
-                if int(ret) == ret:
-                    return int(ret)
-            except ValueError:
-                pass
-        return ret
-
-    def py2op(self, vala, operation, valb):
-        """ Python2 operators
-        """
-        if operation == '__lt__':
-            ret = (vala < valb)
-        elif operation == '__gt__':
-            ret = (vala > valb)
-        elif operation == '__eq__':
-            ret = (vala == valb)
-        elif operation == '__ge__':
-            ret = (vala >= valb)
-        elif operation == '__le__':
-            ret = (vala <= valb)
-        elif operation == '__ne__':
-            ret = (vala != valb)
-        else:
-            ret = getattr(vala, operation)(valb)
+        ret = operation(vala, valb)
+        if oper in '+-*/' and int(ret) == ret:
+            ret = int(ret)
         return ret
 
     def expression(self):
