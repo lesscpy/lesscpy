@@ -3,6 +3,12 @@
 """
 """
 from distutils.core import setup
+import codecs
+
+with codecs.open('LICENSE', encoding="utf-8") as f:
+    license = f.read()
+with codecs.open('README.rst', encoding="utf-8") as f:
+    long_description = f.read()
 
 setup(
       name='lesscpy',
@@ -24,6 +30,6 @@ setup(
                                 'lesscpy/test/css/issues/*.css',
                                 'lesscpy/test/less/*.less',
                                 'lesscpy/test/less/issues/*.less',]},
-      license=open('LICENSE', encoding="utf-8").read(),
-      long_description=open('README.rst', encoding="utf-8").read(),
+      license=license,
+      long_description=long_description,
 )
