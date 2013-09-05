@@ -149,7 +149,7 @@ def run():
                                           yacc_optimize=(not args.debug),
                                           tabfile=yacctab,
                                           verbose=args.verbose)
-                    p.parse(filename=u, debuglevel=0)
+                    p.parse(filename=u, debuglevel=args.debug)
                     if not scope:
                         scope = p.scope
                     else:
@@ -171,7 +171,7 @@ def run():
                                   yacc_optimize=(not args.debug),
                                   scope=copy.deepcopy(scope),
                                   verbose=args.verbose)
-            p.parse(filename=args.target, debuglevel=0)
+            p.parse(filename=args.target, debuglevel=args.debug)
             if args.scopemap:
                 args.no_css = True
                 p.scopemap()
