@@ -514,6 +514,14 @@ class LessParser(object):
         """
         p[0] = list(p)[1:]
 
+    def p_ident_media_var(self, p):
+        """ ident_parts               : css_media t_ws t_popen word ':' variable t_pclose
+        """
+        p[0] = list(p)[1:]
+        if utility.is_variable(p[0][5]):
+            var = self.scope.variables(''.join(p[0][5]))
+            p[0][5] = var.value[0]
+
     def p_selector(self, p):
         """ selector                  : '*'
                                       | '+'
