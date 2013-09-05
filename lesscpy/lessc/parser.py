@@ -305,6 +305,7 @@ class LessParser(object):
 
     def p_mixin_args_list_aux(self, p):
         """ mixin_args_list          : mixin_args_list ',' mixin_args
+                                     | mixin_args_list ';' mixin_args
         """
         p[1].extend([p[3]])
         p[0] = p[1]
