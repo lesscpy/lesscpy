@@ -84,8 +84,9 @@ def run():
     """Run compiler
     """
     aparse = argparse.ArgumentParser(description='LessCss Compiler',
-                                     epilog='<< jtm@robot.is @_o >>',
-                                     version=VERSION_STR)
+                                     epilog='<< jtm@robot.is @_o >>')
+    aparse.add_argument('-v', '--version', action='version',
+                        version=VERSION_STR)
     aparse.add_argument('-I', '--include', action="store", type=str,
                         help="Included less-files (comma separated)")
     aparse.add_argument('-V', '--verbose', action="store_true",
