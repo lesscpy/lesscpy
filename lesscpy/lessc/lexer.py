@@ -128,7 +128,6 @@ class LessLexer:
             t.type = 'less_not'
         elif v in css.propertys:
             t.type = 'css_property'
-            t.value = t.value.strip()
         elif v in dom.html or v.lower() in dom.html:
             t.type = 'css_dom'
         elif c == '@':
@@ -139,7 +138,7 @@ class LessLexer:
                 t.type = 'less_variable'
         elif c == '-':
             t.type = 'css_vendor_property'
-        t.value = t.value.strip()
+        t.value = v
         return t
 
     def t_less_variable(self, t):
