@@ -1,7 +1,6 @@
 svg{color:red;}
 circle{stroke:#006600;fill:#00cc00;}
 circle .green{stroke:#006600;stroke-width:9;fill:#00cc00;}
-rect{fill:blue;fill-opacity:0.1;stroke:green;opacity:0.5;}
 ellipse{fill:yellow;}
 line{stroke:red;}
 path{stroke:blue;}
