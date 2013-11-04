@@ -133,7 +133,10 @@ def run():
                 tok = ll.token()
                 if not tok:
                     break
-                print(tok)
+                if hasattr(tok, "lexer"):  # literals don't have the lexer attribute
+                    print(tok, "State:", tok.lexer.lexstate)
+                else:
+                    print(tok)
             print('EOF')
             sys.exit()
         #
