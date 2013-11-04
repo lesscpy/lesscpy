@@ -34,3 +34,8 @@
 		display: none !important;
 	}
 }
+@media (min-width:12px) {
+	body {
+		margin: 0 auto;
+	}
+}
