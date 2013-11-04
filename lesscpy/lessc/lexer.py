@@ -128,7 +128,7 @@ class LessLexer:
             t.type = 'less_not'
         elif v in css.propertys:
             t.type = 'css_property'
-        elif v in dom.html or v.lower() in dom.html:
+        elif v in dom.elements or v.lower() in dom.elements:
             t.type = 'css_dom'
         elif c == '@':
             v = v.lower()
