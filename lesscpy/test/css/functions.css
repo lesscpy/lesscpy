@@ -1,0 +1,23 @@
+#wrapper {
+	background: url(images/photo-one.jpg);
+}
+body {
+	counter-reset: paras 0;
+}
+p:before {
+	counter-increment: paras 1;
+	content: "New Paragraph: "counter(paras,decimal)": ";
+}
+@media print {
+	a:after {
+		content: " ("attr(href)") ";
+	}
+}
+@media print {
+	abbr:after {
+		content: " ("attr(title)") ";
+	}
+}
+a:hover:after {
+	content: " Page: ("attr(href)") ";
+}

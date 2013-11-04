@@ -148,21 +148,21 @@ class LessParser(object):
 #
 
     def p_statement_aux(self, p):
-        """ statement            : css_charset t_ws css_string ';'
-                                 | css_namespace t_ws css_string ';'
+        """ statement            : css_charset t_ws css_string t_semicolon
+                                 | css_namespace t_ws css_string t_semicolon
         """
         p[0] = Statement(list(p)[1:], p.lineno(1))
         p[0].parse(None)
 
     def p_statement_namespace(self, p):
-        """ statement            : css_namespace t_ws word css_string ';'
+        """ statement            : css_namespace t_ws word css_string t_semicolon
         """
         p[0] = Statement(list(p)[1:], p.lineno(1))
         p[0].parse(None)
 
     def p_statement_import(self, p):
-        """ import_statement     : css_import t_ws css_string ';'
-                                 | css_import t_ws css_string dom ';'
+        """ import_statement     : css_import t_ws css_string t_semicolon
+                                 | css_import t_ws css_string dom t_semicolon
         """
         if self.importlvl > 8:
             raise ImportError(
@@ -203,7 +203,7 @@ class LessParser(object):
         self.scope.add_block(p[0])
 
     def p_block_replace(self, p):
-        """ block_decl               : identifier ';'
+        """ block_decl               : identifier t_semicolon
         """
         m = p[1].parse(None)
         block = self.scope.blocks(m.raw())
@@ -293,7 +293,7 @@ class LessParser(object):
         p[0] = ''.join(list(p)[1:])
 
     def p_call_mixin(self, p):
-        """ call_mixin                : identifier t_popen mixin_args_list t_pclose ';'
+        """ call_mixin                : identifier t_popen mixin_args_list t_pclose t_semicolon
         """
         p[1].parse(None)
         p[0] = Deferred(p[1], p[3], p.lineno(4))
@@ -305,7 +305,7 @@ class LessParser(object):
 
     def p_mixin_args_list_aux(self, p):
         """ mixin_args_list          : mixin_args_list ',' mixin_args
-                                     | mixin_args_list ';' mixin_args
+                                     | mixin_args_list t_semicolon mixin_args
         """
         p[1].extend([p[3]])
         p[0] = p[1]
@@ -376,7 +376,7 @@ class LessParser(object):
 #
 
     def p_variable_decl(self, p):
-        """ variable_decl            : variable ':' style_list ';'
+        """ variable_decl            : variable ':' style_list t_semicolon
         """
         p[0] = Variable(list(p)[1:-1], p.lineno(4))
         p[0].parse(self.scope)
@@ -386,15 +386,15 @@ class LessParser(object):
 #
 
     def p_property_decl(self, p):
-        """ property_decl           : prop_open style_list ';'
-                                    | prop_open style_list css_important ';'
-                                    | prop_open empty ';'
+        """ property_decl           : prop_open style_list t_semicolon
+                                    | prop_open style_list css_important t_semicolon
+                                    | prop_open empty t_semicolon
         """
         l = len(p)
         p[0] = Property(list(p)[1:-1], p.lineno(l - 1))
 
     def p_property_decl_arguments(self, p):
-        """ property_decl           : prop_open less_arguments ';'
+        """ property_decl           : prop_open less_arguments t_semicolon
         """
         p[0] = Property([p[1], [p[2]]], p.lineno(3))
 

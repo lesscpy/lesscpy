@@ -10,3 +10,4 @@ tbody td:first-child:before{content:counter(group,upper-latin)"."counter(row);}
 .escape\|random\|char{color:red;}
 .mixin\!tUp{font-weight:bold;}
 .trailingTest\+{color:red;}
+.sr-only{clip:rect(0 0 0 0);}

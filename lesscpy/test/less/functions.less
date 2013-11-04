@@ -1,0 +1,55 @@
+/*
+    CSS Function tests inspired by 
+    http://www.suburban-glory.com/blog?page=130
+*/
+
+/* CSS 2.1 Functions */
+
+#wrapper {
+  background : url(images/photo-one.jpg);
+}
+
+body {
+  counter-reset: paras 0;
+}
+
+p:before {
+  counter-increment: paras 1;
+  content: "New Paragraph: " counter(paras, decimal) ": ";
+}
+
+@media print {
+  a:after {
+    content: " (" attr(href) ") "
+  }
+}
+
+@media print {
+  abbr:after {
+    content: " (" attr(title) ") ";
+  }
+}
+
+a:hover:after {
+ content: " Page: (" attr(href) ") ";
+}
+
+/* CSS 3 Functions */
+
+/* NOTE(saschpe): Not yet, even lessc chokes on it:
+SyntaxError: expected ')' got '–' in /root/Projects/python/Lesscpy/lesscpy/test/less/functions.less on line 40, column 61:
+39 #example {
+40   width: calc(100% * (attr(value) - attr(min)) / (attr(max) – attr(min)))
+41 }
+
+#example {
+  width: calc(100% * (attr(value) - attr(min)) / (attr(max) – attr(min)))
+}
+
+#example {
+  position: fixed;
+  height: 25px; width: 300px;
+  top: calc(min(500px, 1vh-25px));
+  left: calc(min(30px, 1wh-300px));
+}
+*/

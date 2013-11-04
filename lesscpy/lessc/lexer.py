@@ -20,7 +20,7 @@ class LessLexer:
     states = (
         ('parn', 'inclusive'),
     )
-    literals = ',<>{}=%!/*-+:;~&'
+    literals = ',<>{}=%!/*-+:~&'
     tokens = [
         'css_ident',
         'css_dom',
@@ -49,6 +49,7 @@ class LessLexer:
         't_ws',
         't_popen',
         't_pclose',
+        't_semicolon',
     ]
     reserved = {
         '@media': 'css_media',
@@ -128,7 +129,10 @@ class LessLexer:
             t.type = 'less_not'
         elif v in css.propertys:
             t.type = 'css_property'
-        elif v in dom.elements or v.lower() in dom.elements:
+            t.lexer.in_property_decl = True
+        elif (v in dom.elements or v.lower() in dom.elements) and not t.lexer.in_property_decl:
+            # DOM elements can't be part of property declarations, avoids ambiguity between 'rect' DOM
+            # element and rect() CSS function.
             t.type = 'css_dom'
         elif c == '@':
             v = v.lower()
@@ -138,6 +142,7 @@ class LessLexer:
                 t.type = 'less_variable'
         elif c == '-':
             t.type = 'css_vendor_property'
+            t.lexer.in_property_decl = True
         t.value = v
         return t
 
@@ -211,6 +216,11 @@ class LessLexer:
         t.lexer.pop_state()
         return t
 
+    def t_t_semicolon(self, t):
+        r';'
+        t.lexer.in_property_decl = False
+        return t
+
     def t_less_string(self, t):
         (r'"([^"@]*@\{[^"\}]+\}[^"]*)+"'
          '|\'([^\'@]*@\{[^\'\}]+\}[^\']*)+\'')
@@ -231,6 +241,8 @@ class LessLexer:
     # Build the lexer
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
+        # State-tracking variable, see http://www.dabeaz.com/ply/ply.html#ply_nn18
+        self.lexer.in_property_decl = False
 
     def file(self, filename):
         """
@@ -268,14 +280,15 @@ class LessLexer:
                                 and self.last.type not in self.significant_ws)):
                 continue
             self.pretok = False
-            if t.type == '}' and self.last and self.last.type not in '{;}':
+            if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon':
                 self.next_ = t
                 tok = lex.LexToken()
-                tok.type = ';'
+                tok.type = 't_semicolon'
                 tok.value = ';'
                 tok.lineno = t.lineno
                 tok.lexpos = t.lexpos
                 self.last = tok
+                self.lexer.in_property_decl = False
                 return tok
             self.last = t
             break

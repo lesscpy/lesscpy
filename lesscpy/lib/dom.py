@@ -149,7 +149,7 @@ svg = [
     'path',
     'polygon',
     'polyline',
-    #'rect',
+    'rect',
     'text',
     'textPath',
     'tref',
