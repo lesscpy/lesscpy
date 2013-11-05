@@ -652,6 +652,7 @@ class LessParser(object):
                                     | number
                                     | variable
                                     | css_dom
+                                    | fcall
         """
         p[0] = p[1]
 
