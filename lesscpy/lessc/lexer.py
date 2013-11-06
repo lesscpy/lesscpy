@@ -19,8 +19,10 @@ from lesscpy.lib import css
 class LessLexer:
     states = (
         ('parn', 'inclusive'),
+        ('lessstringquotes', 'inclusive'),
+        ('lessstringapostrophe', 'inclusive'),
     )
-    literals = ',<>{}=%!/*-+:~&'
+    literals = ',<>{}=%!/*-+:&'
     tokens = [
         'css_ident',
         'css_dom',
@@ -40,7 +42,6 @@ class LessLexer:
 
         'less_variable',
         'less_comment',
-        'less_string',
         'less_open_format',
         'less_when',
         'less_and',
@@ -50,6 +51,9 @@ class LessLexer:
         't_popen',
         't_pclose',
         't_semicolon',
+
+        't_lsopen',
+        't_lsclose',
     ]
     reserved = {
         '@media': 'css_media',
@@ -99,16 +103,15 @@ class LessLexer:
         return t
 
     def t_css_ident(self, t):
-        (r'([\-\.\#]?'
-         '|@[@\-]?)'
-         '([_a-z]'
-         '|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}'
-         '|\\\[^\s\r\n0-9a-f])'
-         '([_a-z0-9\-]'
-         '|[\200-\377]'
-         '|\\\[0-9a-f]{1,6}'
-         '|\\\[^\s\r\n0-9a-f])*')
+        (r'[\-\.\#]?'
+          '([_a-z]'
+           '|[\200-\377]'
+           '|\\\[0-9a-f]{1,6}'
+           '|\\\[^\s\r\n0-9a-f])'
+          '([_a-z0-9\-]'
+           '|[\200-\377]'
+           '|\\\[0-9a-f]{1,6}'
+           '|\\\[^\s\r\n0-9a-f])*')
         v = t.value.strip()
         c = v[0]
         if c == '.':
@@ -134,12 +137,6 @@ class LessLexer:
             # DOM elements can't be part of property declarations, avoids ambiguity between 'rect' DOM
             # element and rect() CSS function.
             t.type = 'css_dom'
-        elif c == '@':
-            v = v.lower()
-            if v in LessLexer.reserved:
-                t.type = LessLexer.reserved[v]
-            else:
-                t.type = 'less_variable'
         elif c == '-':
             t.type = 'css_vendor_property'
             t.lexer.in_property_decl = True
@@ -147,7 +144,10 @@ class LessLexer:
         return t
 
     def t_less_variable(self, t):
-        r'@\w+'
+        r'@[\w-]+'
+        v = t.value.lower()
+        if v in LessLexer.reserved:
+            t.type = LessLexer.reserved[v]
         return t
 
     def t_css_color(self, t):
@@ -221,10 +221,30 @@ class LessLexer:
         t.lexer.in_property_decl = False
         return t
 
-    def t_less_string(self, t):
-        (r'"([^"@]*@\{[^"\}]+\}[^"]*)+"'
-         '|\'([^\'@]*@\{[^\'\}]+\}[^\']*)+\'')
-        t.lexer.lineno += t.value.count('\n')
+    def t_t_lsopen(self, t):
+        r'~"|~\''
+        if t.value[1] == '"':
+            t.lexer.push_state('lessstringquotes')
+        elif t.value[1] == '\'':
+            t.lexer.push_state('lessstringapostrophe')
+        return t
+
+    def t_lessstringquotes_less_variable(self, t):
+        r'@\{[^@"\}]+\}'
+        return t
+
+    def t_lessstringapostrophe_less_variable(self, t):
+        r'@\{[^@\'\}]+\}'
+        return t
+
+    def t_lessstringquotes_t_lsclose(self, t):
+        r'"'
+        t.lexer.pop_state()
+        return t
+
+    def t_lessstringapostrophe_t_lsclose(self, t):
+        r'\''
+        t.lexer.pop_state()
         return t
 
     def t_css_string(self, t):
@@ -280,7 +300,8 @@ class LessLexer:
                                 and self.last.type not in self.significant_ws)):
                 continue
             self.pretok = False
-            if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon':
+            if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon' \
+                and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'lessstringquotes' or t.lexer.lexstate == 'lessstringapostrophe')):
                 self.next_ = t
                 tok = lex.LexToken()
                 tok.type = 't_semicolon'

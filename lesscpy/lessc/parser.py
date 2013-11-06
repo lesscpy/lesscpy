@@ -661,9 +661,10 @@ class LessParser(object):
 #
 
     def p_interpolated_str(self, p):
-        """ istring                 : less_string
+        """ istring                 : t_lsopen style t_lsclose
         """
-        p[0] = String(p[1], p.lineno(1))
+        #p[0] = String(p[2], p.lineno(1))
+        p[0] = p[2]
 
     def p_variable_neg(self, p):
         """ variable                : '-' variable
