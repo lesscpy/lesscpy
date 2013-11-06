@@ -451,7 +451,7 @@ class LessParser(object):
         p[0] = Identifier(p[1], 0)
 
     def p_identifier_istr(self, p):
-        """ identifier                : t_popen '~' istring t_pclose
+        """ identifier                : t_popen istring t_pclose
         """
         p[0] = Identifier(Call([p[2], p[3]]), 0)
 
@@ -581,7 +581,7 @@ class LessParser(object):
                             | property t_popen argument_list t_pclose
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
-                            | '~' istring
+                            | istring
                             | '~' css_string
         """
         p[0] = Call(list(p)[1:], 0)
