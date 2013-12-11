@@ -21,6 +21,8 @@ class LessLexer:
         ('parn', 'inclusive'),
         ('lessstringquotes', 'inclusive'),
         ('lessstringapostrophe', 'inclusive'),
+        ('cssstringquotes', 'inclusive'),
+        ('cssstringapostrophe', 'inclusive'),
     )
     literals = ',<>{}=%!/*-+:&'
     tokens = [
@@ -54,6 +56,9 @@ class LessLexer:
 
         't_lsopen',
         't_lsclose',
+
+        't_sopen',
+        't_sclose',
     ]
     reserved = {
         '@media': 'css_media',
@@ -248,9 +253,46 @@ class LessLexer:
         return t
 
     def t_css_string(self, t):
-        r'"[^"]*"|\'[^\']*\''
+        r'"[^"@]*"|\'[^\'@]*\''
         t.lexer.lineno += t.value.count('\n')
         return t
+
+    def t_t_sopen(self, t):
+        r'"|\''
+        if t.value[0] == '"':
+            t.lexer.push_state('cssstringquotes')
+        elif t.value[0] == '\'':
+            t.lexer.push_state('cssstringapostrophe')
+        return t
+
+    def t_cssstringquotes_less_variable(self, t):
+        r'@\{[^@"\}]+\}'
+        return t
+
+    def t_cssstringapostrophe_less_variable(self, t):
+        r'@\{[^@\'\}]+\}'
+        return t
+
+    def t_cssstringapostrophe_css_string(self, t):
+        r'[^\'@]+'
+        t.lexer.lineno += t.value.count('\n')
+        return t
+
+    def t_cssstringquotes_css_string(self, t):
+        r'[^"@]+'
+        t.lexer.lineno += t.value.count('\n')
+        return t
+
+    def t_cssstringquotes_t_sclose(self, t):
+        r'"'
+        t.lexer.pop_state()
+        return t
+
+    def t_cssstringapostrophe_t_sclose(self, t):
+        r'\''
+        t.lexer.pop_state()
+        return t
+
 
     # Error handling rule
     def t_error(self, t):

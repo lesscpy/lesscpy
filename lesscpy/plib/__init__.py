@@ -17,7 +17,6 @@ __all__ = [
     'Node',
     'Property',
     'Statement',
-    'String',
     'Variable'
 ]
 from .block import Block
@@ -29,5 +28,4 @@ from .mixin import Mixin
 from .node import Node
 from .property import Property
 from .statement import Statement
-from .string import String
 from .variable import Variable

@@ -178,12 +178,21 @@ class Scope(list):
             if var is False:
                 raise SyntaxError('Unknown variable %s' % name)
             name = '@' + utility.destring(var.value[0])
-        if name.startswith('@{'):
+            var = self.variables(name)
+            if var is False:
+                raise SyntaxError('Unknown variable %s' % name)
+        elif name.startswith('@{'):
             var = self.variables('@' + name[2:-1])
             if var is False:
                 raise SyntaxError('Unknown escaped variable %s' % name)
-            name = var.name
-        var = self.variables(name)
-        if var is False:
-            raise SyntaxError('Unknown variable %s' % name)
+            try:
+                if isinstance(var.value[0], basestring):  # py3
+                    var.value[0] = utility.destring(var.value[0])
+            except NameError: #
+                if isinstance(var.value[0], str):  # py2
+                    var.value[0] = utility.destring(var.value[0])
+        else:
+            var = self.variables(name)
+            if var is False:
+                raise SyntaxError('Unknown variable %s' % name)
         return var.value

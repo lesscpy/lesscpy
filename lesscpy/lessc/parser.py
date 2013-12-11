@@ -429,7 +429,7 @@ class LessParser(object):
 
     def p_style(self, p):
         """ style                   : expression
-                                    | css_string
+                                    | string
                                     | word
                                     | property
                                     | vendor_property
@@ -615,7 +615,7 @@ class LessParser(object):
 
     def p_argument(self, p):
         """ argument        : expression
-                            | css_string
+                            | string
                             | istring
                             | word
                             | id
@@ -669,8 +669,42 @@ class LessParser(object):
     def p_interpolated_str(self, p):
         """ istring                 : t_lsopen style t_lsclose
         """
-        #p[0] = String(p[2], p.lineno(1))
         p[0] = p[2]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+    def p_string_part(self, p):
+        """ string_part             : variable
+                                    | css_string
+        """
+        p[0] = p[1]
+
+    def p_string_part_list_aux(self, p):
+        """ string_part_list        : string_part_list string_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_string_part_list(self, p):
+        """ string_part_list        : string_part
+        """
+        p[0] = [p[1]]
+
+    def p_string_aux(self, p):
+        """ string                  : t_sopen string_part_list t_sclose
+        """
+        p[0] = ['"', p[2], '"']
+
+    def p_string(self, p):
+        """ string                  : css_string
+        """
+        p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_variable_neg(self, p):
         """ variable                : '-' variable
