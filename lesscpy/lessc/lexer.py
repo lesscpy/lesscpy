@@ -53,6 +53,7 @@ class LessLexer:
         't_popen',
         't_pclose',
         't_semicolon',
+        't_tilde',
 
         't_lsopen',
         't_lsclose',
@@ -232,6 +233,10 @@ class LessLexer:
             t.lexer.push_state('lessstringquotes')
         elif t.value[1] == '\'':
             t.lexer.push_state('lessstringapostrophe')
+        return t
+
+    def t_t_tilde(self, t):
+        r'~'
         return t
 
     def t_lessstringquotes_less_variable(self, t):

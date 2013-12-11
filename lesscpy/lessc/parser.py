@@ -797,8 +797,8 @@ class LessParser(object):
         p[0] = tuple(list(p)[1:])
 
     def p_general_sibling_selector(self, p):
-        """ general_sibling_selector  : '~' t_ws
-                                      | '~'
+        """ general_sibling_selector  : t_tilde t_ws
+                                      | t_tilde
         """
         p[0] = tuple(list(p)[1:])
 
