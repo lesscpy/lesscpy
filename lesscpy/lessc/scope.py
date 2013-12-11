@@ -90,6 +90,8 @@ class Scope(list):
         """
         if isinstance(name, tuple):
             name = name[0]
+        if name.startswith('@{'):
+            name = '@' + name[2:-1]
         i = len(self)
         while i >= 0:
             i -= 1
@@ -176,6 +178,11 @@ class Scope(list):
             if var is False:
                 raise SyntaxError('Unknown variable %s' % name)
             name = '@' + utility.destring(var.value[0])
+        if name.startswith('@{'):
+            var = self.variables('@' + name[2:-1])
+            if var is False:
+                raise SyntaxError('Unknown escaped variable %s' % name)
+            name = var.name
         var = self.variables(name)
         if var is False:
             raise SyntaxError('Unknown variable %s' % name)
