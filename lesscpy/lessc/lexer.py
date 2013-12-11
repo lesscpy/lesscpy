@@ -99,7 +99,7 @@ class LessLexer:
         return t
 
     def t_css_ms_filter(self, t):
-        r'progid:[^;]*'
+        r'(?:progid:|DX\.)[^;\(]*'
         return t
 
     def t_css_ident(self, t):
@@ -144,7 +144,7 @@ class LessLexer:
         return t
 
     def t_less_variable(self, t):
-        r'@[\w-]+'
+        r'@[\w-]+|@\{[^@\}]+\}'
         v = t.value.lower()
         if v in LessLexer.reserved:
             t.type = LessLexer.reserved[v]

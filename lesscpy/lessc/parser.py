@@ -435,7 +435,6 @@ class LessParser(object):
                                     | vendor_property
                                     | istring
                                     | fcall
-                                    | css_ms_filter
         """
         p[0] = p[1]
 
@@ -576,11 +575,18 @@ class LessParser(object):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+    def p_ms_filter(self, p):
+        """ ms_filter       : css_ms_filter
+                            | css_ms_filter t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
     def p_fcall(self, p):
         """ fcall           : word t_popen argument_list t_pclose
                             | property t_popen argument_list t_pclose
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
+                            | ms_filter t_popen argument_list t_pclose
                             | istring
                             | '~' css_string
         """
