@@ -7,3 +7,5 @@ build
 dist
 *.pyc
 MANIFEST
+.tox
+.venv*
