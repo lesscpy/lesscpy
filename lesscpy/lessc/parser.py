@@ -433,7 +433,7 @@ class LessParser(object):
                                     | word
                                     | property
                                     | vendor_property
-                                    | istring
+                                    | estring
                                     | fcall
         """
         p[0] = p[1]
@@ -450,7 +450,7 @@ class LessParser(object):
         p[0] = Identifier(p[1], 0)
 
     def p_identifier_istr(self, p):
-        """ identifier                : t_popen istring t_pclose
+        """ identifier                : t_popen estring t_pclose
         """
         p[0] = Identifier(Call([p[2], p[3]]), 0)
 
@@ -587,7 +587,7 @@ class LessParser(object):
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
                             | ms_filter t_popen argument_list t_pclose
-                            | istring
+                            | estring
                             | '~' css_string
         """
         p[0] = Call(list(p)[1:], 0)
@@ -616,7 +616,7 @@ class LessParser(object):
     def p_argument(self, p):
         """ argument        : expression
                             | string
-                            | istring
+                            | estring
                             | word
                             | id
                             | css_uri
@@ -666,8 +666,8 @@ class LessParser(object):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
-    def p_interpolated_str(self, p):
-        """ istring                 : t_lsopen style t_lsclose
+    def p_escaped_string(self, p):
+        """ estring                 : t_eopen style t_eclose
         """
         p[0] = p[2]
 
@@ -693,7 +693,7 @@ class LessParser(object):
         p[0] = [p[1]]
 
     def p_string_aux(self, p):
-        """ string                  : t_sopen string_part_list t_sclose
+        """ string                  : t_isopen string_part_list t_isclose
         """
         p[0] = ['"', p[2], '"']
 

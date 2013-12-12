@@ -19,10 +19,10 @@ from lesscpy.lib import css
 class LessLexer:
     states = (
         ('parn', 'inclusive'),
-        ('lessstringquotes', 'inclusive'),
-        ('lessstringapostrophe', 'inclusive'),
-        ('cssstringquotes', 'inclusive'),
-        ('cssstringapostrophe', 'inclusive'),
+        ('escapequotes', 'inclusive'),
+        ('escapeapostrophe', 'inclusive'),
+        ('istringquotes', 'inclusive'),
+        ('istringapostrophe', 'inclusive'),
     )
     literals = ',<>{}=%!/*-+:&'
     tokens = [
@@ -55,11 +55,11 @@ class LessLexer:
         't_semicolon',
         't_tilde',
 
-        't_lsopen',
-        't_lsclose',
+        't_eopen',
+        't_eclose',
 
-        't_sopen',
-        't_sclose',
+        't_isopen',
+        't_isclose',
     ]
     reserved = {
         '@media': 'css_media',
@@ -227,32 +227,32 @@ class LessLexer:
         t.lexer.in_property_decl = False
         return t
 
-    def t_t_lsopen(self, t):
+    def t_t_eopen(self, t):
         r'~"|~\''
         if t.value[1] == '"':
-            t.lexer.push_state('lessstringquotes')
+            t.lexer.push_state('escapequotes')
         elif t.value[1] == '\'':
-            t.lexer.push_state('lessstringapostrophe')
+            t.lexer.push_state('escapeapostrophe')
         return t
 
     def t_t_tilde(self, t):
         r'~'
         return t
 
-    def t_lessstringquotes_less_variable(self, t):
+    def t_escapequotes_less_variable(self, t):
         r'@\{[^@"\}]+\}'
         return t
 
-    def t_lessstringapostrophe_less_variable(self, t):
+    def t_escapeapostrophe_less_variable(self, t):
         r'@\{[^@\'\}]+\}'
         return t
 
-    def t_lessstringquotes_t_lsclose(self, t):
+    def t_escapequotes_t_eclose(self, t):
         r'"'
         t.lexer.pop_state()
         return t
 
-    def t_lessstringapostrophe_t_lsclose(self, t):
+    def t_escapeapostrophe_t_eclose(self, t):
         r'\''
         t.lexer.pop_state()
         return t
@@ -262,38 +262,38 @@ class LessLexer:
         t.lexer.lineno += t.value.count('\n')
         return t
 
-    def t_t_sopen(self, t):
+    def t_t_isopen(self, t):
         r'"|\''
         if t.value[0] == '"':
-            t.lexer.push_state('cssstringquotes')
+            t.lexer.push_state('istringquotes')
         elif t.value[0] == '\'':
-            t.lexer.push_state('cssstringapostrophe')
+            t.lexer.push_state('istringapostrophe')
         return t
 
-    def t_cssstringquotes_less_variable(self, t):
+    def t_istringquotes_less_variable(self, t):
         r'@\{[^@"\}]+\}'
         return t
 
-    def t_cssstringapostrophe_less_variable(self, t):
+    def t_istringapostrophe_less_variable(self, t):
         r'@\{[^@\'\}]+\}'
         return t
 
-    def t_cssstringapostrophe_css_string(self, t):
+    def t_istringapostrophe_css_string(self, t):
         r'[^\'@]+'
         t.lexer.lineno += t.value.count('\n')
         return t
 
-    def t_cssstringquotes_css_string(self, t):
+    def t_istringquotes_css_string(self, t):
         r'[^"@]+'
         t.lexer.lineno += t.value.count('\n')
         return t
 
-    def t_cssstringquotes_t_sclose(self, t):
+    def t_istringquotes_t_isclose(self, t):
         r'"'
         t.lexer.pop_state()
         return t
 
-    def t_cssstringapostrophe_t_sclose(self, t):
+    def t_istringapostrophe_t_isclose(self, t):
         r'\''
         t.lexer.pop_state()
         return t
@@ -348,7 +348,7 @@ class LessLexer:
                 continue
             self.pretok = False
             if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon' \
-                and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'lessstringquotes' or t.lexer.lexstate == 'lessstringapostrophe')):
+                and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'escapequotes' or t.lexer.lexstate == 'escapeapostrophe')):
                 self.next_ = t
                 tok = lex.LexToken()
                 tok.type = 't_semicolon'
