@@ -10,6 +10,7 @@
 import re
 from .node import Node
 from lesscpy.lessc import utility
+from lesscpy.lib import reserved
 
 
 class Identifier(Node):
@@ -57,6 +58,19 @@ class Identifier(Node):
                     name.append(n)
         names.append(name)
         parsed = self.root(scope, names) if scope else names
+
+        # Interpolated selectors need another step, we have to replace variables. Avoid reserved words though
+        #
+        # Example:  '.@{var}'       results in [['.', '@{var}']]
+        # But:      '@media print'  results in [['@media', ' ', 'print']]
+        #
+        def replace_variables(tokens, scope):
+            return [scope.swap(t)
+                    if (utility.is_variable(t) and not t in reserved.tokens)
+                    else t
+                    for t in tokens]
+        parsed = [list(utility.flatten(replace_variables(part, scope))) for part in parsed]
+
         self.parsed = [[i for i, j in utility.pairwise(part)
                         if i != ' ' or (j and '?' not in j)]
                        for part in parsed]

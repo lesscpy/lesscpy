@@ -14,6 +14,7 @@ import ply.lex as lex
 
 from lesscpy.lib import dom
 from lesscpy.lib import css
+from lesscpy.lib import reserved
 
 
 class LessLexer:
@@ -23,8 +24,9 @@ class LessLexer:
         ('escapeapostrophe', 'inclusive'),
         ('istringquotes', 'inclusive'),
         ('istringapostrophe', 'inclusive'),
+        ('iselector', 'inclusive'),
     )
-    literals = ',<>{}=%!/*-+:&'
+    literals = ',<>=%!/*-+:&'
     tokens = [
         'css_ident',
         'css_dom',
@@ -60,23 +62,11 @@ class LessLexer:
 
         't_isopen',
         't_isclose',
-    ]
-    reserved = {
-        '@media': 'css_media',
-        '@page': 'css_page',
-        '@import': 'css_import',
-        '@charset': 'css_charset',
-        '@font-face': 'css_font_face',
-        '@namespace': 'css_namespace',
-        '@keyframes': 'css_keyframes',
-        '@-moz-keyframes': 'css_keyframes',
-        '@-webkit-keyframes': 'css_keyframes',
-        '@-ms-keyframes': 'css_keyframes',
-        '@-o-keyframes': 'css_keyframes',
 
-        '@arguments': 'less_arguments',
-    }
-    tokens += list(set(reserved.values()))
+        't_bopen',
+        't_bclose'
+    ]
+    tokens += list(set(reserved.tokens.values()))
     # Tokens with significant following whitespace
     significant_ws = [
         'css_class',
@@ -90,7 +80,7 @@ class LessLexer:
         'less_variable',
         '&',
     ]
-    significant_ws += list(set(reserved.values()))
+    significant_ws += list(set(reserved.tokens.values()))
 
     def __init__(self):
         self.build(reflags=re.UNICODE | re.IGNORECASE)
@@ -108,20 +98,40 @@ class LessLexer:
         r'(?:progid:|DX\.)[^;\(]*'
         return t
 
+    def t_t_bopen(self, t):
+        r'\{'
+        return t
+
+    def t_t_bclose(self, t):
+        r'\}'
+        return t
+
+    def t_css_number(self, t):
+        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz)?'
+        return t
+
     def t_css_ident(self, t):
-        (r'[\-\.\#]?'
-          '([_a-z]'
-           '|[\200-\377]'
-           '|\\\[0-9a-f]{1,6}'
-           '|\\\[^\s\r\n0-9a-f])'
-          '([_a-z0-9\-]'
-           '|[\200-\377]'
-           '|\\\[0-9a-f]{1,6}'
-           '|\\\[^\s\r\n0-9a-f])*')
+        (r'([\-\.\#]?'
+           '([_a-z]'
+            '|[\200-\377]'
+            '|\\\[0-9a-f]{1,6}'
+            '|\\\[^\s\r\n0-9a-f])'
+           '([_a-z0-9\-]'
+            '|[\200-\377]'
+            '|\\\[0-9a-f]{1,6}'
+            '|\\\[^\s\r\n0-9a-f])*)'
+          '|\.')
         v = t.value.strip()
         c = v[0]
         if c == '.':
+            # In some cases, only the '.' can be marked as CSS class.
+            #
+            # Example: .@{name}
+            #
             t.type = 'css_class'
+            if t.lexer.lexstate != "iselector":
+                # Selector-chaining case (a.b.c), we are already in state 'iselector'
+                t.lexer.push_state("iselector")
         elif c == '#':
             t.type = 'css_id'
             if len(v) in [4, 7]:
@@ -149,19 +159,51 @@ class LessLexer:
         t.value = v
         return t
 
+    def t_iselector_less_variable(self, t):
+        r'@\{[^@\}]+\}'
+        return t
+
+    def t_iselector_css_filter(self, t):
+        (r'\[[^\]]*\]'
+         '|(not|lang|nth-[a-z\-]+)\(.+\)'
+         '|and[ \t]\([^><\{]+\)')
+        # TODO/FIXME(saschpe): Only needs to be redifined in state 'iselector' so that
+        # the following css_class doesn't catch everything.
+        return t
+
+    def t_iselector_css_class(self, t):
+        r'[_a-z0-9\-]+'
+        # The first part of CSS class was tokenized by t_css_ident() already.
+        # Here we gather up the any LESS variable.
+        #
+        # Example: .span_@{num}_small
+        #
+        return t
+
+    def t_iselector_t_ws(self, t):
+        r'[ \t\f\v]+'
+        #
+        # Example: .span_@{num}
+        #
+        t.lexer.pop_state()
+        t.value = ' '
+        return t
+
+    def t_iselector_t_bopen(self, t):
+        r'\{'
+        t.lexer.pop_state()
+        return t
+
+
     def t_less_variable(self, t):
         r'@@?[\w-]+|@\{[^@\}]+\}'
         v = t.value.lower()
-        if v in LessLexer.reserved:
-            t.type = LessLexer.reserved[v]
+        if v in reserved.tokens:
+            t.type = reserved.tokens[v]
         return t
 
     def t_css_color(self, t):
         r'\#[0-9]([0-9a-f]{5}|[0-9a-f]{2})'
-        return t
-
-    def t_css_number(self, t):
-        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz)?'
         return t
 
     def t_parn_css_uri(self, t):
@@ -298,7 +340,6 @@ class LessLexer:
         t.lexer.pop_state()
         return t
 
-
     # Error handling rule
     def t_error(self, t):
         raise SyntaxError("Illegal character '%s' line %d" %
@@ -347,7 +388,7 @@ class LessLexer:
                                 and self.last.type not in self.significant_ws)):
                 continue
             self.pretok = False
-            if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon' \
+            if t.type == 't_bclose' and self.last and self.last.type not in ['t_bopen', 't_bclose'] and self.last.type != 't_semicolon' \
                 and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'escapequotes' or t.lexer.lexstate == 'escapeapostrophe')):
                 self.next_ = t
                 tok = lex.LexToken()

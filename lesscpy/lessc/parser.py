@@ -530,7 +530,7 @@ class LessParser(object):
         p[0] = p[1]
 
     def p_ident_part(self, p):
-        """ ident_part                : class
+        """ ident_part                : iclass
                                       | id
                                       | dom
                                       | combinator
@@ -754,11 +754,42 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:])
 
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
     def p_class(self, p):
         """ class                     : css_class
                                       | css_class t_ws
         """
         p[0] = tuple(list(p)[1:])
+
+    def p_interpolated_class_part(self, p):
+        """ iclass_part               : less_variable
+                                      | less_variable t_ws
+                                      | class
+        """
+        p[0] = list(p)[1:]
+
+    def p_interpolated_class_part_list_aux(self, p):
+        """ iclass_part_list          : iclass_part_list iclass_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_interpolated_class_part_list(self, p):
+        """ iclass_part_list          : iclass_part
+        """
+        p[0] = [p[1]]
+
+    def p_interpolated_class(self, p):
+        """ iclass                    : iclass_part_list
+        """
+        p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_id(self, p):
         """ id                        : css_id
@@ -803,13 +834,13 @@ class LessParser(object):
         p[0] = tuple(list(p)[1:])
 
     def p_scope_open(self, p):
-        """ brace_open                : '{'
+        """ brace_open                : t_bopen
         """
         self.scope.push()
         p[0] = p[1]
 
     def p_scope_close(self, p):
-        """ brace_close               : '}'
+        """ brace_close               : t_bclose
         """
         p[0] = p[1]
 
