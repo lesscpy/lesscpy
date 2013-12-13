@@ -26,7 +26,7 @@ class LessLexer:
         ('istringapostrophe', 'inclusive'),
         ('iselector', 'inclusive'),
     )
-    literals = ',<>=%!/*-+&'
+    literals = '<>=%!/*-+&'
     tokens = [
         'css_ident',
         'css_dom',
@@ -57,6 +57,7 @@ class LessLexer:
         't_semicolon',
         't_tilde',
         't_colon',
+        't_comma',
 
         't_eopen',
         't_eclose',
@@ -109,6 +110,11 @@ class LessLexer:
 
     def t_t_colon(self, t):
         r':'
+        return t
+
+    def t_t_comma(self, t):
+        r','
+        t.lexer.in_property_decl = False
         return t
 
     def t_css_number(self, t):

@@ -257,7 +257,7 @@ class LessParser(object):
         p[0] = p[2]
 
     def p_mixin_guard_cond_list_aux(self, p):
-        """ mixin_guard_cond_list    : mixin_guard_cond_list ',' mixin_guard_cond
+        """ mixin_guard_cond_list    : mixin_guard_cond_list t_comma mixin_guard_cond
                                      | mixin_guard_cond_list less_and mixin_guard_cond
         """
         p[1].append(p[2])
@@ -304,7 +304,7 @@ class LessParser(object):
         p[0] = [p[1]]
 
     def p_mixin_args_list_aux(self, p):
-        """ mixin_args_list          : mixin_args_list ',' mixin_args
+        """ mixin_args_list          : mixin_args_list t_comma mixin_args
                                      | mixin_args_list t_semicolon mixin_args
         """
         p[1].extend([p[3]])
@@ -416,7 +416,7 @@ class LessParser(object):
 
     def p_style_list_aux(self, p):
         """ style_list              : style_list style
-                                    | style_list ',' style
+                                    | style_list t_comma style
                                     | style_list t_ws style
         """
         p[1].extend(list(p)[2:])
@@ -455,7 +455,7 @@ class LessParser(object):
         p[0] = Identifier(Call([p[2], p[3]]), 0)
 
     def p_identifier_list_aux(self, p):
-        """ identifier_list           : identifier_list ',' identifier_group
+        """ identifier_list           : identifier_list t_comma identifier_group
         """
         p[1].extend([p[2]])
         p[1].extend(p[3])
@@ -603,7 +603,7 @@ class LessParser(object):
 
     def p_argument_list_aux(self, p):
         """ argument_list       : argument_list argument
-                                | argument_list ',' argument
+                                | argument_list t_comma argument
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
