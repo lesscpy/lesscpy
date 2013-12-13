@@ -434,7 +434,6 @@ class LessParser(object):
                                     | property
                                     | vendor_property
                                     | estring
-                                    | fcall
         """
         p[0] = p[1]
 
@@ -587,8 +586,6 @@ class LessParser(object):
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
                             | ms_filter t_popen argument_list t_pclose
-                            | estring
-                            | '~' css_string
         """
         p[0] = Call(list(p)[1:], 0)
 
