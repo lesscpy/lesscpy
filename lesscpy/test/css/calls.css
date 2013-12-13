@@ -11,7 +11,7 @@
 }
 #escapes {
 	escaped: -Some(#thing, y);
-	escaped1: -Some(#thing, z);
+	escaped1: -Some(#thing,z);
 	eformat: rgb(32, 128, 64);
 }
 #format {
