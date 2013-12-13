@@ -333,7 +333,7 @@ class LessParser(object):
         p[0] = None
 
     def p_mixin_kwarg(self, p):
-        """ mixin_kwarg                : variable ':' mixin_kwarg_arg_list
+        """ mixin_kwarg                : variable t_colon mixin_kwarg_arg_list
         """
         p[0] = Variable(list(p)[1:], p.lineno(2))
 
@@ -376,7 +376,7 @@ class LessParser(object):
 #
 
     def p_variable_decl(self, p):
-        """ variable_decl            : variable ':' style_list t_semicolon
+        """ variable_decl            : variable t_colon style_list t_semicolon
         """
         p[0] = Variable(list(p)[1:-1], p.lineno(4))
         p[0].parse(self.scope)
@@ -404,9 +404,9 @@ class LessParser(object):
         p[0] = (p[1][0], p[2][0])
 
     def p_prop_open(self, p):
-        """ prop_open               : property ':'
-                                    | vendor_property ':'
-                                    | word ':'
+        """ prop_open               : property t_colon
+                                    | vendor_property t_colon
+                                    | word t_colon
         """
         p[0] = (p[1][0], '')
 
@@ -509,12 +509,12 @@ class LessParser(object):
 
     def p_ident_media(self, p):
         """ ident_parts               : css_media t_ws
-                                      | css_media t_ws t_popen word ':' number t_pclose
+                                      | css_media t_ws t_popen word t_colon number t_pclose
         """
         p[0] = list(p)[1:]
 
     def p_ident_media_var(self, p):
-        """ ident_parts               : css_media t_ws t_popen word ':' variable t_pclose
+        """ ident_parts               : css_media t_ws t_popen word t_colon variable t_pclose
         """
         p[0] = list(p)[1:]
         if utility.is_variable(p[0][5]):
@@ -560,14 +560,14 @@ class LessParser(object):
 
     def p_filter(self, p):
         """ filter                    : css_filter
-                                      | ':' word
-                                      | ':' vendor_property
-                                      | ':' vendor_property t_ws
-                                      | ':' css_property
-                                      | ':' css_property t_ws
-                                      | ':' css_filter
-                                      | ':' ':' word
-                                      | ':' ':' vendor_property
+                                      | t_colon word
+                                      | t_colon vendor_property
+                                      | t_colon vendor_property t_ws
+                                      | t_colon css_property
+                                      | t_colon css_property t_ws
+                                      | t_colon css_filter
+                                      | t_colon t_colon word
+                                      | t_colon t_colon vendor_property
         """
         p[0] = list(p)[1:]
 

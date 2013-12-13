@@ -26,7 +26,7 @@ class LessLexer:
         ('istringapostrophe', 'inclusive'),
         ('iselector', 'inclusive'),
     )
-    literals = ',<>=%!/*-+:&'
+    literals = ',<>=%!/*-+&'
     tokens = [
         'css_ident',
         'css_dom',
@@ -56,6 +56,7 @@ class LessLexer:
         't_pclose',
         't_semicolon',
         't_tilde',
+        't_colon',
 
         't_eopen',
         't_eclose',
@@ -104,6 +105,10 @@ class LessLexer:
 
     def t_t_bclose(self, t):
         r'\}'
+        return t
+
+    def t_t_colon(self, t):
+        r':'
         return t
 
     def t_css_number(self, t):
@@ -194,6 +199,11 @@ class LessLexer:
         t.lexer.pop_state()
         return t
 
+    def t_iselector_t_colon(self, t):
+        r':'
+        t.lexer.pop_state()
+        return t
+
 
     def t_less_variable(self, t):
         r'@@?[\w-]+|@\{[^@\}]+\}'
@@ -259,9 +269,13 @@ class LessLexer:
         t.lexer.push_state('parn')
         return t
 
-    def t_t_pclose(self, t):
+    def t_parn_t_pclose(self, t):
         r'\)'
         t.lexer.pop_state()
+        return t
+
+    def t_t_pclose(self, t):
+        r'\)'
         return t
 
     def t_t_semicolon(self, t):
