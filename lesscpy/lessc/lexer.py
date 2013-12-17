@@ -174,6 +174,15 @@ class LessLexer:
         r'@\{[^@\}]+\}'
         return t
 
+    def t_iselector_t_eclose(self, t):
+        r'"|\''
+        # Can only happen if iselector state is on top of estring state.
+        #
+        # Example: @item: ~".col-xs-@{index}";
+        #
+        t.lexer.pop_state()
+        return t
+
     def t_iselector_css_filter(self, t):
         (r'\[[^\]]*\]'
          '|(not|lang|nth-[a-z\-]+)\(.+\)'

@@ -664,7 +664,8 @@ class LessParser(object):
 #
 
     def p_escaped_string(self, p):
-        """ estring                 : t_eopen style t_eclose
+        """ estring                 : t_eopen style_list t_eclose
+                                    | t_eopen identifier_list t_eclose
         """
         p[0] = p[2]
 
