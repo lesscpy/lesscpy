@@ -47,3 +47,6 @@ tbody td:first-child:before {
 .sr-only {
 	clip: rect(0 0 0 0);
 }
+.font-madness {
+	font: 0/0 a;
+}
