@@ -54,14 +54,16 @@ class Deferred(Node):
         if not mixins:
             if scope.deferred:
                 store = [t for t in scope.deferred.parsed[-1]]
+                i = 0
                 while scope.deferred.parsed[-1]:
                     scope.current = scope.deferred
                     ident.parse(scope)
                     mixins = scope.mixins(ident.raw())
                     scope.current = None
-                    if mixins:
+                    if mixins or i > 64:
                         break
                     scope.deferred.parsed[-1].pop()
+                    i += 1
                 scope.deferred.parsed[-1] = store
 
         if not mixins:

@@ -27,6 +27,7 @@ class Variable(Node):
             else:
                 self.name = self.name[0]
         scope.add_variable(self)
+        return self
 
     def copy(self):
         """ Return a copy of self

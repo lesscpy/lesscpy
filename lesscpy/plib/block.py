@@ -69,7 +69,7 @@ class Block(Node):
         f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
         name = self.name.fmt(fills)
-        if self.parsed:
+        if self.parsed and any(p for p in self.parsed if str(type(p)) != "<class 'lesscpy.plib.variable.Variable'>"):
             fills.update({
                 'identifier': name,
                 'proplist': ''.join([p.fmt(fills) for p in self.parsed if p]),
