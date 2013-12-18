@@ -516,7 +516,8 @@ class LessParser(object):
         p[0] = list(p)[1:]
         if utility.is_variable(p[0][5]):
             var = self.scope.variables(''.join(p[0][5]))
-            p[0][5] = var.value[0]
+            if var:
+                p[0][5] = var.value[0]
 
     def p_selector(self, p):
         """ selector                  : '*'
