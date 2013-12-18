@@ -229,3 +229,16 @@ class Call(Node):
         n = int(n * 100.0)
         u = '%'
         return utility.with_unit(n, u)
+
+    def unit(self, value, *args):
+        """ Strip units from a value, or convert to the specified units.
+        args:
+            value (str): target
+        returns:
+            str
+        """
+        n, u = utility.analyze_number(value)
+        if (args):
+            return utility.with_unit(n, args[0])
+        else:
+            return n
