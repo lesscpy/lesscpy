@@ -469,6 +469,12 @@ class LessParser(object):
         """
         p[0] = list(p)[1:]
 
+    def p_identifier_list_viewport(self, p):
+        """ identifier_list           : css_viewport
+                                      | css_viewport t_ws
+        """
+        p[0] = list(p)[1:]
+
     def p_identifier_group_op(self, p):
         """ identifier_group          : identifier_group child_selector ident_parts
                                       | identifier_group '+' ident_parts

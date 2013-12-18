@@ -70,7 +70,7 @@ class LessLexer:
     ]
     tokens += list(set(reserved.tokens.values()))
     # Tokens with significant following whitespace
-    significant_ws = [
+    significant_ws = set([
         'css_class',
         'css_id',
         'css_dom',
@@ -81,8 +81,8 @@ class LessLexer:
         'css_color',
         'less_variable',
         '&',
-    ]
-    significant_ws += list(set(reserved.tokens.values()))
+    ])
+    significant_ws.update(reserved.tokens.values())
 
     def __init__(self):
         self.build(reflags=re.UNICODE | re.IGNORECASE)

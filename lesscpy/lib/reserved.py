@@ -19,5 +19,8 @@ tokens = {
     '@-ms-keyframes': 'css_keyframes',
     '@-o-keyframes': 'css_keyframes',
 
+    '@viewport': 'css_viewport',
+    '@-ms-viewport': 'css_viewport',
+
     '@arguments': 'less_arguments',
 }
