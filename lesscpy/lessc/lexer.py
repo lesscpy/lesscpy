@@ -131,8 +131,8 @@ class LessLexer:
             t.type = 'css_property'
             t.lexer.in_property_decl = True
         elif (v in dom.elements or v.lower() in dom.elements) and not t.lexer.in_property_decl:
-            # DOM elements can't be part of property declarations, avoids ambiguity between 'rect' DOM
-            # element and rect() CSS function.
+            # DOM elements can't be part of property declarations, avoids ambiguity between 'rect'
+            # DOM element and rect() CSS function.
             t.type = 'css_dom'
         elif c == '@':
             v = v.lower()
@@ -280,7 +280,12 @@ class LessLexer:
                                 and self.last.type not in self.significant_ws)):
                 continue
             self.pretok = False
-            if t.type == '}' and self.last and self.last.type not in '{}' and self.last.type != 't_semicolon':
+            if (
+                t.type == '}'
+                and self.last
+                and self.last.type not in '{}'
+                and self.last.type != 't_semicolon'
+            ):
                 self.next_ = t
                 tok = lex.LexToken()
                 tok.type = 't_semicolon'
