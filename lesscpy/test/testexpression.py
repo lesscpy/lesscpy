@@ -51,9 +51,7 @@ class TestExpression(unittest.TestCase):
             ['1', '>', '2', False],
             ['1', '<', '2', True],
             ['1', '>=', '2', False],
-            ['1', '<=', '2', True],
-            ['1', '!=', '2', True],
-            ['1', '<>', '2', True],
+            ['1', '=<', '2', True],
         ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), test)

@@ -285,10 +285,8 @@ class LessParser(object):
         """ mixin_guard_cmp           : '>'
                                       | '<'
                                       | '='
-                                      | '!' '='
                                       | '>' '='
-                                      | '<' '='
-                                      | '<' '>'
+                                      | '=' '<'
         """
         p[0] = ''.join(list(p)[1:])
 
