@@ -83,6 +83,8 @@ class Color():
         """
         if len(args) == 4:
             try:
+                if float(list(args)[3]) > 1:
+                    args = args[:3]
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args

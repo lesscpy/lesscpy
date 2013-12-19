@@ -156,3 +156,11 @@
 	color: red;
 	color: #0000cc;
 }
+.alpha {
+	color: #c8c8c8;
+	color: #c9c8c8;
+	color: #cac8c8;
+	color: #c8c9c8;
+	color: rgba(201,200,200,0.5);
+	color: rgba(202,200,200,0.0);
+}
