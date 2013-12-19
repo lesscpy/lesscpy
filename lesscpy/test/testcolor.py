@@ -58,6 +58,27 @@ class TestLessColor(unittest.TestCase):
         ]:
             self.assertRaises(ValueError, test, args)
 
+    def test_argb(self):
+        test = self.color.argb
+        for a, r, g, b, v in [
+            (255, 255, 255, 255, '#ffffffff'),
+            (100, 100, 100, 100, '#ff646464'),
+            (0, 0, 0, 0, '#00000000'),
+            ('70%', '70%', '70%', '70%', '#b2b2b2b2'),
+            ('1%', '1%', '1%', '1%', '#02020202'),
+            ('100%', '100%', '100%', '100%', '#ffffffff'),
+            ('0%', '0%', '0%', '0%', '#00000000'),
+        ]:
+            self.assertEqual(test(a, r, g, b), v)
+        for args in [
+            (255, 255, 255, 256),
+            (-1, 0, 0, 0),
+            (200, '100%', '100%', '100%'),
+            ('200%', '100%', '100%', '100%'),
+        ]:
+            self.assertRaises(ValueError, test, args)
+
+
     def test_hsl(self):
         """
         """
