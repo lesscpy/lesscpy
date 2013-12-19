@@ -24,6 +24,12 @@ class TestLessColor(unittest.TestCase):
             ('0%', '0%', '0%', '#000000'),
         ]:
             self.assertEqual(test(r, g, b), v)
+        for r, g, b, a, v in [
+            (255, 255, 255, 0.5,  '#ffffff'),
+            (100, 100, 100, 0.9, '#646464'),
+            (0, 0, 0, 100, '#000000'),
+        ]:
+            self.assertEqual(test(r, g, b, a), v)
         for args in [
             (255, 255, 256),
             (0, -1, 0),

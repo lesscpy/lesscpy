@@ -62,8 +62,8 @@ class Color():
             str
         """
         if len(args) == 4:
-            return self.rgba(*args)
-        elif len(args) == 3:
+            args = args[:3]
+        if len(args) == 3:
             try:
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
