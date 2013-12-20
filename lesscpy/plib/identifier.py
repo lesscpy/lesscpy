@@ -39,6 +39,14 @@ class Identifier(Node):
             self.tokens = list(utility.flatten([id.split() + [',']
                                                 for id in self.tokens.parse(scope).split(',')]))
             self.tokens.pop()
+        if self.tokens and any(hasattr(t, 'parse') for t in self.tokens):
+            tmp_tokens = []
+            for t in self.tokens:
+                if hasattr(t, 'parse'):
+                    tmp_tokens.append(t.parse(scope))
+                else:
+                    tmp_tokens.append(t)
+            self.tokens = list(utility.flatten(tmp_tokens))
         if self.tokens and self.tokens[0] in self._subp:
             name = list(utility.flatten(self.tokens))
             self.subparse = True

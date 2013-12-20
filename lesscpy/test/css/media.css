@@ -39,3 +39,8 @@
 		margin: 0 auto;
 	}
 }
+@media (width:767px) {
+	.visible-xs {
+		display: block;
+	}
+}

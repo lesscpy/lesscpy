@@ -47,3 +47,10 @@
 @media (min-width: @minwidth) {
     body { margin: 0 auto; }
 }
+/*
+    Expressions
+    */
+@foo: 768px - 1;
+@media (width: @foo) {
+  .visible-xs { display: block; }
+}
