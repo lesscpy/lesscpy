@@ -275,7 +275,7 @@ class Color():
         # Clamp value
         return min(1, max(0, value))
 
-    def grayscale(self, color, *args):
+    def greyscale(self, color, *args):
         """ Simply 100% desaturate.
         args:
             color (str): color
@@ -286,10 +286,10 @@ class Color():
             return self.desaturate(color, 100.0)
         raise ValueError('Illegal color values')
 
-    def greyscale(self, color, *args):
-        """Wrapper for grayscale, other spelling
+    def grayscale(self, color, *args):
+        """Wrapper for greyscale, other spelling
         """
-        return self.grayscale(color, *args)
+        return self.greyscale(color, *args)
 
     def spin(self, color, degree, *args):
         """ Spin color by degree. (Increase / decrease hue)
