@@ -303,7 +303,7 @@ class Color():
         """
         if color and degree:
             if isinstance(degree, str):
-                degree = int(degree.strip('%'))
+                degree = float(degree.strip('%'))
             h, l, s = self._hextohls(color)
             h = ((h * 360.0) + degree) % 360.0
             h = 360.0 + h if h < 0 else h
@@ -347,7 +347,7 @@ class Color():
         """
         if color1 and color2:
             if isinstance(weight, str):
-                weight = int(weight.strip('%'))
+                weight = float(weight.strip('%'))
             weight = ((weight / 100.0) * 2) - 1
             rgb1 = self._hextorgb(color1)
             rgb2 = self._hextorgb(color2)
@@ -408,7 +408,7 @@ class Color():
 
     def _ophsl(self, color, diff, idx, operation):
         if isinstance(diff, str):
-            diff = int(diff.strip('%'))
+            diff = float(diff.strip('%'))
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(operation(hls[idx], diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)
