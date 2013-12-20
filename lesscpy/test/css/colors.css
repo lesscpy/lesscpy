@@ -163,6 +163,9 @@
 	color: #c8c9c8;
 	color: rgba(201,200,200,0.5);
 	color: rgba(202,200,200,0.0);
+	color: rgba(0,0,0,0.0);
+	color: rgba(1,0,0,0);
+	color: rgba(0,5,0,0);
 }
 .fraction {
 	color: #000000;

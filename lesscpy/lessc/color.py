@@ -84,13 +84,22 @@ class Color():
         """
         if len(args) == 4:
             try:
-                if float(list(args)[3]) > 1:
+                falpha = float(list(args)[3])
+                if falpha > 1:
                     args = args[:3]
+                if falpha == 0:
+                    values = self._rgbatohex_raw(list(map(int, args)))
+                    return "rgba(%s)" % ','.join([str(a) for a in values])
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
                         if a[-1] == '%'
                         and 100 >= int(a[:-1]) >= 0)):
+                    alpha = list(args)[3]
+                    if alpha[-1] == '%' and float(alpha[:-1]) == 0:
+                        values = self._rgbatohex_raw([int(a[:-1]) * 255 / 100.0
+                                                for a in args])
+                        return "rgba(%s)" % ','.join([str(a) for a in values])
                     return self._rgbatohex([int(a[:-1]) * 255 / 100.0
                                             for a in args])
         raise ValueError('Illegal color values')
@@ -380,6 +389,14 @@ class Color():
                 color = ''.join([c * 2 for c in color])
             return '#%s' % color
         raise ValueError('Cannot format non-color')
+
+    
+    def _rgbatohex_raw(self, rgba):
+        values = ["%x" % v for v in [0xff
+                                     if h > 0xff else
+                                     0 if h < 0 else h
+                                     for h in rgba]]
+        return values
 
     def _rgbatohex(self, rgba):
         return '#%s' % ''.join(["%02x" % v for v in
