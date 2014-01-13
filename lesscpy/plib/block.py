@@ -76,7 +76,7 @@ class Block(Node):
             })
             out.append(f % fills)
         if hasattr(self, 'inner'):
-            if self.name.subparse:  # @media
+            if self.name.subparse and len(self.inner) > 0:  # @media
                 inner = ''.join([p.fmt(fills) for p in self.inner])
                 inner = inner.replace(fills['nl'],
                                       fills['nl'] + fills['tab']).rstrip(fills['tab'])
