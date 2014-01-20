@@ -13,3 +13,8 @@
 	width: 6px;
 	height: 9px;
 }
+@import "styles.css";
+@import url("styles.css");
+@import url("druck.css") print;
+@import url("foo.css") projection,tv;
+@import url("bar.css") handheld and (max-width:500px);

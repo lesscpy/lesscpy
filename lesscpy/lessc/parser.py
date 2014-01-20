@@ -162,12 +162,20 @@ class LessParser(object):
 
     def p_statement_import(self, p):
         """ import_statement     : css_import t_ws css_string t_semicolon
-                                 | css_import t_ws css_string dom t_semicolon
+                                 | css_import t_ws css_string media_query_list t_semicolon
+                                 | css_import t_ws fcall t_semicolon
+                                 | css_import t_ws fcall media_query_list t_semicolon
         """
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
-        ipath = utility.destring(p[3])
+        if isinstance(p[3], str):
+            ipath = utility.destring(p[3])
+        elif isinstance(p[3], Call):
+            # NOTE(saschpe): Always in the form of 'url("...");', so parse it
+            # and retrieve the inner css_string. This whole func is messy.
+            p[3] = p[3].parse(self.scope) # Store it as string, Statement.fmt expects it.
+            ipath = utility.destring(p[3][4:-1])
         fn, fe = os.path.splitext(ipath)
         if not fe or fe.lower() == '.less':
             try:
@@ -222,6 +230,11 @@ class LessParser(object):
             pass
         p[0] = p[1]
         self.scope.current = p[1]
+
+    def p_block_open_media_query(self, p):
+        """ block_open                : media_query_decl brace_open
+        """
+        p[0] = Identifier(p[1]).parse(self.scope)
 
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
@@ -510,20 +523,77 @@ class LessParser(object):
             p[1] = [p[1]]
         p[0] = p[1]
 
-    def p_ident_media(self, p):
-        """ ident_parts               : css_media t_ws
-                                      | css_media t_ws t_popen word t_colon number t_pclose
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+    def p_media_query_decl(self, p):
+        """ media_query_decl            : css_media t_ws
+                                        | css_media t_ws media_query_list
         """
         p[0] = list(p)[1:]
 
-    def p_ident_media_var(self, p):
-        """ ident_parts               : css_media t_ws t_popen word t_colon variable t_pclose
+    def p_media_query_list_aux(self, p):
+        """ media_query_list            : media_query_list t_comma media_query
         """
         p[0] = list(p)[1:]
-        if utility.is_variable(p[0][5]):
-            var = self.scope.variables(''.join(p[0][5]))
+
+    def p_media_query_list(self, p):
+        """ media_query_list            : media_query
+        """
+        p[0] = [p[1]]
+
+    def p_media_query_a(self, p):
+        """ media_query                 : media_type
+                                        | media_type media_query_expression_list
+                                        | not media_type
+                                        | not media_type media_query_expression_list
+                                        | only media_type
+                                        | only media_type media_query_expression_list
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_b(self, p):
+        """ media_query                 : media_query_expression media_query_expression_list
+                                        | media_query_expression
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_expression_list_aux(self, p):
+        """ media_query_expression_list : media_query_expression_list and media_query_expression
+                                        | and media_query_expression
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_expression(self, p):
+        """ media_query_expression      : t_popen css_media_feature t_pclose
+                                        | t_popen css_media_feature t_colon media_query_value t_pclose
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_value(self, p):
+        """ media_query_value           : number
+                                        | variable
+                                        | word
+                                        | color
+                                        | expression
+        """
+        if utility.is_variable(p[1]):
+            var = self.scope.variables(''.join(p[1]))
             if var:
-                p[0][5] = var.value[0]
+                value = var.value[0]
+                if hasattr(value, 'parse'):
+                    p[1] = value.parse(self.scope)
+                else:
+                    p[1] = value
+        if isinstance(p[1], Expression):
+            p[0] = p[1].parse(self.scope)
+        else:
+            p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_selector(self, p):
         """ selector                  : '*'
@@ -818,6 +888,12 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:])
 
+    def p_media_type(self, p):
+        """ media_type                : css_media_type
+                                      | css_media_type t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
     def p_combinator(self, p):
         """ combinator                : '&' t_ws
                                       | '&'
@@ -846,6 +922,24 @@ class LessParser(object):
         """ brace_close               : t_bclose
         """
         p[0] = p[1]
+
+    def p_and(self, p):
+        """ and                       : t_and t_ws
+                                      | t_and
+        """
+        p[0] = tuple(list(p)[1:])
+
+    def p_not(self, p):
+        """ not                       : t_not t_ws
+                                      | t_not
+        """
+        p[0] = tuple(list(p)[1:])
+
+    def p_only(self, p):
+        """ only                      : t_only t_ws
+                                      | t_only
+        """
+        p[0] = tuple(list(p)[1:])
 
     def p_empty(self, p):
         'empty                        :'

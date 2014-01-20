@@ -25,6 +25,8 @@ class LessLexer:
         ('istringquotes', 'inclusive'),
         ('istringapostrophe', 'inclusive'),
         ('iselector', 'inclusive'),
+        ('mediaquery', 'inclusive'),
+        ('import', 'inclusive'),
     )
     literals = '<>=%!/*-+&'
     tokens = [
@@ -43,6 +45,13 @@ class LessLexer:
         'css_vendor_hack',
         'css_uri',
         'css_ms_filter',
+
+        'css_media_type',
+        'css_media_feature',
+
+        't_and',
+        't_not',
+        't_only',
 
         'less_variable',
         'less_comment',
@@ -79,7 +88,11 @@ class LessLexer:
         'css_ident',
         'css_number',
         'css_color',
+        'css_media_type',
         'less_variable',
+        't_and',
+        't_not',
+        't_only',
         '&',
     ])
     significant_ws.update(reserved.tokens.values())
@@ -219,12 +232,69 @@ class LessLexer:
         t.lexer.pop_state()
         return t
 
+    def t_mediaquery_t_not(self, t):
+        r'not'
+        return t
+
+    def t_mediaquery_t_only(self, t):
+        r'only'
+        return t
+
+    def t_mediaquery_t_and(self, t):
+        r'and'
+        return t
+
+    def t_mediaquery_t_popen(self, t):
+        r'\('
+        # Redefine global t_popen to avoid pushing state 'parn'
+        return t
+
+    @lex.TOKEN('|'.join(css.media_types))
+    def t_mediaquery_css_media_type(self, t):
+        return t
+
+    @lex.TOKEN('|'.join(css.media_features))
+    def t_mediaquery_css_media_feature(self, t):
+        return t
+
+    def t_mediaquery_t_bopen(self, t):
+        r'\{'
+        t.lexer.pop_state()
+        return t
+
+    def t_mediaquery_t_semicolon(self, t):
+        r';'
+        # This can happen only as part of a CSS import statement. The 
+        # "mediaquery" state is reused there. Ordinary media queries always
+        # end at '{', i.e. when a block is opened.
+        t.lexer.pop_state()  # state mediaquery
+        # We have to pop the 'import' state here because we already ate the 
+        # t_semicolon and won't trigger t_import_t_semicolon.
+        t.lexer.pop_state()  # state import
+        return t
+
+    @lex.TOKEN('|'.join(css.media_types))
+    def t_import_css_media_type(self, t):
+        # Example: @import url("bar.css") handheld and (max-width: 500px);
+        # Alternatively, we could use a lookahead "if not ';'" after the URL
+        # part of the @import statement...
+        t.lexer.push_state("mediaquery")
+        return t
+
+    def t_import_t_semicolon(self, t):
+        r';'
+        t.lexer.pop_state()
+        return t
 
     def t_less_variable(self, t):
         r'@@?[\w-]+|@\{[^@\}]+\}'
         v = t.value.lower()
         if v in reserved.tokens:
             t.type = reserved.tokens[v]
+            if t.type == "css_media":
+                t.lexer.push_state("mediaquery")
+            elif t.type == "css_import":
+                t.lexer.push_state("import")
         return t
 
     def t_css_color(self, t):

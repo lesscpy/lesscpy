@@ -36,6 +36,10 @@
 @media all and (orientation:portrait) {
     aside { float: none; }
 }
+@media not screen and (color), print and (color) {
+    body { margin: 0 auto; }
+}
+
 /*
 
 */
@@ -53,4 +57,16 @@
 @foo: 768px - 1;
 @media (width: @foo) {
   .visible-xs { display: block; }
+}
+
+/*
+    Vendor extensions and expressions
+*/
+@media 
+  only screen and (   min--moz-device-pixel-ratio: 5/2),
+  only screen and (     -o-min-device-pixel-ratio: 2/1),
+  only screen and (        min-device-pixel-ratio: 2),
+  only screen and (                min-resolution: 192dpi),
+  only screen and (                min-resolution: 2dppx) {
+    background-size: 10px;
 }

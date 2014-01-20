@@ -29,7 +29,12 @@
 		float: none;
 	}
 }
-@media (min-width:768px)and (max-width: 979px) {
+@media not screen and (color),print and (color) {
+	body {
+		margin: 0 auto;
+	}
+}
+@media (min-width:768px)and (max-width:979px) {
 	.hidden-desktop {
 		display: none !important;
 	}
@@ -43,4 +48,7 @@
 	.visible-xs {
 		display: block;
 	}
+}
+@media only screen and (min--moz-device-pixel-ratio:2.5),only screen and (-o-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:192dpi),only screen and (min-resolution:2dppx) {
+	background-size: 10px;
 }
