@@ -118,7 +118,7 @@ class LessLexer:
         return t
 
     def t_css_number(self, t):
-        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz)?'
+        r'-?(\d*\.\d+|\d+)(s|%|in|ex|[ecm]m|p[txc]|deg|g?rad|ms?|k?hz|dpi|dpcm|dppx)?'
         return t
 
     def t_css_ident(self, t):
