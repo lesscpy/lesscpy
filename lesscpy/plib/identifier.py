@@ -115,6 +115,8 @@ class Identifier(Node):
                     parsed.extend(parent)
                 else:
                     parsed.append(n)
+        elif name[0] == "@media":
+            parsed.extend(name)
         else:
             parsed.extend(parent)
             if parent[-1] != ' ':
