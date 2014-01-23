@@ -95,3 +95,20 @@
   }
   width: 100px;
 }
+.visible {
+  @media print {
+    color: green;
+  }
+  &.visible-sm {
+    @media screen {
+      color: green;
+    }
+  }
+}
+.navbar {
+  .form {
+    @media (max-width: 10px) {
+      margin-bottom: 5px;
+    }
+  }
+}

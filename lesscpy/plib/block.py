@@ -49,7 +49,9 @@ class Block(Node):
             for p in inner:
                 if p is not None:
                     if isinstance(p, Block):
-                        if p.name.tokens[0] == '@media' and not self.name.raw().startswith("@media"):
+                        if (len(scope) == 2 and p.tokens[1] is not None):
+                            p_is_ampersand = '&' in p.name.tokens[0]
+                            p_is_mediaquery = p.name.tokens[0] == '@media'
                             # Inner block @media ... { ... } is a nested media
                             # query. But double-nested media queries have to be
                             # removed and marked as well. While parsing ".foo",
@@ -76,39 +78,49 @@ class Block(Node):
                             reparse_p = False
                             for child in p.tokens[1]:
                                 if isinstance(child, Block) and child.name.raw().startswith("@media"):
-                                    # Double-nested media query found. We remove it from 'p' and add
-                                    # it to this block with a new 'name'.
-                                    part_a = p.name.tokens[2:][0][0][0]
-                                    part_b = child.name.tokens[2:][0][0]
-                                    new_ident_tokens = ['@media', ' ', [part_a, (' ', 'and', ' '), part_b]]
                                     # Remove child from the nested media query, it will be re-added to
                                     # the parent with 'merged' media query (see above example).
                                     p.tokens[1].remove(child)
-                                    reparse_p = True
-                                    # Parse child again with new @media $BLA {} part
-                                    child.tokens[0] = Identifier(new_ident_tokens)
-                                    child.parsed = None
-                                    child = child.parse(scope)
+                                    if p_is_mediaquery:  # Media query inside a & block
+                                        # Double-nested media query found. We remove it from 'p' and add
+                                        # it to this block with a new 'name'.
+                                        reparse_p = True
+                                        part_a = p.name.tokens[2:][0][0][0]
+                                        part_b = child.name.tokens[2:][0][0]
+                                        new_ident_tokens = ['@media', ' ', [part_a, (' ', 'and', ' '), part_b]]
+                                        # Parse child again with new @media $BLA {} part
+                                        child.tokens[0] = Identifier(new_ident_tokens)
+                                        child.parsed = None
+                                        child = child.parse(scope)
+                                    else:
+                                        child.block_name = p.name
                                     append_list.append(child)
-                            if reparse_p:
-                                p.parsed = None
-                                p = p.parse(scope)
-                            append_list.insert(0, p) # This media query should occur before it's children
-                            for media_query in append_list:
-                                self.inner_media_queries.append(media_query)
+                                if reparse_p:
+                                    p.parsed = None
+                                    p = p.parse(scope)
+                            if not p_is_mediaquery and not append_list:
+                                self.inner.append(p)
+                            else:
+                                append_list.insert(0, p) # This media query should occur before it's children
+                                for media_query in append_list:
+                                    self.inner_media_queries.append(media_query)
                             # NOTE(saschpe): The code is not recursive but we hope that people
                             # wont use triple-nested media queries.
                         else:
                             self.inner.append(p)
                     else:
                         self.parsed.append(p)
-            if len(self.inner_media_queries) > 0:
+            if self.inner_media_queries:
                 # Nested media queries, we have to remove self from scope and
                 # push all nested @media ... {} blocks.
                 scope.remove_block(self, index=-2)
                 for mb in self.inner_media_queries:
                     # New inner block with current name and media block contents
-                    cb = Block([self.tokens[0], mb.tokens[1]]).parse(scope)
+                    if hasattr(mb, 'block_name'):
+                        cb_name = mb.block_name
+                    else:
+                        cb_name = self.tokens[0]
+                    cb = Block([cb_name, mb.tokens[1]]).parse(scope)
                     # Replace inner block contents with new block
                     new_mb = Block([mb.tokens[0], [cb]]).parse(scope)
                     self.inner.append(new_mb)

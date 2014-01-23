@@ -80,3 +80,18 @@
 		color: blue;
 	}
 }
+@media print {
+	.visible {
+		color: green;
+	}
+}
+@media screen {
+	.visible.visible-sm {
+		color: green;
+	}
+}
+@media (max-width:10px) {
+	.navbar .form {
+		margin-bottom: 5px;
+	}
+}

@@ -16,3 +16,6 @@ body{max-width:35em;margin:0 auto;}}
 .two{width:100px;}
 @media (width:400px){.two{font-size:1.2em;}}
 @media print and (color){.two{color:blue;}}
+@media print{.visible{color:green;}}
+@media screen{.visible.visible-sm{color:green;}}
+@media (max-width:10px){.navbar .form{margin-bottom:5px;}}
