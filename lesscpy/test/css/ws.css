@@ -40,3 +40,6 @@
 @font-face {
 	src: url('x') format('e'), url('r') format('s');
 }
+fieldset[disabled] .form-control {
+	cursor: not-allowed;
+}

@@ -110,6 +110,8 @@ class Identifier(Node):
         if any((n for n in name if n == '&')):
             for n in name:
                 if n == '&':
+                    if parsed[-1].endswith(']'):
+                        parsed.extend(' ')
                     if parent[-1] == ' ':
                         parent.pop()
                     parsed.extend(parent)
