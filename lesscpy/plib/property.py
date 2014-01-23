@@ -79,7 +79,7 @@ class Property(Node):
                          else str(p)
                          for p in self.parsed])
         # IE cannot handle no space after url()
-        style = re.sub("(url\(.*\))([^\s,])", "\\1 \\2", style)
+        style = re.sub("(url\([^\)]*\))([^\s,])", "\\1 \\2", style)
         fills.update({
             'property': self.property,
             'style': style.strip(),

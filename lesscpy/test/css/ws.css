@@ -37,3 +37,6 @@
 		padding: src('no semi in media block');
 	}
 }
+@font-face {
+	src: url('x') format('e'), url('r') format('s');
+}
