@@ -155,6 +155,4 @@ class Identifier(Node):
         name = ',$$'.join(''.join(p).strip()
                           for p in self.parsed)
         name = re.sub('\?(.)\?', '%(ws)s\\1%(ws)s', name) % fills
-        return (name.replace('$$', fills['nl'])
-                if len(name) > 85
-                else name.replace('$$', fills['ws'])).replace('  ', ' ')
+        return name.replace('$$', fills['nl']).replace('  ', ' ')

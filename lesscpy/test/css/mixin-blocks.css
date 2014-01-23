@@ -32,10 +32,12 @@ pre {
 pre .mixin {
 	color: yellow;
 }
-div.nest a:hover .deep p, div.nest a:focus .deep p {
+div.nest a:hover .deep p,
+div.nest a:focus .deep p {
 	widows: 3;
 }
-.nest_deep a:hover .deep p, .nest_deep a:focus .deep p {
+.nest_deep a:hover .deep p,
+.nest_deep a:focus .deep p {
 	widows: 3;
 }
 .mixout {

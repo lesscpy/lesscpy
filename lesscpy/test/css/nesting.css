@@ -13,7 +13,12 @@
 .div .nest.deep .deeper .deepest {
 	color: purple;
 }
-h1 a:hover, h1 p:hover, h2 a:hover, h2 p:hover, h3 a:hover, h3 p:hover {
+h1 a:hover,
+h1 p:hover,
+h2 a:hover,
+h2 p:hover,
+h3 a:hover,
+h3 p:hover {
 	color: red;
 }
 a {
@@ -28,13 +33,16 @@ div a {
 p a span {
 	color: yellow;
 }
-.foo .bar .qux, .foo .baz .qux {
+.foo .bar .qux,
+.foo .baz .qux {
 	display: block;
 }
-.qux .foo .bar, .qux .foo .baz {
+.qux .foo .bar,
+.qux .foo .baz {
 	display: inline;
 }
-.qux .foo .bar .biz, .qux .foo .baz .biz {
+.qux .foo .bar .biz,
+.qux .foo .baz .biz {
 	display: none;
 }
 #first > .one {

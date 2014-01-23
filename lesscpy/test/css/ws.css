@@ -16,7 +16,9 @@
 .whitespace {
 	color: black;
 }
-.white, .space, .mania {
+.white,
+.space,
+.mania {
 	color: white;
 }
 .newlines {
