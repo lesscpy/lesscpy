@@ -79,12 +79,13 @@ class TestIdentifier(unittest.TestCase):
         sc.current = Identifier(['.c', ',', '.d'], 0).parse(sc)
         id = Identifier(['.deep'], 0)
         self.assertEqual(id.parse(sc).fmt(fl), '.a .next .c .deep,\n'
-                         '.a .next .d .deep,\n'
                          '.b .next .c .deep,\n'
+                         '.a .next .d .deep,\n'
                          '.b .next .d .deep')
-        self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%.a%'
-                                   ' %.next% %.d% %.deep%.b% %.next%'
-                                   ' %.c% %.deep%.b% %.next% %.d% %.deep')
+        self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%'
+                                   '.b% %.next% %.c% %.deep%'
+                                   '.a% %.next% %.d% %.deep%'
+                                   '.b% %.next% %.d% %.deep')
 
     def test_media(self):
         fl = {'ws': ' ', 'nl': '\n'}

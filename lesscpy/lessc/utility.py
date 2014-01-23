@@ -11,6 +11,7 @@
 from __future__ import print_function
 
 import collections
+import itertools
 import math
 import re
 import sys
@@ -276,3 +277,15 @@ def convergent_round(value, ndigits=0):
                 nearest_even = integral_part + 0.5
                 return math.ceil(nearest_even)
     return round(value, ndigits)
+
+
+def permutations_with_replacement(iterable, r=None):
+    """Return successive r length permutations of elements in the iterable.
+
+    Similar to itertools.permutation but withouth repeated values filtering.
+    """
+    pool = tuple(iterable)
+    n = len(pool)
+    r = n if r is None else r
+    for indices in itertools.product(range(n), repeat=r):
+        yield list(pool[i] for i in indices)
