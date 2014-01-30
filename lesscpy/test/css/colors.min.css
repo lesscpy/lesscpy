@@ -15,7 +15,9 @@
 .lighten{color:#585858;color:#6f6f6f;color:#888888;color:#bbbbbb;color:#eeeeee;color:#ffffff;color:#ffffff;color:#000000;color:#ffffff;color:#ffffff;color:#2b3632;color:#404f49;color:#566c63;color:#88a096;color:#c1cdc8;color:#ffffff;}
 .darken{color:#525252;color:#3b3b3b;color:#222222;color:#000000;color:#000000;color:#000000;color:#000000;color:#000000;color:#000000;color:#ffffff;color:#27302c;color:#121715;color:#000000;color:#000000;color:#000000;color:#000000;}
 .spin{color:#555555;color:#555555;color:#555555;color:#555555;color:#555555;color:#555555;color:#000000;color:#000000;color:#ffffff;color:#ffffff;color:#29332f;color:#29332d;color:#293332;color:#2a3329;color:#292d33;color:#2c2933;}
-.grayscale{color:#000000;color:#000000;color:#ffffff;color:#ffffff;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;}
+.greyscale{color:#000000;color:#000000;color:#ffffff;color:#ffffff;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;color:#2e2e2e;}
 .mix{color:#7f007f;color:#7f7f7f;color:#7f9055;color:#3f00bf;color:#ff0000;color:#0000ff;}
 .vars{color:#f6430f;background-color:#f8b38d;color:#f1dfda;}
 .names{color:red;color:#0000cc;}
+.alpha{color:#c8c8c8;color:#c9c8c8;color:#cac8c8;color:#c8c9c8;color:rgba(201,200,200,0.5);color:rgba(202,200,200,0.0);color:rgba(0,0,0,0.0);color:rgba(1,0,0,0);color:rgba(0,5,0,0);}
+.fraction{color:#000000;color:#eeeeee;color:#fc0002;color:#292f33;color:#2e2e2e;color:#005c37;color:#555555;}

@@ -10,8 +10,8 @@
 	round15: 2;
 }
 #escapes {
-	escaped: -Some::weird(#thing, y);
-	escaped1: -Some::weird(#thing, z);
+	escaped: -Some(#thing, y);
+	escaped1: -Some(#thing,z);
 	eformat: rgb(32, 128, 64);
 }
 #format {

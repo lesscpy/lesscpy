@@ -127,7 +127,7 @@
 	color: #292d33;
 	color: #2c2933;
 }
-.grayscale {
+.greyscale {
 	color: #000000;
 	color: #000000;
 	color: #ffffff;
@@ -155,4 +155,24 @@
 .names {
 	color: red;
 	color: #0000cc;
+}
+.alpha {
+	color: #c8c8c8;
+	color: #c9c8c8;
+	color: #cac8c8;
+	color: #c8c9c8;
+	color: rgba(201,200,200,0.5);
+	color: rgba(202,200,200,0.0);
+	color: rgba(0,0,0,0.0);
+	color: rgba(1,0,0,0);
+	color: rgba(0,5,0,0);
+}
+.fraction {
+	color: #000000;
+	color: #eeeeee;
+	color: #fc0002;
+	color: #292f33;
+	color: #2e2e2e;
+	color: #005c37;
+	color: #555555;
 }

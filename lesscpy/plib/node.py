@@ -48,7 +48,7 @@ class Node(object):
                           else t
                           for t in tokens]
                 done = False
-            if any(t for t in tokens if utility.is_variable(t)):
+            if any(t for t in tokens if (utility.is_variable(t)) or str(type(t)) == "<class 'lesscpy.plib.variable.Variable'>"):
                 tokens = self.replace_variables(tokens, scope)
                 done = False
             if done:
@@ -63,10 +63,15 @@ class Node(object):
         returns:
             list
         """
-        return [scope.swap(t)
-                if utility.is_variable(t)
-                else t
-                for t in tokens]
+        list = []
+        for t in tokens:
+            if utility.is_variable(t):
+                list.append(scope.swap(t))
+            elif str(type(t)) == "<class 'lesscpy.plib.variable.Variable'>":
+                list.append(scope.swap(t.name))
+            else:
+                list.append(t)
+        return list
 
     def fmt(self, fills):
         """ Format node

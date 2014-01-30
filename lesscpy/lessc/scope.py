@@ -63,6 +63,14 @@ class Scope(list):
         self[-1]['__blocks__'].append(block)
         self[-1]['__names__'].append(block.raw())
 
+    def remove_block(self, block, index="-1"):
+        """Remove block element from scope
+        Args:
+            block (Block): Block object
+        """
+        self[index]["__blocks__"].remove(block)
+        self[index]["__names__"].remove(block.raw())
+
     def add_mixin(self, mixin):
         """Add mixin to scope
         Args:
@@ -90,6 +98,8 @@ class Scope(list):
         """
         if isinstance(name, tuple):
             name = name[0]
+        if name.startswith('@{'):
+            name = '@' + name[2:-1]
         i = len(self)
         while i >= 0:
             i -= 1
@@ -176,7 +186,21 @@ class Scope(list):
             if var is False:
                 raise SyntaxError('Unknown variable %s' % name)
             name = '@' + utility.destring(var.value[0])
-        var = self.variables(name)
-        if var is False:
-            raise SyntaxError('Unknown variable %s' % name)
+            var = self.variables(name)
+            if var is False:
+                raise SyntaxError('Unknown variable %s' % name)
+        elif name.startswith('@{'):
+            var = self.variables('@' + name[2:-1])
+            if var is False:
+                raise SyntaxError('Unknown escaped variable %s' % name)
+            try:
+                if isinstance(var.value[0], basestring):  # py3
+                    var.value[0] = utility.destring(var.value[0])
+            except NameError: #
+                if isinstance(var.value[0], str):  # py2
+                    var.value[0] = utility.destring(var.value[0])
+        else:
+            var = self.variables(name)
+            if var is False:
+                raise SyntaxError('Unknown variable %s' % name)
         return var.value

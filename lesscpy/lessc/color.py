@@ -11,6 +11,7 @@
 import operator
 
 import colorsys
+import re
 from . import utility
 from lesscpy.lib import colors
 
@@ -62,8 +63,8 @@ class Color():
             str
         """
         if len(args) == 4:
-            return self.rgba(*args)
-        elif len(args) == 3:
+            args = args[:3]
+        if len(args) == 3:
             try:
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
@@ -83,13 +84,66 @@ class Color():
         """
         if len(args) == 4:
             try:
+                falpha = float(list(args)[3])
+                if falpha > 1:
+                    args = args[:3]
+                if falpha == 0:
+                    values = self._rgbatohex_raw(list(map(int, args)))
+                    return "rgba(%s)" % ','.join([str(a) for a in values])
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
                         if a[-1] == '%'
                         and 100 >= int(a[:-1]) >= 0)):
+                    alpha = list(args)[3]
+                    if alpha[-1] == '%' and float(alpha[:-1]) == 0:
+                        values = self._rgbatohex_raw([int(a[:-1]) * 255 / 100.0
+                                                for a in args])
+                        return "rgba(%s)" % ','.join([str(a) for a in values])
                     return self._rgbatohex([int(a[:-1]) * 255 / 100.0
                                             for a in args])
+        raise ValueError('Illegal color values')
+
+    def argb(self, *args):
+        """ Translate argb(...) to color string
+
+        Creates a hex representation of a color in #AARRGGBB format (NOT
+        #RRGGBBAA!). This format is used in Internet Explorer, and .NET
+        and Android development.
+
+        raises:
+            ValueError
+        returns:
+            str
+        """
+        if len(args) == 1 and type(args[0]) is str:
+            match = re.match(r'rgba\((.*)\)', args[0])
+            if match:
+                # NOTE(saschpe): Evil hack to cope with rgba(.., .., .., 0.5) passed through untransformed
+                rgb = re.sub(r'\s+', '', match.group(1)).split(',')
+            else:
+                rgb = list(self._hextorgb(args[0]))
+        else:
+            rgb = list(args)
+        if len(rgb) == 3:
+            return self._rgbatohex([255] + list(map(int, rgb)))
+        elif len(rgb) == 4:
+            rgb = [rgb.pop()] + rgb  # Move Alpha to front 
+            try:
+                fval = float(list(rgb)[0])
+                if fval > 1:
+                    rgb = [255] + rgb[1:] # Clip invalid integer/float values
+                elif 1 >= fval >= 0:
+                    rgb = [fval * 256] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
+                else:
+                    rgb = [0] + rgb[1:]  # Clip lower bound
+                return self._rgbatohex(list(map(int, rgb)))
+            except ValueError:
+                if all((a for a in rgb
+                        if a[-1] == '%'
+                        and 100 >= int(a[:-1]) >= 0)):
+                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0
+                                            for a in rgb])
         raise ValueError('Illegal color values')
 
     def hsl(self, *args):
@@ -230,7 +284,7 @@ class Color():
         # Clamp value
         return min(1, max(0, value))
 
-    def grayscale(self, color, *args):
+    def greyscale(self, color, *args):
         """ Simply 100% desaturate.
         args:
             color (str): color
@@ -241,10 +295,10 @@ class Color():
             return self.desaturate(color, 100.0)
         raise ValueError('Illegal color values')
 
-    def greyscale(self, color, *args):
-        """Wrapper for grayscale, other spelling
+    def grayscale(self, color, *args):
+        """Wrapper for greyscale, other spelling
         """
-        return self.grayscale(color, *args)
+        return self.greyscale(color, *args)
 
     def spin(self, color, degree, *args):
         """ Spin color by degree. (Increase / decrease hue)
@@ -258,7 +312,7 @@ class Color():
         """
         if color and degree:
             if isinstance(degree, str):
-                degree = int(degree.strip('%'))
+                degree = float(degree.strip('%'))
             h, l, s = self._hextohls(color)
             h = ((h * 360.0) + degree) % 360.0
             h = 360.0 + h if h < 0 else h
@@ -302,7 +356,7 @@ class Color():
         """
         if color1 and color2:
             if isinstance(weight, str):
-                weight = int(weight.strip('%'))
+                weight = float(weight.strip('%'))
             weight = ((weight / 100.0) * 2) - 1
             rgb1 = self._hextorgb(color1)
             rgb2 = self._hextorgb(color2)
@@ -336,6 +390,14 @@ class Color():
             return '#%s' % color
         raise ValueError('Cannot format non-color')
 
+    
+    def _rgbatohex_raw(self, rgba):
+        values = ["%x" % v for v in [0xff
+                                     if h > 0xff else
+                                     0 if h < 0 else h
+                                     for h in rgba]]
+        return values
+
     def _rgbatohex(self, rgba):
         return '#%s' % ''.join(["%02x" % v for v in
                                 [0xff
@@ -363,7 +425,7 @@ class Color():
 
     def _ophsl(self, color, diff, idx, operation):
         if isinstance(diff, str):
-            diff = int(diff.strip('%'))
+            diff = float(diff.strip('%'))
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(operation(hls[idx], diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)

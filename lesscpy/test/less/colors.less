@@ -134,17 +134,17 @@
 	color: spin(#29332f, 60);
 	color: spin(#29332f, 100);
 }
-.grayscale {
-	color: grayscale(#000, 100%);
-	color: grayscale(#000, 0%);
-	color: grayscale(#fff, 100%);
-	color: grayscale(#fff, 0%);
-	color: grayscale(#29332f, 1%);
-	color: grayscale(#29332f, 10%);
-	color: grayscale(#29332f, 20%);
-	color: grayscale(#29332f, 40%);
-	color: grayscale(#29332f, 60%);
-	color: grayscale(#29332f, 100%);
+.greyscale {
+	color: greyscale(#000, 100%);
+	color: greyscale(#000, 0%);
+	color: greyscale(#fff, 100%);
+	color: greyscale(#fff, 0%);
+	color: greyscale(#29332f, 1%);
+	color: greyscale(#29332f, 10%);
+	color: greyscale(#29332f, 20%);
+	color: greyscale(#29332f, 40%);
+	color: greyscale(#29332f, 60%);
+	color: greyscale(#29332f, 100%);
 }
 .mix {
 	color: mix(#f00, #00f);
@@ -169,5 +169,25 @@
 */
 .names {
 	color: red;
-	color: darken(BLUE, 10%);
+	color: darken(blue, 10%);
+}
+.alpha {
+  	color: rgb(200, 200, 200, 100);
+  	color: rgb(201, 200, 200, 0.5);
+  	color: rgb(202, 200, 200, 0.0);
+  	color: rgba(200, 201, 200, 100);
+  	color: rgba(201, 200, 200, 0.5);
+  	color: rgba(202, 200, 200, 0.0);
+  	color: rgba(0, 0, 0, 0.0);
+  	color: rgba(1, 0, 0, 0);
+  	color: rgba(0%, 2%, 0%, 0%);
+}
+.fraction {
+	color: darken(#29332f, 45.3%);
+	color: lighten(#000, 93.5%);
+	color: mix(#f00, #00f, 98.9%);
+	color: spin(#29332f, 45.5);
+	color: greyscale(#29332f, 98.5%);
+	color: saturate(#29332f, 99.9%);
+	color: desaturate(#555, 1.5%);
 }

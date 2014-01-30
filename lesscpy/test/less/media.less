@@ -36,6 +36,10 @@
 @media all and (orientation:portrait) {
     aside { float: none; }
 }
+@media not screen and (color), print and (color) {
+    body { margin: 0 auto; }
+}
+
 /*
 
 */
@@ -46,4 +50,65 @@
 @minwidth: 12px;
 @media (min-width: @minwidth) {
     body { margin: 0 auto; }
+}
+/*
+    Expressions
+    */
+@foo: 768px - 1;
+@media (width: @foo) {
+  .visible-xs { display: block; }
+}
+
+/*
+    Vendor extensions and expressions
+*/
+@media 
+  only screen and (   min--moz-device-pixel-ratio: 5/2),
+  only screen and (     -o-min-device-pixel-ratio: 2/1),
+  only screen and (        min-device-pixel-ratio: 2),
+  only screen and (                min-resolution: 192dpi),
+  only screen and (                min-resolution: 2dppx) {
+    background-size: 10px;
+}
+/*
+    Nested media queries
+*/
+.lead {
+  @media (width: 768px) {
+    font-size: 21px;
+  }
+}
+.one {
+  @media (width: 400px){
+    font-size: 1.2em;
+    @media print and (color) {
+      color: blue;
+    }
+  }
+}
+.two {
+  @media (width: 400px){
+    font-size: 1.2em;
+  }
+  @media print and (color) {
+    color: blue;
+  }
+  width: 100px;
+}
+.visible {
+  @media print {
+    color: green;
+  }
+  &.visible-sm {
+    @media screen {
+      color: green;
+    }
+  }
+}
+.navbar {
+  .form {
+    @media (max-width: 10px) {
+      margin-bottom: 5px;
+    }
+  }
 }

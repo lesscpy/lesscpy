@@ -9,3 +9,5 @@
 .no_final_semi{color:white;}
 .no_final_semi1{color:yellow;color:white;}
 @media all{html{padding:src('no semi in media block');}}
+@font-face{src:url('x') format('e'),url('r') format('s');}
+fieldset[disabled] .form-control{cursor:not-allowed;}

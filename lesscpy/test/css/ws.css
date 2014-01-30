@@ -16,7 +16,9 @@
 .whitespace {
 	color: black;
 }
-.white, .space, .mania {
+.white,
+.space,
+.mania {
 	color: white;
 }
 .newlines {
@@ -34,4 +36,10 @@
 	html {
 		padding: src('no semi in media block');
 	}
+}
+@font-face {
+	src: url('x') format('e'), url('r') format('s');
+}
+fieldset[disabled] .form-control {
+	cursor: not-allowed;
 }

@@ -99,3 +99,23 @@ h1, h2, h3, h4, h5 {
 		}
 	}
 }
+.child, .sibling {
+  & + & {
+    color: red;
+  }
+}
+.child, .sibling {
+  & + & + & {
+    color: red;
+  }
+}
+.child, .sibling, .foo {
+  & + & + & {
+    color: red;
+  }
+}
+.child, .sibling, .foo {
+  & + & {
+    color: red;
+  }
+}

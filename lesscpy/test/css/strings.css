@@ -17,6 +17,9 @@
 #escaped {
 	filter: DX.Transform.MS.BS.filter(opacity=50);
 }
+.escaped {
+	filter: alpha(opacity=0.1);
+}
 #interpolation {
 	url: "http://lesscss.org/dev/image.jpg";
 	url2: "http://lesscss.org/image-256.jpg";

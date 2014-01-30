@@ -48,6 +48,9 @@ class Expression(Node):
             return ' '.join([str(A), str(O), str(B)])
         if ua == 'color' or ub == 'color':
             return color.Color().process((A, O, B))
+        if a == 0 and O == '/':
+            # NOTE(saschpe): The ugliest but valid CSS since sliced bread: 'font: 0/1 a;'
+            return ''.join([str(A), str(O), str(B), ' '])
         out = self.operate(a, b, O)
         if isinstance(out, bool):
             return out
@@ -119,10 +122,10 @@ class Expression(Node):
             '>': operator.gt,
             '<': operator.lt,
             '>=': operator.ge,
-            '<=': operator.le,
-            '!=': operator.ne,
-            '<>': operator.ne,
+            '=<': operator.le,
         }.get(oper)
+        if operation is None:
+            raise SyntaxError("Unknown operation %s" % oper)
         ret = operation(vala, valb)
         if oper in '+-*/' and int(ret) == ret:
             ret = int(ret)

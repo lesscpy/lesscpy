@@ -162,12 +162,20 @@ class LessParser(object):
 
     def p_statement_import(self, p):
         """ import_statement     : css_import t_ws css_string t_semicolon
-                                 | css_import t_ws css_string dom t_semicolon
+                                 | css_import t_ws css_string media_query_list t_semicolon
+                                 | css_import t_ws fcall t_semicolon
+                                 | css_import t_ws fcall media_query_list t_semicolon
         """
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
-        ipath = utility.destring(p[3])
+        if isinstance(p[3], str):
+            ipath = utility.destring(p[3])
+        elif isinstance(p[3], Call):
+            # NOTE(saschpe): Always in the form of 'url("...");', so parse it
+            # and retrieve the inner css_string. This whole func is messy.
+            p[3] = p[3].parse(self.scope) # Store it as string, Statement.fmt expects it.
+            ipath = utility.destring(p[3][4:-1])
         fn, fe = os.path.splitext(ipath)
         if not fe or fe.lower() == '.less':
             try:
@@ -223,6 +231,11 @@ class LessParser(object):
         p[0] = p[1]
         self.scope.current = p[1]
 
+    def p_block_open_media_query(self, p):
+        """ block_open                : media_query_decl brace_open
+        """
+        p[0] = Identifier(p[1]).parse(self.scope)
+
     def p_font_face_open(self, p):
         """ block_open                : css_font_face t_ws brace_open
         """
@@ -257,7 +270,7 @@ class LessParser(object):
         p[0] = p[2]
 
     def p_mixin_guard_cond_list_aux(self, p):
-        """ mixin_guard_cond_list    : mixin_guard_cond_list ',' mixin_guard_cond
+        """ mixin_guard_cond_list    : mixin_guard_cond_list t_comma mixin_guard_cond
                                      | mixin_guard_cond_list less_and mixin_guard_cond
         """
         p[1].append(p[2])
@@ -285,10 +298,8 @@ class LessParser(object):
         """ mixin_guard_cmp           : '>'
                                       | '<'
                                       | '='
-                                      | '!' '='
                                       | '>' '='
-                                      | '<' '='
-                                      | '<' '>'
+                                      | '=' '<'
         """
         p[0] = ''.join(list(p)[1:])
 
@@ -304,7 +315,7 @@ class LessParser(object):
         p[0] = [p[1]]
 
     def p_mixin_args_list_aux(self, p):
-        """ mixin_args_list          : mixin_args_list ',' mixin_args
+        """ mixin_args_list          : mixin_args_list t_comma mixin_args
                                      | mixin_args_list t_semicolon mixin_args
         """
         p[1].extend([p[3]])
@@ -333,7 +344,7 @@ class LessParser(object):
         p[0] = None
 
     def p_mixin_kwarg(self, p):
-        """ mixin_kwarg                : variable ':' mixin_kwarg_arg_list
+        """ mixin_kwarg                : variable t_colon mixin_kwarg_arg_list
         """
         p[0] = Variable(list(p)[1:], p.lineno(2))
 
@@ -376,7 +387,7 @@ class LessParser(object):
 #
 
     def p_variable_decl(self, p):
-        """ variable_decl            : variable ':' style_list t_semicolon
+        """ variable_decl            : variable t_colon style_list t_semicolon
         """
         p[0] = Variable(list(p)[1:-1], p.lineno(4))
         p[0].parse(self.scope)
@@ -404,9 +415,9 @@ class LessParser(object):
         p[0] = (p[1][0], p[2][0])
 
     def p_prop_open(self, p):
-        """ prop_open               : property ':'
-                                    | vendor_property ':'
-                                    | word ':'
+        """ prop_open               : property t_colon
+                                    | vendor_property t_colon
+                                    | word t_colon
         """
         p[0] = (p[1][0], '')
 
@@ -416,7 +427,7 @@ class LessParser(object):
 
     def p_style_list_aux(self, p):
         """ style_list              : style_list style
-                                    | style_list ',' style
+                                    | style_list t_comma style
                                     | style_list t_ws style
         """
         p[1].extend(list(p)[2:])
@@ -429,13 +440,11 @@ class LessParser(object):
 
     def p_style(self, p):
         """ style                   : expression
-                                    | css_string
+                                    | string
                                     | word
                                     | property
                                     | vendor_property
-                                    | istring
-                                    | fcall
-                                    | css_ms_filter
+                                    | estring
         """
         p[0] = p[1]
 
@@ -451,12 +460,12 @@ class LessParser(object):
         p[0] = Identifier(p[1], 0)
 
     def p_identifier_istr(self, p):
-        """ identifier                : t_popen '~' istring t_pclose
+        """ identifier                : t_popen estring t_pclose
         """
         p[0] = Identifier(Call([p[2], p[3]]), 0)
 
     def p_identifier_list_aux(self, p):
-        """ identifier_list           : identifier_list ',' identifier_group
+        """ identifier_list           : identifier_list t_comma identifier_group
         """
         p[1].extend([p[2]])
         p[1].extend(p[3])
@@ -470,6 +479,12 @@ class LessParser(object):
     def p_identifier_list_keyframe(self, p):
         """ identifier_list           : css_keyframes t_ws css_ident
                                       | css_keyframes t_ws css_ident t_ws
+        """
+        p[0] = list(p)[1:]
+
+    def p_identifier_list_viewport(self, p):
+        """ identifier_list           : css_viewport
+                                      | css_viewport t_ws
         """
         p[0] = list(p)[1:]
 
@@ -508,19 +523,77 @@ class LessParser(object):
             p[1] = [p[1]]
         p[0] = p[1]
 
-    def p_ident_media(self, p):
-        """ ident_parts               : css_media t_ws
-                                      | css_media t_ws t_popen word ':' number t_pclose
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+    def p_media_query_decl(self, p):
+        """ media_query_decl            : css_media t_ws
+                                        | css_media t_ws media_query_list
         """
         p[0] = list(p)[1:]
 
-    def p_ident_media_var(self, p):
-        """ ident_parts               : css_media t_ws t_popen word ':' variable t_pclose
+    def p_media_query_list_aux(self, p):
+        """ media_query_list            : media_query_list t_comma media_query
         """
         p[0] = list(p)[1:]
-        if utility.is_variable(p[0][5]):
-            var = self.scope.variables(''.join(p[0][5]))
-            p[0][5] = var.value[0]
+
+    def p_media_query_list(self, p):
+        """ media_query_list            : media_query
+        """
+        p[0] = [p[1]]
+
+    def p_media_query_a(self, p):
+        """ media_query                 : media_type
+                                        | media_type media_query_expression_list
+                                        | not media_type
+                                        | not media_type media_query_expression_list
+                                        | only media_type
+                                        | only media_type media_query_expression_list
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_b(self, p):
+        """ media_query                 : media_query_expression media_query_expression_list
+                                        | media_query_expression
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_expression_list_aux(self, p):
+        """ media_query_expression_list : media_query_expression_list and media_query_expression
+                                        | and media_query_expression
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_expression(self, p):
+        """ media_query_expression      : t_popen css_media_feature t_pclose
+                                        | t_popen css_media_feature t_colon media_query_value t_pclose
+        """
+        p[0] = list(p)[1:]
+
+    def p_media_query_value(self, p):
+        """ media_query_value           : number
+                                        | variable
+                                        | word
+                                        | color
+                                        | expression
+        """
+        if utility.is_variable(p[1]):
+            var = self.scope.variables(''.join(p[1]))
+            if var:
+                value = var.value[0]
+                if hasattr(value, 'parse'):
+                    p[1] = value.parse(self.scope)
+                else:
+                    p[1] = value
+        if isinstance(p[1], Expression):
+            p[0] = p[1].parse(self.scope)
+        else:
+            p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_selector(self, p):
         """ selector                  : '*'
@@ -531,7 +604,7 @@ class LessParser(object):
         p[0] = p[1]
 
     def p_ident_part(self, p):
-        """ ident_part                : class
+        """ ident_part                : iclass
                                       | id
                                       | dom
                                       | combinator
@@ -561,14 +634,14 @@ class LessParser(object):
 
     def p_filter(self, p):
         """ filter                    : css_filter
-                                      | ':' word
-                                      | ':' vendor_property
-                                      | ':' vendor_property t_ws
-                                      | ':' css_property
-                                      | ':' css_property t_ws
-                                      | ':' css_filter
-                                      | ':' ':' word
-                                      | ':' ':' vendor_property
+                                      | t_colon word
+                                      | t_colon vendor_property
+                                      | t_colon vendor_property t_ws
+                                      | t_colon css_property
+                                      | t_colon css_property t_ws
+                                      | t_colon css_filter
+                                      | t_colon t_colon word
+                                      | t_colon t_colon vendor_property
         """
         p[0] = list(p)[1:]
 
@@ -576,13 +649,18 @@ class LessParser(object):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+    def p_ms_filter(self, p):
+        """ ms_filter       : css_ms_filter
+                            | css_ms_filter t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
     def p_fcall(self, p):
         """ fcall           : word t_popen argument_list t_pclose
                             | property t_popen argument_list t_pclose
                             | vendor_property t_popen argument_list t_pclose
                             | less_open_format argument_list t_pclose
-                            | '~' istring
-                            | '~' css_string
+                            | ms_filter t_popen argument_list t_pclose
         """
         p[0] = Call(list(p)[1:], 0)
 
@@ -597,7 +675,7 @@ class LessParser(object):
 
     def p_argument_list_aux(self, p):
         """ argument_list       : argument_list argument
-                                | argument_list ',' argument
+                                | argument_list t_comma argument
         """
         p[1].extend(list(p)[2:])
         p[0] = p[1]
@@ -609,8 +687,8 @@ class LessParser(object):
 
     def p_argument(self, p):
         """ argument        : expression
-                            | css_string
-                            | istring
+                            | string
+                            | estring
                             | word
                             | id
                             | css_uri
@@ -652,6 +730,7 @@ class LessParser(object):
                                     | number
                                     | variable
                                     | css_dom
+                                    | fcall
         """
         p[0] = p[1]
 
@@ -659,10 +738,46 @@ class LessParser(object):
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
-    def p_interpolated_str(self, p):
-        """ istring                 : less_string
+    def p_escaped_string(self, p):
+        """ estring                 : t_eopen style_list t_eclose
+                                    | t_eopen identifier_list t_eclose
         """
-        p[0] = String(p[1], p.lineno(1))
+        p[0] = p[2]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+    def p_string_part(self, p):
+        """ string_part             : variable
+                                    | css_string
+        """
+        p[0] = p[1]
+
+    def p_string_part_list_aux(self, p):
+        """ string_part_list        : string_part_list string_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_string_part_list(self, p):
+        """ string_part_list        : string_part
+        """
+        p[0] = [p[1]]
+
+    def p_string_aux(self, p):
+        """ string                  : t_isopen string_part_list t_isclose
+        """
+        p[0] = ['"', p[2], '"']
+
+    def p_string(self, p):
+        """ string                  : css_string
+        """
+        p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_variable_neg(self, p):
         """ variable                : '-' variable
@@ -712,11 +827,42 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:])
 
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
     def p_class(self, p):
         """ class                     : css_class
                                       | css_class t_ws
         """
         p[0] = tuple(list(p)[1:])
+
+    def p_interpolated_class_part(self, p):
+        """ iclass_part               : less_variable
+                                      | less_variable t_ws
+                                      | class
+        """
+        p[0] = list(p)[1:]
+
+    def p_interpolated_class_part_list_aux(self, p):
+        """ iclass_part_list          : iclass_part_list iclass_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_interpolated_class_part_list(self, p):
+        """ iclass_part_list          : iclass_part
+        """
+        p[0] = [p[1]]
+
+    def p_interpolated_class(self, p):
+        """ iclass                    : iclass_part_list
+        """
+        p[0] = p[1]
+
+#
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
     def p_id(self, p):
         """ id                        : css_id
@@ -742,6 +888,12 @@ class LessParser(object):
         """
         p[0] = tuple(list(p)[1:])
 
+    def p_media_type(self, p):
+        """ media_type                : css_media_type
+                                      | css_media_type t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
     def p_combinator(self, p):
         """ combinator                : '&' t_ws
                                       | '&'
@@ -755,21 +907,39 @@ class LessParser(object):
         p[0] = tuple(list(p)[1:])
 
     def p_general_sibling_selector(self, p):
-        """ general_sibling_selector  : '~' t_ws
-                                      | '~'
+        """ general_sibling_selector  : t_tilde t_ws
+                                      | t_tilde
         """
         p[0] = tuple(list(p)[1:])
 
     def p_scope_open(self, p):
-        """ brace_open                : '{'
+        """ brace_open                : t_bopen
         """
         self.scope.push()
         p[0] = p[1]
 
     def p_scope_close(self, p):
-        """ brace_close               : '}'
+        """ brace_close               : t_bclose
         """
         p[0] = p[1]
+
+    def p_and(self, p):
+        """ and                       : t_and t_ws
+                                      | t_and
+        """
+        p[0] = tuple(list(p)[1:])
+
+    def p_not(self, p):
+        """ not                       : t_not t_ws
+                                      | t_not
+        """
+        p[0] = tuple(list(p)[1:])
+
+    def p_only(self, p):
+        """ only                      : t_only t_ws
+                                      | t_only
+        """
+        p[0] = tuple(list(p)[1:])
 
     def p_empty(self, p):
         'empty                        :'

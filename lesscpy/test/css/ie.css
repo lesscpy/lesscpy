@@ -1,11 +1,11 @@
 .nav {
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333", endColorstr="#000000", GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333",endColorstr="#000000",GradientType=0);
 }
 .nav1 {
 	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
 }
 .nav2 {
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333", endColorstr="#000000", GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#333333",endColorstr="#000000",GradientType=0);
 }
 body {
 	*zoom: 1px;

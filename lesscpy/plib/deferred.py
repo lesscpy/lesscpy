@@ -25,7 +25,7 @@ class Deferred(Node):
         self.tokens = [mixin, args]
         self.lineno = lineno
 
-    def parse(self, scope, error=False):
+    def parse(self, scope, error=False, depth=0):
         """ Parse function. We search for mixins
         first within current scope then fallback
         to global scope. The special scope.deferred
@@ -51,17 +51,22 @@ class Deferred(Node):
             ident.parse(None)
             mixins = scope.mixins(ident.raw())
 
+        if depth > 64:
+            raise SyntaxError('NameError `%s`' % ident.raw(True))
+
         if not mixins:
             if scope.deferred:
                 store = [t for t in scope.deferred.parsed[-1]]
+                i = 0
                 while scope.deferred.parsed[-1]:
                     scope.current = scope.deferred
                     ident.parse(scope)
                     mixins = scope.mixins(ident.raw())
                     scope.current = None
-                    if mixins:
+                    if mixins or i > 64:
                         break
                     scope.deferred.parsed[-1].pop()
+                    i += 1
                 scope.deferred.parsed[-1] = store
 
         if not mixins:
@@ -89,7 +94,15 @@ class Deferred(Node):
         if res:
             store = [t for t in scope.deferred.parsed[
                 -1]] if scope.deferred else False
-            res = [p.parse(scope) for p in res if p]
+            tmp_res = []
+            for p in res:
+                if p:
+                    if isinstance(p, Deferred):
+                        tmp_res.append(p.parse(scope, depth=depth+1))
+                    else:
+                        tmp_res.append(p.parse(scope))
+            res = tmp_res
+            #res = [p.parse(scope, depth=depth+1) for p in res if p]
             while(any(t for t in res if isinstance(t, Deferred))):
                 res = [p.parse(scope) for p in res if p]
             if store:

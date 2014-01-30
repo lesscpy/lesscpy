@@ -24,6 +24,12 @@ class TestLessColor(unittest.TestCase):
             ('0%', '0%', '0%', '#000000'),
         ]:
             self.assertEqual(test(r, g, b), v)
+        for r, g, b, a, v in [
+            (255, 255, 255, 0.5,  '#ffffff'),
+            (100, 100, 100, 0.9, '#646464'),
+            (0, 0, 0, 100, '#000000'),
+        ]:
+            self.assertEqual(test(r, g, b, a), v)
         for args in [
             (255, 255, 256),
             (0, -1, 0),
@@ -35,13 +41,13 @@ class TestLessColor(unittest.TestCase):
     def test_rgba(self):
         test = self.color.rgba
         for r, g, b, a, v in [
-            (255, 255, 255, 255, '#ffffffff'),
-            (100, 100, 100, 100, '#64646464'),
-            (0, 0, 0, 0, '#00000000'),
+            (255, 255, 255, 255, '#ffffff'),
+            (100, 100, 100, 100, '#646464'),
+            (0, 0, 0, 0, 'rgba(0,0,0,0)'),
             ('70%', '70%', '70%', '70%', '#b2b2b2b2'),
             ('1%', '1%', '1%', '1%', '#02020202'),
             ('100%', '100%', '100%', '100%', '#ffffffff'),
-            ('0%', '0%', '0%', '0%', '#00000000'),
+            ('0%', '0%', '0%', '0%', 'rgba(0,0,0,0)'),
         ]:
             self.assertEqual(test(r, g, b, a), v)
         for args in [
@@ -51,6 +57,27 @@ class TestLessColor(unittest.TestCase):
             ('100%', '100%', '100%', '200%'),
         ]:
             self.assertRaises(ValueError, test, args)
+
+    def test_argb(self):
+        test = self.color.argb
+        for a, r, g, b, v in [
+            (255, 255, 255, 255, '#ffffffff'),
+            (100, 100, 100, 100, '#ff646464'),
+            (0, 0, 0, 0, '#00000000'),
+            ('70%', '70%', '70%', '70%', '#b2b2b2b2'),
+            ('1%', '1%', '1%', '1%', '#02020202'),
+            ('100%', '100%', '100%', '100%', '#ffffffff'),
+            ('0%', '0%', '0%', '0%', '#00000000'),
+        ]:
+            self.assertEqual(test(a, r, g, b), v)
+        for args in [
+            (255, 255, 255, 256),
+            (-1, 0, 0, 0),
+            (200, '100%', '100%', '100%'),
+            ('200%', '100%', '100%', '100%'),
+        ]:
+            self.assertRaises(ValueError, test, args)
+
 
     def test_hsl(self):
         """

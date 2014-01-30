@@ -335,3 +335,67 @@ vendor_ugly = [
     'zoom',
 ]
 propertys = css2 + css3 + svg + vendor_ugly
+
+# CSS-2(.1) media types: http://www.w3.org/TR/CSS2/media.html#media-types
+# Include media types as defined in HTML4: http://www.w3.org/TR/1999/REC-html401-19991224/types.html#h-6.13
+# Also explained in http://www.w3.org/TR/css3-mediaqueries/#background
+html4_media_types = [
+    'all',
+    'aural',  # deprecated by CSS 2.1, which reserves "speech"
+    'braille',
+    'handheld',
+    'print',
+    'projection',
+    'screen',
+    'tty',
+    'tv',
+]
+css2_media_types = [
+    'embossed',  # CSS2, not HTML4
+    'speech',  # CSS2. not HTML4
+]
+media_types = html4_media_types + css2_media_types
+
+css3_media_features = [
+    'width',
+    'min-width',
+    'max-width',
+    'height',
+    'min-height',
+    'max-height',
+    'device-width',
+    'min-device-width',
+    'max-device-width',
+    'device-height',
+    'min-device-height',
+    'max-device-height',
+    'orientation',
+    'aspect-ratio',
+    'min-aspect-ratio',
+    'max-aspect-ratio',
+    'device-aspect-ratio',
+
+    'min-device-aspect-ratio',
+    'max-device-aspect-ratio',
+    'color',
+    'min-color',
+    'max-color',
+    'color-index',
+    'min-color-index',
+    'max-color-index',
+    'monochrome',
+    'min-monochrome',
+    'max-monochrome',
+    'resolution',
+    'min-resolution',
+    'max-resolution',
+    'scan',
+    'grid',
+]
+vendor_media_features = [
+    '-webkit-min-device-pixel-ratio',
+    'min--moz-device-pixel-ratio',
+    '-o-min-device-pixel-ratio',
+    'min-device-pixel-ratio',
+]
+media_features = css3_media_features + vendor_media_features
