@@ -31,7 +31,7 @@ setup(
     author_email='jtm@robot.is',
     url='https://github.com/robotis/Lesscpy',
     packages=find_packages(exclude=['*test*']),
-    scripts=['bin/lesscpy'],
+    scripts=['scripts/lesscpy'],
     install_requires=install_requires,
     tests_require=test_requires,
     test_suite='test',
