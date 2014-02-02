@@ -34,7 +34,7 @@ setup(
     scripts=['scripts/lesscpy'],
     install_requires=install_requires,
     tests_require=test_requires,
-    test_suite='test',
+    test_suite='nose.collector',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
