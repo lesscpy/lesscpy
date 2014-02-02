@@ -14,7 +14,12 @@ with codecs.open('README.rst', encoding='utf-8') as f:
 
 with open("requirements.txt", "r") as f:
     install_requires = [str(req) for req in pkg_resources.parse_requirements(f)]
-
+with open("test-requirements.txt", "r") as f:
+    test_requires = []
+    for line in f.readlines():
+        # Skip '-r ...' includes which pkg_resources doesn't understand:
+        if not line.startswith('-r '):
+            test_requires.append(str(pkg_resources.Requirement.parse(line)))
 
 setup(
     name='lesscpy',
@@ -28,6 +33,8 @@ setup(
     packages=find_packages(exclude=['*test*']),
     scripts=['bin/lesscpy'],
     install_requires=install_requires,
+    tests_require=test_requires,
+    test_suite='test',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
