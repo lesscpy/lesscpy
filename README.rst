@@ -1,6 +1,16 @@
 LESSCPY
 =======
 
+.. image:: https://travis-ci.org/saschpe/lesscpy.png?branch=master
+        :target: https://travis-ci.org/saschpe/lesscpy
+
+.. image:: https://pypip.in/d/lesscpy/badge.png
+        :target: https://pypi.python.org/pypi/lesscpy
+
+.. image:: https://pypip.in/v/lesscpy/badge.png
+        :target: https://pypi.python.org/pypi/lesscpy
+
+
 Python LESS Compiler.
 
 A compiler written in Python for the LESS language. For those of us not willing
@@ -17,26 +27,64 @@ For more information on LESS:
  
 Development files:
   https://github.com/robotis/Lesscpy
+
+
+Supported features
+------------------
+
+- Variables
+- String interpolation
+- Mixins (nested, calls, closures, recursive)
+- Guard expressions
+- Parametered mixins (class / id)
+- @arguments
+- Nesting
+- Escapes ~/e()
+- Expressions
+- Keyframe blocks
+- Color functions (lighten, darken, saturate, desaturate, spin, hue, mix,
+                   saturation, lightness)
+- Other functions (round, increment, decrement, format '%(', ...)
+- Keyframe blocks
+
+
+Differences from less.js
+------------------------
+
+- All colors are auto-formatted to #nnnnnn. eg, #f7e923
+- Does not preserve CSS comments
+
+
+Not supported
+-------------
+
+- JavaScript evaluation
  
 
 Requirements
 ------------
 
-- Python 2.6 or 2.7
-- ply (Python Lex-Yacc)
-
-For more information on ply:
-  http://www.dabeaz.com/ply/
+- Python 2.6, 2.7, or 3.3
+- ply (Python Lex-Yacc) (check requirements.txt)
  
 
 Installation
 ------------
 
+To install lesscpy from the `Python Package Index`_, simply:
+
+.. code-block:: bash
+
+    $ pip install lesscpy
+
+To do a local system-wide install:
+
 .. code-block:: bash
 
     python setup.py install
  
-Or simply place the package into your Python path.
+Or simply place the package into your Python path. Or rather use packages
+provided by your distribution (openSUSE has them at least).
 
 
 Compiler script Usage
@@ -84,67 +132,10 @@ Compiler script Usage
       -N, --no-css          No css output
 
 
-Supported features
-------------------
-
-- Variables
-- String interpolation
-- Mixins
-- mixins (Nested)
-- mixins (Nested (Calls))
-- mixins (closures)
-- mixins (recursive)
-- Guard expressions
-- Parametered mixins (class)
-- Parametered mixins (id)
-- @arguments
-- Nesting
-- Escapes ~/e()
-- Expressions
-- Keyframe blocks
-- Color functions:
-
-  - lighten
-  - darken
-  - saturate
-  - desaturate
-  - spin
-  - hue
-  - mix
-  - saturation
-  - lightness
-
-- Other functions:
-
-  - round
-  - increment
-  - decrement
-  - format '%('
-  - add
-  - iscolor
-  - isnumber
-  - isurl
-  - isstring
-  - iskeyword
-
-- Keyframe blocks
-
-
-Differences from less.js
-------------------------
-
-- All MS filters and other strange vendor constructs must be escaped
-- All colors are auto-formatted to #nnnnnn. eg, #f7e923
-- Does not preserve css comments
-
-
-Not supported
--------------
-
-- JavaScript evaluation
-
-
 License
 -------
 
 See the LICENSE file
+
+
+.. _`Python Package Index`: https://pypi.python.org/pypi/rapport
