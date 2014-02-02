@@ -1,4 +1,8 @@
+"""
+    lesscpy expression tests.
+"""
 import unittest
+
 from lesscpy.plib.expression import Expression
 
 
@@ -52,7 +56,3 @@ class TestExpression(unittest.TestCase):
         ]:
             e = Expression(test[:3])
             self.assertEqual(test[3], e.parse(None), test)
-
-
-if __name__ == '__main__':
-    unittest.main()

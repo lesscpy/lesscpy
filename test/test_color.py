@@ -1,12 +1,12 @@
 """
-    lesscpy tests.
+    lesscpy color tests.
 """
 import unittest
+
 from lesscpy.lessc import color
 
 
 class TestLessColor(unittest.TestCase):
-
     def setUp(self):
         self.color = color.Color()
 
@@ -182,6 +182,3 @@ class TestLessColor(unittest.TestCase):
 
         ]:
             self.assertEqual(test(c, p), v, v)
-
-if __name__ == '__main__':
-    unittest.main()

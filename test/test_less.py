@@ -13,6 +13,3 @@ class LessTestCase(unittest.TestCase):
 find_and_load_cases(LessTestCase,
                     less_dir='less',
                     css_dir='css')
-
-if __name__ == "__main__":
-    unittest.main()

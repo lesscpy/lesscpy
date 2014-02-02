@@ -24,6 +24,3 @@ find_and_load_cases(Bootstrap3ThemeTestCase,
                     less_dir='bootstrap3/less',
                     less_files=['theme'],
                     css_dir='bootstrap3/css')
-
-if __name__ == "__main__":
-    unittest.main()

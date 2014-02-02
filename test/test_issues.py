@@ -14,6 +14,3 @@ find_and_load_cases(IssuesTestCase,
                     less_dir='less/issues',
                     css_dir='css/issues',
                     css_minimized=False)
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,4 +1,5 @@
 import unittest
+
 import lesscpy.lessc.utility as utility
 
 
@@ -102,7 +103,3 @@ class TestUtility(unittest.TestCase):
         self.assertEqual(3.0, test(10.0 / 3, 0))
         self.assertEqual(4, test(3.5))
         self.assertEqual(4, test(4.5))
-
-
-if __name__ == '__main__':
-    unittest.main()
