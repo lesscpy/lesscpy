@@ -136,15 +136,15 @@ class LessLexer:
 
     def t_css_ident(self, t):
         (r'([\-\.\#]?'
-           '([_a-z]'
-            '|[\200-\377]'
-            '|\\\[0-9a-f]{1,6}'
-            '|\\\[^\s\r\n0-9a-f])'
-           '([_a-z0-9\-]'
-            '|[\200-\377]'
-            '|\\\[0-9a-f]{1,6}'
-            '|\\\[^\s\r\n0-9a-f])*)'
-          '|\.')
+         '([_a-z]'
+         '|[\200-\377]'
+         '|\\\[0-9a-f]{1,6}'
+         '|\\\[^\s\r\n0-9a-f])'
+         '([_a-z0-9\-]'
+         '|[\200-\377]'
+         '|\\\[0-9a-f]{1,6}'
+         '|\\\[^\s\r\n0-9a-f])*)'
+         '|\.')
         v = t.value.strip()
         c = v[0]
         if c == '.':
@@ -264,11 +264,11 @@ class LessLexer:
 
     def t_mediaquery_t_semicolon(self, t):
         r';'
-        # This can happen only as part of a CSS import statement. The 
+        # This can happen only as part of a CSS import statement. The
         # "mediaquery" state is reused there. Ordinary media queries always
         # end at '{', i.e. when a block is opened.
         t.lexer.pop_state()  # state mediaquery
-        # We have to pop the 'import' state here because we already ate the 
+        # We have to pop the 'import' state here because we already ate the
         # t_semicolon and won't trigger t_import_t_semicolon.
         t.lexer.pop_state()  # state import
         return t
@@ -488,7 +488,7 @@ class LessLexer:
                 continue
             self.pretok = False
             if t.type == 't_bclose' and self.last and self.last.type not in ['t_bopen', 't_bclose'] and self.last.type != 't_semicolon' \
-                and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'escapequotes' or t.lexer.lexstate == 'escapeapostrophe')):
+                    and not (hasattr(t, 'lexer') and (t.lexer.lexstate == 'escapequotes' or t.lexer.lexstate == 'escapeapostrophe')):
                 self.next_ = t
                 tok = lex.LexToken()
                 tok.type = 't_semicolon'

@@ -9,7 +9,6 @@
 """
 import re
 from .node import Node
-from lesscpy.lessc import utility
 
 
 class Property(Node):
@@ -93,6 +92,3 @@ class Property(Node):
             Property object
         """
         return Property([t for t in self.tokens], 0)
-        new.property = self.property
-        new.parsed = [u for u in self.parsed]
-        return new

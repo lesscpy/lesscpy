@@ -7,7 +7,6 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-import re
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.plib.identifier import Identifier
@@ -50,7 +49,6 @@ class Block(Node):
                 if p is not None:
                     if isinstance(p, Block):
                         if (len(scope) == 2 and p.tokens[1] is not None):
-                            p_is_ampersand = '&' in p.name.tokens[0]
                             p_is_mediaquery = p.name.tokens[0] == '@media'
                             # Inner block @media ... { ... } is a nested media
                             # query. But double-nested media queries have to be
@@ -101,7 +99,7 @@ class Block(Node):
                             if not p_is_mediaquery and not append_list:
                                 self.inner.append(p)
                             else:
-                                append_list.insert(0, p) # This media query should occur before it's children
+                                append_list.insert(0, p)  # This media query should occur before it's children
                                 for media_query in append_list:
                                     self.inner_media_queries.append(media_query)
                             # NOTE(saschpe): The code is not recursive but we hope that people

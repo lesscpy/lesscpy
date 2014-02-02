@@ -1,12 +1,10 @@
 import unittest
-if __name__ == '__main__':
-    import bootstrap
+
 import lesscpy.lessc.utility as utility
 
 
 class TestUtility(unittest.TestCase):
-
-    def testanalyze(self):
+    def test_analyze(self):
         test = utility.analyze_number
         self.assertEqual((0, ''), test('0'))
         self.assertEqual((1, ''), test('1'))
@@ -26,7 +24,7 @@ class TestUtility(unittest.TestCase):
         self.assertRaises(SyntaxError, test, '-o')
         self.assertRaises(SyntaxError, test, '')
 
-    def testsplit_unit(self):
+    def test_split_unit(self):
         test = utility.split_unit
         self.assertEqual(('', ''), test(None))
         self.assertEqual(('', ''), test(False))
@@ -36,7 +34,7 @@ class TestUtility(unittest.TestCase):
         self.assertEqual(('1', 'px'), test('1px'))
         self.assertEqual(('-1', 'px'), test('-1px'))
 
-    def testis_int(self):
+    def test_is_int(self):
         test = utility.is_int
         self.assertTrue(test(1))
         self.assertTrue(test('1'))
@@ -46,7 +44,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test(None))
         self.assertFalse(test(0.0))
 
-    def testis_float(self):
+    def test_is_float(self):
         test = utility.is_float
         self.assertFalse(test(1))
         self.assertFalse(test('1'))
@@ -57,7 +55,7 @@ class TestUtility(unittest.TestCase):
         self.assertTrue(test('77.0565'))
         self.assertTrue(test('-0.0'))
 
-    def testis_color(self):
+    def test_is_color(self):
         test = utility.is_color
         self.assertTrue(test('#123'))
         self.assertTrue(test('#123456'))
@@ -72,7 +70,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test(False))
         self.assertFalse(test([]))
 
-    def testis_variable(self):
+    def test_is_variable(self):
         test = utility.is_variable
         self.assertTrue(test('@var'))
         self.assertTrue(test('-@var'))
@@ -81,7 +79,7 @@ class TestUtility(unittest.TestCase):
         self.assertFalse(test(False))
         self.assertFalse(test([]))
 
-    def testwith_unit(self):
+    def test_with_unit(self):
         test = utility.with_unit
         self.assertEqual('1px', test((1, 'px')))
         self.assertEqual('1px', test(1, 'px'))
@@ -105,7 +103,3 @@ class TestUtility(unittest.TestCase):
         self.assertEqual(3.0, test(10.0 / 3, 0))
         self.assertEqual(4, test(3.5))
         self.assertEqual(4, test(4.5))
-
-
-if __name__ == '__main__':
-    unittest.main()

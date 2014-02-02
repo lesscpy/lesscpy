@@ -1,6 +1,5 @@
 import unittest
-if __name__ == '__main__':
-    import bootstrap
+
 from lesscpy.lessc.scope import Scope
 from lesscpy.plib.identifier import Identifier
 
@@ -100,6 +99,3 @@ class TestIdentifier(unittest.TestCase):
             t, r = i
             id = Identifier(t, 0)
             self.assertEqual(id.parse(sc).fmt(fl), r, i)
-
-if __name__ == '__main__':
-    unittest.main()

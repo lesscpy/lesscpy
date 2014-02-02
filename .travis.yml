@@ -3,7 +3,5 @@ python:
 # - "2.6"
   - "2.7"
   - "3.3"
-# command to install dependencies
-install: "pip install -r requirements.txt --use-mirrors"
-# command to run tests
-script: python lesscpy/test/__main__.py -v
+install: "pip install --use-mirrors -r test-requirements.txt"
+script: nosetests -v

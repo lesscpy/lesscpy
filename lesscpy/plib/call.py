@@ -10,7 +10,7 @@
 import re
 import math
 try:
-    from urllib.parse import quote as urlquote, urlparse
+    from urllib.parse import quote as urlquote
 except ImportError:
     from urllib import quote as urlquote
 from .node import Node
@@ -106,7 +106,7 @@ class Call(Node):
         """
         try:
             n, u = utility.analyze_number(string)
-        except SyntaxError as e:
+        except SyntaxError:
             return False
         return True
 

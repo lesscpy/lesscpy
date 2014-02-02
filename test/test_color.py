@@ -1,14 +1,12 @@
 """
-    lesscpy tests.
+    lesscpy color tests.
 """
 import unittest
-if __name__ == '__main__':
-    import bootstrap
+
 from lesscpy.lessc import color
 
 
 class TestLessColor(unittest.TestCase):
-
     def setUp(self):
         self.color = color.Color()
 
@@ -25,7 +23,7 @@ class TestLessColor(unittest.TestCase):
         ]:
             self.assertEqual(test(r, g, b), v)
         for r, g, b, a, v in [
-            (255, 255, 255, 0.5,  '#ffffff'),
+            (255, 255, 255, 0.5, '#ffffff'),
             (100, 100, 100, 0.9, '#646464'),
             (0, 0, 0, 100, '#000000'),
         ]:
@@ -77,7 +75,6 @@ class TestLessColor(unittest.TestCase):
             ('200%', '100%', '100%', '100%'),
         ]:
             self.assertRaises(ValueError, test, args)
-
 
     def test_hsl(self):
         """
@@ -185,6 +182,3 @@ class TestLessColor(unittest.TestCase):
 
         ]:
             self.assertEqual(test(c, p), v, v)
-
-if __name__ == '__main__':
-    unittest.main()

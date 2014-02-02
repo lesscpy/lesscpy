@@ -8,7 +8,6 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 from .node import Node
-from lesscpy.lessc import utility
 
 
 class Deferred(Node):
@@ -98,7 +97,7 @@ class Deferred(Node):
             for p in res:
                 if p:
                     if isinstance(p, Deferred):
-                        tmp_res.append(p.parse(scope, depth=depth+1))
+                        tmp_res.append(p.parse(scope, depth=depth + 1))
                     else:
                         tmp_res.append(p.parse(scope))
             res = tmp_res
