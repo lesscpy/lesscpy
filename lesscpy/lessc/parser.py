@@ -634,12 +634,14 @@ class LessParser(object):
 
     def p_filter(self, p):
         """ filter                    : css_filter
+                                      | css_filter t_ws
                                       | t_colon word
                                       | t_colon vendor_property
                                       | t_colon vendor_property t_ws
                                       | t_colon css_property
                                       | t_colon css_property t_ws
                                       | t_colon css_filter
+                                      | t_colon css_filter t_ws
                                       | t_colon t_colon word
                                       | t_colon t_colon vendor_property
         """

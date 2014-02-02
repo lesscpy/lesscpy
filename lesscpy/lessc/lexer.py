@@ -89,6 +89,7 @@ class LessLexer:
         'css_number',
         'css_color',
         'css_media_type',
+        'css_filter',
         'less_variable',
         't_and',
         't_not',
