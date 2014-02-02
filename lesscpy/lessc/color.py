@@ -98,7 +98,7 @@ class Color():
                     alpha = list(args)[3]
                     if alpha[-1] == '%' and float(alpha[:-1]) == 0:
                         values = self._rgbatohex_raw([int(a[:-1]) * 255 / 100.0
-                                                for a in args])
+                                                     for a in args])
                         return "rgba(%s)" % ','.join([str(a) for a in values])
                     return self._rgbatohex([int(a[:-1]) * 255 / 100.0
                                             for a in args])
@@ -128,11 +128,11 @@ class Color():
         if len(rgb) == 3:
             return self._rgbatohex([255] + list(map(int, rgb)))
         elif len(rgb) == 4:
-            rgb = [rgb.pop()] + rgb  # Move Alpha to front 
+            rgb = [rgb.pop()] + rgb  # Move Alpha to front
             try:
                 fval = float(list(rgb)[0])
                 if fval > 1:
-                    rgb = [255] + rgb[1:] # Clip invalid integer/float values
+                    rgb = [255] + rgb[1:]  # Clip invalid integer/float values
                 elif 1 >= fval >= 0:
                     rgb = [fval * 256] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
                 else:
@@ -390,7 +390,6 @@ class Color():
             return '#%s' % color
         raise ValueError('Cannot format non-color')
 
-    
     def _rgbatohex_raw(self, rgba):
         values = ["%x" % v for v in [0xff
                                      if h > 0xff else

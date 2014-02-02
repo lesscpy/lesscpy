@@ -9,7 +9,6 @@
 """
 
 import operator
-import sys
 
 from .node import Node
 from lesscpy.lessc import utility

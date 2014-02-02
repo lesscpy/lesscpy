@@ -22,7 +22,7 @@ from . import lexer
 from . import utility
 from .scope import Scope
 from .color import Color
-from lesscpy.plib import *
+from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable
 
 
 class LessParser(object):
@@ -174,7 +174,7 @@ class LessParser(object):
         elif isinstance(p[3], Call):
             # NOTE(saschpe): Always in the form of 'url("...");', so parse it
             # and retrieve the inner css_string. This whole func is messy.
-            p[3] = p[3].parse(self.scope) # Store it as string, Statement.fmt expects it.
+            p[3] = p[3].parse(self.scope)  # Store it as string, Statement.fmt expects it.
             ipath = utility.destring(p[3][4:-1])
         fn, fe = os.path.splitext(ipath)
         if not fe or fe.lower() == '.less':
@@ -226,7 +226,7 @@ class LessParser(object):
         """
         try:
             p[1].parse(self.scope)
-        except SyntaxError as e:
+        except SyntaxError:
             pass
         p[0] = p[1]
         self.scope.current = p[1]

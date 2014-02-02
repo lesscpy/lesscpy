@@ -196,7 +196,7 @@ class Scope(list):
             try:
                 if isinstance(var.value[0], basestring):  # py3
                     var.value[0] = utility.destring(var.value[0])
-            except NameError: #
+            except NameError:
                 if isinstance(var.value[0], str):  # py2
                     var.value[0] = utility.destring(var.value[0])
         else:

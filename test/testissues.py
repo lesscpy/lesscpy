@@ -4,7 +4,6 @@
 import unittest
 import os
 import glob
-import bootstrap
 
 from lesscpy.lessc import parser
 from lesscpy.lessc import formatter
