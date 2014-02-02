@@ -6,9 +6,9 @@ import pkg_resources
 
 import codecs
 
+import lesscpy
 
-with codecs.open('LICENSE', encoding='utf-8') as f:
-    license = f.read()
+
 with codecs.open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
@@ -23,14 +23,15 @@ with open("test-requirements.txt", "r") as f:
 
 setup(
     name='lesscpy',
-    version='0.9j',
-    license=license,
+    version=lesscpy.__version__,
+    license="MIT",
     description='Python LESS compiler',
     long_description=long_description,
     author='Jóhann T Maríusson',
     author_email='jtm@robot.is',
     url='https://github.com/robotis/Lesscpy',
     packages=find_packages(exclude=['*test*']),
+    package_data={'': ['LICENSE']},
     scripts=['scripts/lesscpy'],
     install_requires=install_requires,
     tests_require=test_requires,
