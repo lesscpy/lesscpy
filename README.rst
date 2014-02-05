@@ -26,7 +26,7 @@ For more information on LESS:
   http://lesscss.org/ or https://github.com/cloudhead/less.js
  
 Development files:
-  https://github.com/robotis/Lesscpy
+  https://github.com/lesscpy/Lesscpy
 
 
 Supported features
