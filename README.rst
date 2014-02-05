@@ -1,8 +1,8 @@
 LESSCPY
 =======
 
-.. image:: https://travis-ci.org/saschpe/lesscpy.png?branch=master
-        :target: https://travis-ci.org/saschpe/lesscpy
+.. image:: https://travis-ci.org/lesscpy/lesscpy.png?branch=master
+        :target: https://travis-ci.org/lesscpy/lesscpy
 
 .. image:: https://pypip.in/d/lesscpy/badge.png
         :target: https://pypi.python.org/pypi/lesscpy
@@ -26,7 +26,7 @@ For more information on LESS:
   http://lesscss.org/ or https://github.com/cloudhead/less.js
  
 Development files:
-  https://github.com/lesscpy/Lesscpy
+  https://github.com/lesscpy/lesscpy
 
 
 Supported features
