@@ -29,7 +29,7 @@ setup(
     long_description=long_description,
     author='Jóhann T Maríusson',
     author_email='jtm@robot.is',
-    url='https://github.com/robotis/Lesscpy',
+    url='https://github.com/lesscpy/lesscpy',
     packages=find_packages(exclude=['*test*']),
     package_data={'': ['LICENSE']},
     scripts=['scripts/lesscpy'],
