@@ -1,7 +1,14 @@
 language: python
 python:
 # - "2.6"
-  - "2.7"
-  - "3.3"
-install: "pip install --use-mirrors -r test-requirements.txt"
-script: nosetests -v
+  - 2.7
+  - 3.3
+install:
+  # setup.py test (script) fetches all test_require files, thus no pip needed
+  #- pip install --use-mirrors -r test-requirements.txt
+  - pip install --use-mirrors coveralls
+script:
+  #nosetests -v
+  coverage run --source=lesscpy setup.py test
+after_success:
+  coveralls
