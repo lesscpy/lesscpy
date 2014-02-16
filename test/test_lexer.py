@@ -22,7 +22,7 @@ class TestLessLexer(unittest.TestCase):
         """
         It can load content from a string.
         """
-        file = StringIO("""
+        file = StringIO(b"""
             @simple-var: 1;
             """)
 
@@ -36,7 +36,7 @@ class TestLessLexer(unittest.TestCase):
         It can load content from a path.
         """
         file = NamedTemporaryFile()
-        file.write("""
+        file.write(b"""
             @simple-var: 1;
             """)
         file.seek(0)
