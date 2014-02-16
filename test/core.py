@@ -3,6 +3,9 @@
 """
 import os
 import glob
+import unittest
+
+import six
 
 from lesscpy.lessc import parser
 from lesscpy.lessc import formatter
@@ -85,3 +88,51 @@ def create_case(args):
             else:
                 self.fail("%s not found..." % minf)
     return do_case_expected
+
+
+class ListReporter(object):
+    """
+    A reporter which accumulates errors in a list.
+    """
+    def __init__(self):
+        self.errors = []
+
+    def add(self, filename, line_no, type, value):
+        self.errors.append({
+            'filename': filename,
+            'line_no': line_no,
+            'type': type,
+            'value': value,
+            })
+
+
+class IntegrationTestCase(unittest.TestCase):
+    """
+    Generic test case for writing integration tests.
+    """
+
+    def assertParsedResult(self, content, expected):
+        """
+        Check that content is parsed as expected.
+
+        Expected should be passed as a indented multi-line string.
+
+        The checks are done as a list to have a better diff.
+        """
+        error_reporter = ListReporter()
+        new_parser = parser.LessParser(error_reporter=error_reporter)
+        new_formatter = formatter.Formatter()
+        new_parser.parse(filestream=six.StringIO(content))
+
+        if error_reporter.errors:
+            self.fail('Errors during parsing.\n%s' % (error_reporter.errors))
+
+        result = new_formatter.format(new_parser)
+
+        # Break multi-line in lines and remove start and end lines.
+        expected_content = expected.split('\n')[1:-1]
+        first_line = expected_content[0]
+        padding = len(first_line) - len(first_line.lstrip(' '))
+        expected_content = [line[padding:] for line in expected_content]
+
+        self.assertEqual(expected_content, result.split('\n'))

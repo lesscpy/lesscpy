@@ -39,7 +39,8 @@ class LessParser(object):
                  scope=None,
                  outputdir='/tmp',
                  importlvl=0,
-                 verbose=False
+                 verbose=False,
+                 error_reporter=None,
                  ):
         """ Parser object
 
@@ -76,6 +77,10 @@ class LessParser(object):
         self.stash = {}
         self.result = None
         self.target = None
+
+        if error_reporter is None:
+            error_reporter = _DefaultErrorReporter()
+        self.error_reporter = error_reporter
 
     def parse(self, filename='', filestream=None, debuglevel=0):
         """ Parse file.
@@ -963,8 +968,13 @@ class LessParser(object):
             t (Lex token): Error token
         """
         if t:
-            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
-                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
+            self.error_reporter.add(
+                filename=self.target,
+                line_no=t.lineno,
+                type=t.type,
+                value=t.value,
+                )
+
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -985,3 +995,13 @@ class LessParser(object):
         color = '\x1b[31m' if t == 'E' else '\x1b[33m'
         print("%s%s: line: %d: %s\n" %
               (color, t, line, e), end='\x1b[0m', file=sys.stderr)
+
+
+class _DefaultErrorReporter(object):
+    """
+    A simple reporter which reports to standard error.
+    """
+
+    def add(self, filename, line_no, type, value):
+        print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
+              % (filename, line_no, type, value), file=sys.stderr)
