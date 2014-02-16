@@ -1,10 +1,12 @@
 """
 Unit test for the parser.
 """
-from StringIO import StringIO
 import unittest
 
+from six import StringIO
+
 from lesscpy.lessc.parser import LessParser
+
 
 class TestLessParser(unittest.TestCase):
     """

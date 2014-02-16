@@ -1,10 +1,10 @@
 """
 Unit tests for the lexer.
 """
-from StringIO import StringIO
 from tempfile import NamedTemporaryFile
 import unittest
 
+from six import StringIO
 
 from lesscpy.lessc.lexer import LessLexer
 
