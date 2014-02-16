@@ -22,7 +22,7 @@ class TestLessLexer(unittest.TestCase):
         """
         It can load content from a string.
         """
-        file = StringIO(b"""
+        file = StringIO("""
             @simple-var: 1;
             """)
 
