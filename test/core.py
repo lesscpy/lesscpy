@@ -39,6 +39,18 @@ def find_and_load_cases(cls, less_dir, css_dir, less_files=None, css_minimized=T
 
 
 def create_case(args):
+
+    def assert_line(self, expect, result, file, line_no):
+        """
+        Check that lines are equal, showing a pretty diff.
+        """
+        diff_expect = expect.replace('\t', '\\t')
+        diff_result = result.replace('\t', '\\t')
+        self.assertEqual(
+            expect,result,
+            '\nExpecting\n%s\nGot\n%s\nFor %s: Line %d' % (
+                diff_expect, diff_result, file, line_no))
+
     def do_case_expected(self):
         lessf, cssf, minf = args
         if os.path.exists(cssf):
@@ -56,8 +68,7 @@ def create_case(args):
                     line = line.rstrip()
                     if not line:
                         continue
-                    self.assertEqual(
-                        line, pout[i], '%s: Line %d' % (cssf, i + 1))
+                    assert_line(self, line, pout[i], cssf, i + 1)
                     i += 1
             if pl > i and i:
                 self.fail(
@@ -79,8 +90,7 @@ def create_case(args):
                         if i >= ml:
                             self.fail(
                                 "%s: result has less lines (%d < %d)" % (minf, i, ml))
-                        self.assertEqual(
-                            line.rstrip(), mout[i], '%s: Line %d' % (minf, i + 1))
+                        assert_line(self, line.rstrip(), mout[i], cssf, i + 1)
                         i += 1
                 if ml > i and i:
                     self.fail(

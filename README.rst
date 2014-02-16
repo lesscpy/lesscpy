@@ -132,6 +132,20 @@ Compiler script Usage
       -N, --no-css          No css output
 
 
+Developing with tests
+---------------------
+
+Tests are copied from original Less project as less and css files and places
+in `test` directory.
+
+You can run the test for a single file using the following command.
+For file `test/less/lazy-eval.less` you will run::
+
+  nosetests test.test_less:LessTestCase.test_less_lazy-eval
+
+There are also normal unit tests in `test` directory.
+
+
 License
 -------
 
@@ -139,3 +153,4 @@ See the LICENSE file
 
 
 .. _`Python Package Index`: https://pypi.python.org/pypi/rapport
+
