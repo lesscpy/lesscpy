@@ -3,8 +3,9 @@ Implementation of mixins.
 
 Documentation : http://lesscss.org/features/#mixins-feature
 """
-from StringIO import StringIO
 import unittest
+
+from six import StringIO
 
 from lesscpy.lessc.formatter import Formatter
 from lesscpy.lessc.parser import LessParser
