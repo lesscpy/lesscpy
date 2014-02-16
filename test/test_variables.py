@@ -184,11 +184,11 @@ class TestVariables(IntegrationTestCase):
             }
             """,
             """
+            .class1 {
+              one: 1;
+            }
             .class1 .class {
               three: 3;
-            }
-            .class {
-              one: 1;
             }
             """
             )
