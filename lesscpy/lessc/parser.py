@@ -77,7 +77,7 @@ class LessParser(object):
         self.result = None
         self.target = None
 
-    def parse(self, filename='', debuglevel=0):
+    def parse(self, filename='', filestream=None, debuglevel=0):
         """ Parse file.
         kwargs:
             filename (str): File to parse
@@ -87,8 +87,14 @@ class LessParser(object):
             print('Compiling target: %s' % filename, file=sys.stderr)
         self.scope.push()
         self.target = filename
+        if filestream:
+            content = filestream
+        else:
+            content = filename
+
         self.result = self.parser.parse(
-            filename, lexer=self.lex, debug=debuglevel)
+            content, lexer=self.lex, debug=debuglevel)
+
         self.post_parse()
 
     def post_parse(self):
