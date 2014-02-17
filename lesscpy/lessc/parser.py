@@ -456,6 +456,7 @@ class LessParser(object):
 
     def p_interpolated_property_part_word(self, p):
         """ interpolated_property_part  : word
+                                        | vendor_property
         """
         p[0] = p[1]
 
