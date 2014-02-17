@@ -25,18 +25,28 @@ class Property(Node):
         returns:
             self
         """
-        if not self.parsed:
-            if len(self.tokens) > 2:
-                property, style, _ = self.tokens
-                self.important = True
+        if self.parsed:
+            return self
+
+        if len(self.tokens) > 2:
+            property, style, _ = self.tokens
+            self.important = True
+        else:
+            property, style = self.tokens
+            self.important = False
+        interpolated_property = []
+        for part in property:
+            if part and part.startswith('@'):
+                interpolated_property.append(
+                    scope.variables(part).value[0][0])
             else:
-                property, style = self.tokens
-                self.important = False
-            self.property = ''.join(property)
-            self.parsed = []
-            if style:
-                style = self.preprocess(style)
-                self.parsed = self.process(style, scope)
+                interpolated_property.append(part)
+        self.property = ''.join(interpolated_property)
+        self.parsed = []
+        if style:
+            style = self.preprocess(style)
+            self.parsed = self.process(style, scope)
+
         return self
 
     def preprocess(self, style):

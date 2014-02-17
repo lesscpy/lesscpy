@@ -55,6 +55,7 @@ class LessLexer:
         't_only',
 
         'less_variable',
+        'less_variable_interpolated',
         'less_comment',
         'less_open_format',
         'less_when',
@@ -92,6 +93,7 @@ class LessLexer:
         'css_media_type',
         'css_filter',
         'less_variable',
+        'less_variable_interpolated',
         't_and',
         't_not',
         't_only',
@@ -185,7 +187,7 @@ class LessLexer:
         t.value = v
         return t
 
-    def t_iselector_less_variable(self, t):
+    def t_iselector_less_variable_interpolated(self, t):
         r'@\{[^@\}]+\}'
         return t
 
@@ -289,7 +291,7 @@ class LessLexer:
         return t
 
     def t_less_variable(self, t):
-        r'@@?[\w-]+|@\{[^@\}]+\}'
+        r'@@?[\w-]+'
         v = t.value.lower()
         if v in reserved.tokens:
             t.type = reserved.tokens[v]
@@ -297,6 +299,11 @@ class LessLexer:
                 t.lexer.push_state("mediaquery")
             elif t.type == "css_import":
                 t.lexer.push_state("import")
+        return t
+
+    def t_less_variable_interpolated(self, t):
+        r'@\{[^@\}]+\}'
+        t.value = '@' + t.value[2:-1]
         return t
 
     def t_css_color(self, t):

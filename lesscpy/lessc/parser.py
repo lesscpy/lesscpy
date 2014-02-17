@@ -430,7 +430,34 @@ class LessParser(object):
                                     | vendor_property t_colon
                                     | word t_colon
         """
-        p[0] = (p[1][0], '')
+        p[0] = p[1]
+
+    def p_prop_open_interpolated(self, p):
+        """ prop_open               : interpolated_property t_colon
+        """
+        p[0] = tuple(part[0] for part in p[1])
+
+
+    def p_interpolated_property(self, p):
+        """ interpolated_property : interpolated_property_part
+        """
+        p[0] = [p[1]]
+
+    def p_interpolated_property_aux(self, p):
+        """ interpolated_property : interpolated_property interpolated_property_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_interpolated_property_part_variable(self, p):
+        """ interpolated_property_part  : variable_interpolated
+        """
+        p[0] = p[1]
+
+    def p_interpolated_property_part_word(self, p):
+        """ interpolated_property_part  : word
+        """
+        p[0] = p[1]
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -529,6 +556,7 @@ class LessParser(object):
         """ ident_parts               : ident_part
                                       | selector
                                       | filter_group
+                                      | variable_interpolated
         """
         if not isinstance(p[1], list):
             p[1] = [p[1]]
@@ -809,6 +837,12 @@ class LessParser(object):
 #        p[0] = p[1]
         p[0] = tuple(list(p)[1:])
 
+    def p_variable_interpolated(self, p):
+        """ variable_interpolated  : less_variable_interpolated
+                                   | less_variable_interpolated t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
     def p_color(self, p):
         """ color                   : css_color
                                     | css_color t_ws
@@ -851,8 +885,7 @@ class LessParser(object):
         p[0] = tuple(list(p)[1:])
 
     def p_interpolated_class_part(self, p):
-        """ iclass_part               : less_variable
-                                      | less_variable t_ws
+        """ iclass_part               : variable_interpolated
                                       | class
         """
         p[0] = list(p)[1:]
