@@ -9,6 +9,8 @@ import six
 
 from lesscpy.lessc import parser
 from lesscpy.lessc import formatter
+from lesscpy.plib.block import Block
+from lesscpy.plib.variable import Variable
 
 
 class Opt(object):
@@ -121,6 +123,38 @@ class IntegrationTestCase(unittest.TestCase):
     Generic test case for writing integration tests.
     """
 
+    def assertIsVariable(self, node, name, value):
+        """
+        Check that `node` is a variable with `name` and `value`.
+        """
+        self.assertIsInstance(node, Variable)
+        self.assertEqual(name, node.name)
+        self.assertEqual(value, node.value)
+
+    def assertIsBlock(self, node):
+        """
+        Check that node is a block.
+        """
+        self.assertIsInstance(node, Block)
+
+    def assertNoErrors(self, reporter):
+        """
+        Check that reporter does not contains errors.
+        """
+        if reporter.errors:
+            self.fail('Errors during parsing.\n%s' % (reporter.errors))
+
+    def parseContent(self, content):
+        """
+        Return the parsed elements for `content`.
+        """
+        error_reporter = ListReporter()
+        new_parser = parser.LessParser(error_reporter=error_reporter)
+        new_parser.parse(filestream=six.StringIO(content))
+        self.assertNoErrors(error_reporter)
+        return new_parser.result
+
+
     def assertParsedResult(self, content, expected):
         """
         Check that content is parsed as expected.
@@ -134,8 +168,7 @@ class IntegrationTestCase(unittest.TestCase):
         new_formatter = formatter.Formatter()
         new_parser.parse(filestream=six.StringIO(content))
 
-        if error_reporter.errors:
-            self.fail('Errors during parsing.\n%s' % (error_reporter.errors))
+        self.assertNoErrors(error_reporter)
 
         result = new_formatter.format(new_parser)
 

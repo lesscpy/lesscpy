@@ -117,8 +117,8 @@ class TestVariables(IntegrationTestCase):
             """,
             """
             .widget {
-              color: #0ee;
-              background-color: #999;
+              color: #00eeee;
+              background-color: #999999;
             }
             """
             )

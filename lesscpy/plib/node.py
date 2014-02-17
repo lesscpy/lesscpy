@@ -12,6 +12,13 @@ from lesscpy.lessc import utility
 
 class Node(object):
 
+    DEFAULT_FILLS = {
+        'nl': '',
+        'tab': '',
+        'ws': ' ',
+        'eb': '\n'
+        }
+
     def __init__(self, tokens, lineno=0):
         """ Base Node
         args:
