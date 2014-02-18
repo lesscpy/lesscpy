@@ -278,6 +278,16 @@ def convergent_round(value, ndigits=0):
                 return math.ceil(nearest_even)
     return round(value, ndigits)
 
+def pc_or_float(s):
+    """ Utility function to process strings that contain either percentiles or floats
+    args:
+        str: s
+    returns:
+       float
+    """
+    if isinstance(s, str) and '%' in s:
+        return float(s.strip('%')) / 100.0
+    return float(s)
 
 def permutations_with_replacement(iterable, r=None):
     """Return successive r length permutations of elements in the iterable.
