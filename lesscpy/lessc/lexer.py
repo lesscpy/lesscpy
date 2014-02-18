@@ -11,6 +11,7 @@
 """
 import re
 import ply.lex as lex
+from six import string_types
 
 from lesscpy.lib import dom
 from lesscpy.lib import css
@@ -460,12 +461,16 @@ class LessLexer:
             self.lexer.input(f.read())
         return self
 
-    def input(self, filename):
+    def input(self, file):
         """
-        Wrapper for file
+        Load lexer with content from `file` which can be a path or a file
+        like object.
         """
-        with open(filename) as f:
-            self.lexer.input(f.read())
+        if isinstance(file, string_types):
+            with open(file) as f:
+                self.lexer.input(f.read())
+        else:
+            self.lexer.input(file.read())
 
     def token(self):
         """
