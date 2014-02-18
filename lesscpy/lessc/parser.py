@@ -456,6 +456,7 @@ class LessParser(object):
 
     def p_interpolated_property_part_word(self, p):
         """ interpolated_property_part  : word
+                                        | vendor_property
         """
         p[0] = p[1]
 
@@ -920,7 +921,7 @@ class LessParser(object):
         """ property                  : css_property
                                       | css_property t_ws
         """
-        p[0] = tuple(list(p)[1:])
+        p[0] = (p[1],)
 
     def p_page(self, p):
         """ page                      : css_page

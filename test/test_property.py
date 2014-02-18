@@ -62,9 +62,16 @@ class TestPropertyParsing(IntegrationTestCase):
               @{property}-color: #0ee;
             }
             """)
-
-        self.assertIsVariable(result[0], '@property', [('color',)])
-        block = result[1]
-        self.assertIsBlock(block)
+        self.assertIsBlock(result[1])
         self.assertEqual(
-            '.widget {background-color: #00eeee;}\n', block.fmt())
+            '.widget {background-color: #00eeee;}\n', result[1].fmt())
+
+    def test_white_space_after_name(self):
+        """
+        """
+        result = self.parseContent(
+            """
+            .whitespace { color : black ; }
+            """)
+        self.assertEqual(
+            '.whitespace {color: black;}\n', result[0].fmt())
