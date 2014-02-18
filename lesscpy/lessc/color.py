@@ -157,11 +157,7 @@ class Color():
             return self.hsla(*args)
         elif len(args) == 3:
             h, s, l = args
-            if isinstance(l, str):
-                l = int(l.strip('%'))
-            if isinstance(s, str):
-                s = int(s.strip('%'))
-            rgb = colorsys.hls_to_rgb(int(h) / 360.0, l / 100.0, s / 100.0)
+            rgb = colorsys.hls_to_rgb(int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
             color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
         raise ValueError('Illegal color values')
@@ -175,13 +171,9 @@ class Color():
         """
         if len(args) == 4:
             h, s, l, a = args
-            if isinstance(l, str):
-                l = int(l.strip('%'))
-            if isinstance(s, str):
-                s = int(s.strip('%'))
-            rgb = colorsys.hls_to_rgb(int(h) / 360.0, l / 100.0, s / 100.0)
+            rgb = colorsys.hls_to_rgb(int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
             color = [float(utility.convergent_round(c * 255)) for c in rgb]
-            color.append(utility.convergent_round(float(a[:-1]) / 100.0, 2))
+            color.append(utility.pc_or_float(a))
             return "rgba(%s,%s,%s,%s)" % tuple(color)
         raise ValueError('Illegal color values')
 
