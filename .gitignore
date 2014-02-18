@@ -9,4 +9,3 @@ dist
 MANIFEST
 .tox
 .venv*
-*.egg-info/

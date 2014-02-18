@@ -1,8 +1,11 @@
 LESSCPY
 =======
 
-.. image:: https://travis-ci.org/saschpe/lesscpy.png?branch=master
-        :target: https://travis-ci.org/saschpe/lesscpy
+.. image:: https://travis-ci.org/lesscpy/lesscpy.png?branch=master
+        :target: https://travis-ci.org/lesscpy/lesscpy
+
+.. image:: https://coveralls.io/repos/lesscpy/lesscpy/badge.png
+        :target: https://coveralls.io/r/lesscpy/lesscpy
 
 .. image:: https://pypip.in/d/lesscpy/badge.png
         :target: https://pypi.python.org/pypi/lesscpy
@@ -10,6 +13,13 @@ LESSCPY
 .. image:: https://pypip.in/v/lesscpy/badge.png
         :target: https://pypi.python.org/pypi/lesscpy
 
+.. image:: https://pypip.in/wheel/lesscpy/badge.png
+        :target: https://pypi.python.org/pypi/lesscpy
+        :alt: Wheel Status
+
+.. image:: https://pypip.in/license/lesscpy/badge.png
+        :target: https://pypi.python.org/pypi/lesscpy
+        :alt: License
 
 Python LESS Compiler.
 
@@ -26,7 +36,7 @@ For more information on LESS:
   http://lesscss.org/ or https://github.com/cloudhead/less.js
  
 Development files:
-  https://github.com/lesscpy/Lesscpy
+  https://github.com/lesscpy/lesscpy
 
 
 Supported features

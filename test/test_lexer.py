@@ -1,10 +1,10 @@
 """
 Unit tests for the lexer.
 """
-from StringIO import StringIO
 from tempfile import NamedTemporaryFile
 import unittest
 
+from six import StringIO
 
 from lesscpy.lessc.lexer import LessLexer
 
@@ -36,7 +36,7 @@ class TestLessLexer(unittest.TestCase):
         It can load content from a path.
         """
         file = NamedTemporaryFile()
-        file.write("""
+        file.write(b"""
             @simple-var: 1;
             """)
         file.seek(0)
