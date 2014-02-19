@@ -214,12 +214,12 @@ class LessParser(object):
                     recurse.parse(filename=filename, debuglevel=0)
                     p[0] = recurse.result
                 else:
-				    error = "Cannot import '%s', file not found" % path
-				    self.error_reporter.warning(
-				        filename=self.target,
-				        line_no=line_no,
-				        value=error,
-				        )
+                    error = "Cannot import '%s', file not found" % path
+                    self.error_reporter.warning(
+                        filename=self.target,
+                        line_no=line_no,
+                        value=error,
+                        )
                     p[0] = None
             except ImportError as e:
                 self.error_reporter.error(
