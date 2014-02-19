@@ -491,7 +491,38 @@ class LessParser(object):
                                     | vendor_property t_colon
                                     | word t_colon
         """
-        p[0] = (p[1][0], '')
+        p[0] = p[1]
+
+    def p_prop_open_interpolated(self, p):
+        """ prop_open               : interpolated_property t_colon
+        """
+        p[0] = p[1]
+
+    def p_interpolated_property(self, p):
+        """ interpolated_property : interpolated_property_part
+        """
+        p[0] = [p[1]]
+
+    def p_interpolated_property_aux(self, p):
+        """ interpolated_property : interpolated_property interpolated_property_part
+        """
+        p[1].extend([p[2]])
+        p[0] = p[1]
+
+    def p_interpolated_property_part(self, p):
+        """ interpolated_property_part  : variable_interpolated
+                                        | css_property
+                                        | css_vendor_property
+                                        | '-'
+        """
+        p[0] = p[1]
+
+    def p_interpolated_property_part_word(self, p):
+        """ interpolated_property_part  : word
+        """
+        # Not sure whey word comes as a list.
+        p[0] = p[1][0]
+
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -590,6 +621,7 @@ class LessParser(object):
         """ ident_parts               : ident_part
                                       | selector
                                       | filter_group
+                                      | variable_interpolated
         """
         if not isinstance(p[1], list):
             p[1] = [p[1]]
@@ -959,7 +991,7 @@ class LessParser(object):
         """ property                  : css_property
                                       | css_property t_ws
         """
-        p[0] = tuple(list(p)[1:])
+        p[0] = (p[1],)
 
     def p_page(self, p):
         """ page                      : css_page
