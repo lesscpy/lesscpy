@@ -55,6 +55,7 @@ class LessLexer:
         't_only',
 
         'less_variable',
+        'less_variable_interpolated',
         'less_comment',
         'less_open_format',
         'less_when',
@@ -92,6 +93,7 @@ class LessLexer:
         'css_media_type',
         'css_filter',
         'less_variable',
+        'less_variable_interpolated',
         't_and',
         't_not',
         't_only',
@@ -185,7 +187,7 @@ class LessLexer:
         t.value = v
         return t
 
-    def t_iselector_less_variable(self, t):
+    def t_iselector_less_variable_interpolated(self, t):
         r'@\{[^@\}]+\}'
         return t
 
@@ -289,7 +291,9 @@ class LessLexer:
         return t
 
     def t_less_variable(self, t):
-        r'@@?[\w-]+|@\{[^@\}]+\}'
+        r'@@?[\w-]+'
+        # Some special CSS stataments can look like a less variable,
+        # so we change the type here.
         v = t.value.lower()
         if v in reserved.tokens:
             t.type = reserved.tokens[v]
@@ -298,6 +302,17 @@ class LessLexer:
             elif t.type == "css_import":
                 t.lexer.push_state("import")
         return t
+
+    def t_less_variable_interpolated(self, t):
+        r'@\{[^@\}]+\}'
+        t.value = self._getVariableInterpolatedName(t.value)
+        return t
+
+    def _getVariableInterpolatedName(self, value):
+        """
+        Return the name of an interpolated variable.
+        """
+        return '@' + value[2:-1]
 
     def t_css_color(self, t):
         r'\#[0-9]([0-9a-f]{5}|[0-9a-f]{2})'
@@ -413,12 +428,14 @@ class LessLexer:
             t.lexer.push_state('istringapostrophe')
         return t
 
-    def t_istringquotes_less_variable(self, t):
+    def t_istringquotes_less_variable_interpolated(self, t):
         r'@\{[^@"\}]+\}'
+        t.value = self._getVariableInterpolatedName(t.value)
         return t
 
-    def t_istringapostrophe_less_variable(self, t):
+    def t_istringapostrophe_less_variable_interpolated(self, t):
         r'@\{[^@\'\}]+\}'
+        t.value = self._getVariableInterpolatedName(t.value)
         return t
 
     def t_istringapostrophe_css_string(self, t):

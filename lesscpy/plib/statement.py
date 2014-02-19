@@ -39,4 +39,7 @@ class Statement(Node):
         returns:
             str
         """
+        if fills is None:
+            fills = self.DEFAULT_FILLS
+
         return ''.join(self.parsed) + fills['eb']

@@ -11,12 +11,13 @@ from lesscpy.lessc.lexer import LessLexer
 
 class TestLessLexer(unittest.TestCase):
     """
-    Unit tests for LessLexer
+    Tests for general LessLexer methods.
+
+    Tests for token method are split into dedicated tests for each node type.
     """
 
     def setUp(self):
         self.lexer = LessLexer()
-
 
     def test_input_stream(self):
         """

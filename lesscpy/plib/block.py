@@ -10,6 +10,7 @@
 from .node import Node
 from lesscpy.lessc import utility
 from lesscpy.plib.identifier import Identifier
+from lesscpy.plib.variable import Variable
 
 
 class Block(Node):
@@ -40,7 +41,20 @@ class Block(Node):
                 self.name.parse(scope)
             if not inner:
                 inner = []
-            inner = list(utility.flatten([p.parse(scope) for p in inner if p]))
+
+            parsed_inner = []
+            # First we parse all variables from the block to resolve
+            # the final value.
+            for child in inner:
+                if child and isinstance(child, Variable):
+                    parsed_inner.append(child.parse(scope))
+            # Then we parse the other children.
+            for child in inner:
+                if child and not isinstance(child, Variable):
+                    parsed_inner.append(child.parse(scope))
+            # And flatten the result.
+            inner = list(utility.flatten(parsed_inner))
+
             self.parsed = []
             self.inner = []
             if not hasattr(self, "inner_media_queries"):
@@ -139,13 +153,15 @@ class Block(Node):
         except (AttributeError, TypeError):
             pass
 
-    def fmt(self, fills):
+    def fmt(self, fills=None):
         """Format block (CSS)
         args:
             fills (dict): Fill elements
         returns:
             str (CSS)
         """
+        if fills is None:
+            fills = self.DEFAULT_FILLS
         f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
         name = self.name.fmt(fills)
