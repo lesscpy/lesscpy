@@ -444,8 +444,7 @@ class LessParser(object):
     def p_prop_open_interpolated(self, p):
         """ prop_open               : interpolated_property t_colon
         """
-        p[0] = tuple(part[0] for part in p[1])
-
+        p[0] = p[1]
 
     def p_interpolated_property(self, p):
         """ interpolated_property : interpolated_property_part
@@ -460,12 +459,13 @@ class LessParser(object):
 
     def p_interpolated_property_part_variable(self, p):
         """ interpolated_property_part  : variable_interpolated
+                                        | word
         """
-        p[0] = p[1]
+        p[0] = p[1][0]
 
-    def p_interpolated_property_part_word(self, p):
-        """ interpolated_property_part  : word
-                                        | vendor_property
+    def p_interpolated_property_part_other(self, p):
+        """ interpolated_property_part  : css_property
+                                        | css_vendor_property
         """
         p[0] = p[1]
 
@@ -658,7 +658,9 @@ class LessParser(object):
                                       | dom
                                       | combinator
                                       | color
+                                      | word
         """
+        # word is added to support TAG names containing dash characters.
         p[0] = p[1]
 
     def p_ident_part_aux(self, p):
@@ -851,7 +853,7 @@ class LessParser(object):
         """ variable_interpolated  : less_variable_interpolated
                                    | less_variable_interpolated t_ws
         """
-        p[0] = tuple(list(p)[1:])
+        p[0] = (p[1],)
 
     def p_color(self, p):
         """ color                   : css_color

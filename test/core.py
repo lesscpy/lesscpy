@@ -59,7 +59,7 @@ def create_case(args):
             p = parser.LessParser()
             p.parse(filename=lessf)
             f = formatter.Formatter(Opt())
-            pout = f.format(p).split('\n')
+            pout = f.format(p.result).split('\n')
             pl = len(pout)
             i = 0
             with open(cssf) as cssf:
@@ -84,7 +84,7 @@ def create_case(args):
                 opt.minify = True
                 p.parse(filename=lessf)
                 f = formatter.Formatter(opt)
-                mout = f.format(p).split('\n')
+                mout = f.format(p.result).split('\n')
                 ml = len(mout)
                 i = 0
                 with open(minf) as cssf:
@@ -150,10 +150,16 @@ class IntegrationTestCase(unittest.TestCase):
         """
         error_reporter = ListReporter()
         new_parser = parser.LessParser(error_reporter=error_reporter)
-        new_parser.parse(filestream=six.StringIO(content))
+        new_parser.parse(file=six.StringIO(content))
         self.assertNoErrors(error_reporter)
         return new_parser.result
 
+    def formatContent(self, content):
+        """
+        Return the serialized CSS for LESS `content`.
+        """
+        new_formatter = formatter.Formatter()
+        return new_formatter.format(self.parseContent(content))
 
     def assertParsedResult(self, content, expected):
         """
@@ -163,14 +169,7 @@ class IntegrationTestCase(unittest.TestCase):
 
         The checks are done as a list to have a better diff.
         """
-        error_reporter = ListReporter()
-        new_parser = parser.LessParser(error_reporter=error_reporter)
-        new_formatter = formatter.Formatter()
-        new_parser.parse(filestream=six.StringIO(content))
-
-        self.assertNoErrors(error_reporter)
-
-        result = new_formatter.format(new_parser)
+        result = self.formatContent(content)
 
         # Break multi-line in lines and remove start and end lines.
         expected_content = expected.split('\n')[1:-1]

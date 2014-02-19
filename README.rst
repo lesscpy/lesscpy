@@ -142,8 +142,10 @@ Compiler script Usage
       -N, --no-css          No css output
 
 
-Developing with tests
----------------------
+Development
+-----------
+
+You can create a virtual environment in '.venv' directory.
 
 Tests are copied from original Less project as less and css files and places
 in `test` directory.
