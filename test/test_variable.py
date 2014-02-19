@@ -12,6 +12,33 @@ class TestVariables(IntegrationTestCase):
     Integration tests for variables.
     """
 
+    def checkTokens(self, name, value):
+        """
+        Check tokens for variable declaration.
+        """
+        self.assertToken('less_variable', name)
+        self.assertToken('t_colon', ':')
+        self.assertToken('css_ident', value)
+
+    def checkDeclaration(self, content, name, value):
+        """
+        Check tokens and parsing of variable declartation.
+        """
+        self.inputContent(content)
+        self.checkTokens(name, value)
+
+        result = self.parseContent(content)
+        self.assertIsVariable(result[0], name, value)
+
+    def test_declaration(self):
+        self.checkDeclaration('@var:  name  ;', '@var', 'name')
+
+    def test_declaration_single_quotes(self):
+        self.checkDeclaration('@var:  \'name\'  ;', '@var', '\'name\'')
+
+    def test_declaration_double_quotes(self):
+        self.checkDeclaration('@var:  "name"  ;', '@var', '"name"')
+
     def test_not_included(self):
         """
         Variables are not included in the parsed result but values
@@ -81,22 +108,6 @@ class TestVariables(IntegrationTestCase):
               color: #444444;
               background: url("../img/white-sand.png");
             }
-            """
-            )
-
-
-    def disabled_interpolation_import(self):
-        """
-        It can be used in imports.
-
-        http://lesscss.org/features/#variables-feature-import-statements
-        """
-        self.assertParsedResult(
-            """
-            @theme: "name";
-            @import "@{theme}.less";
-            """,
-            """
             """
             )
 

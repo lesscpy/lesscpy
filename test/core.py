@@ -7,10 +7,12 @@ import unittest
 
 import six
 
-from lesscpy.lessc import parser
 from lesscpy.lessc import formatter
+from lesscpy.lessc.lexer import LessLexer
+from lesscpy.lessc.parser import LessParser
 from lesscpy.plib.block import Block
 from lesscpy.plib.variable import Variable
+from lesscpy.plib.statement import Statement
 
 
 class Opt(object):
@@ -56,7 +58,7 @@ def create_case(args):
     def do_case_expected(self):
         lessf, cssf, minf = args
         if os.path.exists(cssf):
-            p = parser.LessParser()
+            p = LessParser()
             p.parse(filename=lessf)
             f = formatter.Formatter(Opt())
             pout = f.format(p.result).split('\n')
@@ -79,7 +81,7 @@ def create_case(args):
             self.fail("%s not found..." % cssf)
         if minf:
             if os.path.exists(minf):
-                p = parser.LessParser()
+                p = LessParser()
                 opt = Opt()
                 opt.minify = True
                 p.parse(filename=lessf)
@@ -108,12 +110,19 @@ class ListReporter(object):
     """
     def __init__(self):
         self.errors = []
+        self.warnings = []
 
-    def add(self, filename, line_no, type, value):
+    def error(self, filename, line_no, value):
         self.errors.append({
             'filename': filename,
             'line_no': line_no,
-            'type': type,
+            'value': value,
+            })
+
+    def warning(self, filename, line_no, value):
+        self.warnings.append({
+            'filename': filename,
+            'line_no': line_no,
             'value': value,
             })
 
@@ -128,8 +137,12 @@ class IntegrationTestCase(unittest.TestCase):
         Check that `node` is a variable with `name` and `value`.
         """
         self.assertIsInstance(node, Variable)
-        self.assertEqual(name, node.name)
-        self.assertEqual(value, node.value)
+
+        message = '\nExp %s:%s\nGot %s:%s' % (
+            name, value, node.name, node.value)
+
+        self.assertEqual(name, node.name, message)
+        self.assertEqual(value, node.value, message)
 
     def assertIsBlock(self, node):
         """
@@ -137,29 +150,45 @@ class IntegrationTestCase(unittest.TestCase):
         """
         self.assertIsInstance(node, Block)
 
+    def assertIsStatement(self, node):
+        """
+        Check that node is a statement.
+        """
+        self.assertIsInstance(node, Statement)
+
     def assertNoErrors(self, reporter):
         """
-        Check that reporter does not contains errors.
+        Check that reporter does not contains errors or warnings.
         """
         if reporter.errors:
             self.fail('Errors during parsing.\n%s' % (reporter.errors))
 
-    def parseContent(self, content):
+        if reporter.warnings:
+            self.fail('Warnings during parsing.\n%s' % (reporter.warnings))
+
+    def makeParser(self):
+        """
+        Return a new intance of parser.
+        """
+        error_reporter = ListReporter()
+        return LessParser(error_reporter=error_reporter)
+
+    def parseContent(self, content, parser=None):
         """
         Return the parsed elements for `content`.
         """
-        error_reporter = ListReporter()
-        new_parser = parser.LessParser(error_reporter=error_reporter)
-        new_parser.parse(file=six.StringIO(content))
-        self.assertNoErrors(error_reporter)
-        return new_parser.result
+        if not parser:
+            parser = self.makeParser()
+        parser.parse(file=six.StringIO(content))
+        self.assertNoErrors(parser.error_reporter)
+        return parser.result
 
-    def formatContent(self, content):
+    def formatContent(self, content, parser=None):
         """
         Return the serialized CSS for LESS `content`.
         """
         new_formatter = formatter.Formatter()
-        return new_formatter.format(self.parseContent(content))
+        return new_formatter.format(self.parseContent(content, parser))
 
     def assertParsedResult(self, content, expected):
         """
@@ -178,3 +207,20 @@ class IntegrationTestCase(unittest.TestCase):
         expected_content = [line[padding:] for line in expected_content]
 
         self.assertEqual(expected_content, result.split('\n'))
+
+    def inputContent(self, content):
+        """
+        Input content into the lexer.
+        """
+        self.lexer = LessLexer()
+        self.lexer.input(six.StringIO(content))
+
+    def assertToken(self, type, value):
+        """
+        Check that next token is of type and value.
+        """
+        token = self.lexer.token()
+        message = '\nExp %s:%s\nGot %s:%s' % (
+            type, value, token.type, token.value)
+        self.assertEqual(token.type, type, message)
+        self.assertEqual(token.value, value, message)

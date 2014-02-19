@@ -65,6 +65,15 @@ Differences from less.js
 - Does not preserve CSS comments
 
 
+Not supported yet
+-----------------
+
+- Interpolation in imports.
+- Interpolation in property names when variable is an expression.
+- Interpolation in property names when merged with '+'.
+- Variable name can not be a single '-' (dash) character.
+
+
 Not supported
 -------------
 

@@ -5,9 +5,9 @@ from lesscpy.lessc.parser import LessParser
 from test.core import IntegrationTestCase
 
 
-class TestSelectorParsing(IntegrationTestCase):
+class TestSelector(IntegrationTestCase):
     """
-    Tests for parsing of selectores.
+    Tests for parsing of selectors.
     """
 
     def test_class_selector(self):

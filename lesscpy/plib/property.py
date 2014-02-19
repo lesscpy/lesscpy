@@ -8,6 +8,7 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 import re
+from lesscpy.lessc import utility
 from .node import Node
 
 
@@ -34,14 +35,8 @@ class Property(Node):
         else:
             property, style = self.tokens
             self.important = False
-        interpolated_property = []
-        for part in property:
-            if part and part.startswith('@'):
-                interpolated_property.append(
-                    scope.variables(part).value[0][0])
-            else:
-                interpolated_property.append(part)
-        self.property = ''.join(interpolated_property)
+
+        self.property = utility.resolve_variables(scope, property)
         self.parsed = []
         if style:
             style = self.preprocess(style)

@@ -11,25 +11,13 @@ from lesscpy.lessc.lexer import LessLexer
 
 class TestLessLexer(unittest.TestCase):
     """
-    Unit tests for LessLexer
+    Tests for general LessLexer methods.
+
+    Tests for token method are split into dedicated tests for each node type.
     """
 
     def setUp(self):
         self.lexer = LessLexer()
-
-    def inputContent(self, content):
-        """
-        Input content into the lexer.
-        """
-        self.lexer.input(StringIO(content))
-
-    def assertToken(self, type, value):
-        """
-        Check that next token is of type and value.
-        """
-        token = self.lexer.token()
-        self.assertEqual(token.type, type)
-        self.assertEqual(token.value, value)
 
     def test_input_stream(self):
         """
@@ -58,24 +46,3 @@ class TestLessLexer(unittest.TestCase):
 
         token = self.lexer.token()
         self.assertEqual('@simple-var', token.value)
-
-    def test_interpolated_property_full(self):
-        self.inputContent('@{var}: black;')
-
-        self.assertToken('less_variable_interpolated', '@var')
-        self.assertToken('t_colon', ':')
-
-    def test_interpolated_property_css_vendor(self):
-        self.inputContent('@{var}-color: black;')
-
-        self.assertToken('less_variable_interpolated', '@var')
-        self.assertToken('css_vendor_property', '-color')
-        self.assertToken('t_colon', ':')
-
-
-    def test_interpolated_property_css_vendor(self):
-        self.inputContent('@{var}color: black;')
-
-        self.assertToken('less_variable_interpolated', '@var')
-        self.assertToken('css_property', 'color')
-        self.assertToken('t_colon', ':')

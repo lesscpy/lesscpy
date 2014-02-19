@@ -289,3 +289,25 @@ def permutations_with_replacement(iterable, r=None):
     r = n if r is None else r
     for indices in itertools.product(range(n), repeat=r):
         yield list(pool[i] for i in indices)
+
+
+def resolve_variables(scope, variables):
+    """
+    Iterate all variables from list and resolved them in `scope` returning
+    a resolved string.
+    """
+    result = []
+    for part in variables:
+        if not part:
+            continue
+        if part.startswith('@'):
+            resolved = scope.variables(part)
+            if resolved:
+                value = destring(resolved.value[0][0])
+                result.append(value)
+            else:
+                raise AssertionError('Variable %s not defined.' % (part))
+        else:
+            result.append(part)
+
+    return ''.join(result)
