@@ -186,51 +186,90 @@ class LessParser(object):
         p[0].parse(None)
 
     def p_statement_import(self, p):
-        """ import_statement     : css_import t_ws css_string t_semicolon
+        """ import_statement     : css_import t_ws string t_semicolon
                                  | css_import t_ws css_string media_query_list t_semicolon
                                  | css_import t_ws fcall t_semicolon
                                  | css_import t_ws fcall media_query_list t_semicolon
+
+        """
+        """
+        @import statements may be treated differently by Less depending on
+        the file extension:
+
+        - If the file has a .css extension it will be treated as CSS and the
+          @import statement left as-is (see the inline option below).
+        - If it has any other extension it will be treated as Less and
+          imported.
+        - If it does not have an extension, .less will be appended and it
+          will be included as a imported Less file.
+
+        Reference:
+        http://lesscss.org/features/#import-directives-feature-file-extensions
         """
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
+
+        import_path = None
         if isinstance(p[3], str):
-            ipath = utility.destring(p[3])
+            # css_string
+            import_path = utility.destring(p[3])
+        if isinstance(p[3], list):
+            # string
+            import_path = utility.resolve_variables(self.scope, p[3][1])
         elif isinstance(p[3], Call):
+            # fcall
             # NOTE(saschpe): Always in the form of 'url("...");', so parse it
             # and retrieve the inner css_string. This whole func is messy.
             p[3] = p[3].parse(self.scope)  # Store it as string, Statement.fmt expects it.
-            ipath = utility.destring(p[3][4:-1])
-        fn, fe = os.path.splitext(ipath)
-        if not fe or fe.lower() == '.less':
-            try:
-                cpath = os.path.dirname(os.path.abspath(self.target))
-                if not fe:
-                    ipath += '.less'
-                filename = "%s%s%s" % (cpath, os.sep, ipath)
-                if os.path.exists(filename):
-                    recurse = LessParser(importlvl=self.importlvl + 1,
-                                         verbose=self.verbose, scope=self.scope)
-                    recurse.parse(filename=filename, debuglevel=0)
-                    p[0] = recurse.result
-                else:
-                    error = "Cannot import '%s', file not found" % path
-                    self.error_reporter.warning(
-                        filename=self.target,
-                        line_no=line_no,
-                        value=error,
-                        )
-                    p[0] = None
-            except ImportError as e:
-                self.error_reporter.error(
-                    filename=self.target,
-                    line_no=line_no,
-                    value=e,
-                    )
-        else:
-            p[0] = Statement(list(p)[1:], p.lineno(1))
+            import_path = utility.destring(p[3][4:-1])
+
+        name, extension = os.path.splitext(import_path)
+        if extension and extension.lower() == '.css':
+            p[0] =  Statement(list(p)[1:], p.lineno(1))
             p[0].parse(None)
-        sys.stdout.flush()
+        else:
+            p[0] = self._import(import_path, line_no=p.lineno(1))
+
+    def _import(self, import_path, line_no):
+        """
+        Import file at `path`.
+
+        Returned parsed tokens or None if file could not be parsed.
+        """
+        name, extension = os.path.splitext(import_path)
+        try:
+            base_path = os.path.dirname(os.path.abspath(self.target))
+            if not extension:
+                import_path += '.less'
+            full_path = os.path.join(base_path, import_path)
+            return self._parseImport(full_path, line_no=line_no)
+
+        except ImportError as e:
+            self.error_reporter.error(
+                filename=self.target,
+                line_no=line_no,
+                value=e,
+                )
+            return None
+
+    def _parseImport(self, path, line_no):
+        """
+        Parse imported file at `path`.
+        """
+        if not os.path.exists(path):
+            error = "Cannot import '%s', file not found" % path
+            self.error_reporter.warning(
+                filename=self.target,
+                line_no=line_no,
+                value=error,
+                )
+            return None
+
+        recurse = LessParser(importlvl=self.importlvl + 1,
+                             verbose=self.verbose, scope=self.scope)
+        recurse.parse(filename=path, debuglevel=0)
+        return recurse.result
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -784,7 +823,7 @@ class LessParser(object):
 #
 
     def p_string_part(self, p):
-        """ string_part             : variable
+        """ string_part             : variable_interpolated
                                     | css_string
         """
         p[0] = p[1]
@@ -830,6 +869,12 @@ class LessParser(object):
         """
 #        p[0] = p[1]
         p[0] = tuple(list(p)[1:])
+
+    def p_variable_interpolated(self, p):
+        """ variable_interpolated  : less_variable_interpolated
+                                   | less_variable_interpolated t_ws
+        """
+        p[0] = p[1]
 
     def p_color(self, p):
         """ color                   : css_color
