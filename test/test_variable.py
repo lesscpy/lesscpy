@@ -1,0 +1,210 @@
+"""
+Test for variables.
+
+http://lesscss.org/features/#features-overview-feature
+"""
+from lesscpy.lessc.parser import LessParser
+from test.core import IntegrationTestCase
+
+
+class TestVariables(IntegrationTestCase):
+    """
+    Integration tests for variables.
+    """
+
+    def checkTokens(self, name, value):
+        """
+        Check tokens for variable declaration.
+        """
+        self.assertToken('less_variable', name)
+        self.assertToken('t_colon', ':')
+        self.assertToken('css_ident', value)
+
+    def checkDeclaration(self, content, name, value):
+        """
+        Check tokens and parsing of variable declartation.
+        """
+        self.inputContent(content)
+        self.checkTokens(name, value)
+
+        result = self.parseContent(content)
+        self.assertIsVariable(result[0], name, value)
+
+    def test_declaration(self):
+        self.checkDeclaration('@var:  name  ;', '@var', 'name')
+
+    def test_declaration_single_quotes(self):
+        self.checkDeclaration('@var:  \'name\'  ;', '@var', '\'name\'')
+
+    def test_declaration_double_quotes(self):
+        self.checkDeclaration('@var:  "name"  ;', '@var', '"name"')
+
+    def test_not_included(self):
+        """
+        Variables are not included in the parsed result but values
+        are expanded in specific rules.
+
+        http://lesscss.org/features/#variables-feature-overview
+        """
+        self.assertParsedResult(
+            """
+            @nice-blue: #5B83AD;
+            @light-blue: @nice-blue + #111;
+
+            #header {
+              color: @light-blue;
+            }
+            """,
+            """
+            #header {
+              color: #6c94be;
+            }
+            """
+            )
+
+    def test_interpolation_selector(self):
+        """
+        It can be used in selector names.
+
+        http://lesscss.org/features/#variables-feature-selectors
+        """
+        self.assertParsedResult(
+            """
+            @mySelector: banner;
+
+            .@{mySelector} {
+              font-weight: bold;
+              line-height: 40px;
+              margin: 0 auto;
+            }
+            """,
+            """
+            .banner {
+              font-weight: bold;
+              line-height: 40px;
+              margin: 0 auto;
+            }
+            """
+            )
+
+
+    def test_interpolation_url(self):
+        """
+        It can be used in urls.
+
+        http://lesscss.org/features/#variables-feature-urls
+        """
+        self.assertParsedResult(
+            """
+            @images: "../img";
+
+            body {
+              color: #444444;
+              background: url("@{images}/white-sand.png");
+            }
+            """,
+            """
+            body {
+              color: #444444;
+              background: url("../img/white-sand.png");
+            }
+            """
+            )
+
+    def test_interpolation_variable_names(self):
+        """
+        It is also possible to define variables with a variable name.
+
+        http://lesscss.org/features/#variables-feature-variable-names
+        """
+        self.assertParsedResult(
+            """
+            @fnord:  "I am fnord.";
+            @var:    "fnord";
+            .class {
+              content: @@var;
+            }
+            """,
+            """
+            .class {
+              content: "I am fnord.";
+            }
+            """
+            )
+
+    def test_lazy_loading(self):
+        """
+        Variables are lazy loaded and do not have to be declared before being
+        used.
+        """
+        self.assertParsedResult(
+            """
+            .lazy-eval {
+              width: @var;
+            }
+
+            @var: @a;
+            @a: 9%;
+            """,
+            """
+            .lazy-eval {
+              width: 9%;
+            }
+            """
+            )
+
+    def test_lazy_loading_scope(self):
+        """
+        Variables are lazy loaded and do not have to be declared before being
+        used.
+        """
+        self.assertParsedResult(
+            """
+            @var: 0;
+            .class1 {
+              @var: 1;
+              .class {
+                @var: 2;
+                three: @var;
+                @var: 3;
+              }
+              one: @var;
+            }
+            """,
+            """
+            .class1 {
+              one: 1;
+            }
+            .class1 .class {
+              three: 3;
+            }
+            """
+            )
+
+    def test_lazy_default_variables(self):
+        """
+        Variables can be overrided by putting the definition afterwards.
+
+        http://lesscss.org/features/#variables-feature-default-variables
+        """
+        self.assertParsedResult(
+            """
+            // library
+            @base-color: green;
+            @dark-color: darken(@base-color, 10%);
+
+            // use of library
+            @base-color: red;
+
+            .class {
+                background: @base-color;
+                text-color: @dark-color;
+            }
+            """,
+            """
+            .class {
+              background: red;
+              text-color: #cc0000;
+            }
+            """
+            )
