@@ -713,7 +713,9 @@ class LessParser(object):
                                       | dom
                                       | combinator
                                       | color
+                                      | word
         """
+        # `word` is added to support TAG names containing dash characters.
         p[0] = p[1]
 
     def p_ident_part_aux(self, p):
