@@ -156,7 +156,7 @@ If you want to use the compiler from within Python, you can do it like this:
 
 The output will be:
 
-.. code-block:: css
+.. code-block:: text
 
     a{border-width:6px;}
 
