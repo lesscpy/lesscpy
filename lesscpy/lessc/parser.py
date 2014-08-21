@@ -39,7 +39,8 @@ class LessParser(object):
                  scope=None,
                  outputdir='/tmp',
                  importlvl=0,
-                 verbose=False
+                 verbose=False,
+                 fail_with_exc=False
                  ):
         """ Parser object
 
@@ -52,6 +53,8 @@ class LessParser(object):
                 outputdir (str): Output (debugging)
                 importlvl (int): Import depth
                 verbose (bool): Verbose mode
+                fail_with_exc (bool): Throw exception on syntax error instead
+                                      of printing to stderr
         """
         self.verbose = verbose
         self.importlvl = importlvl
@@ -76,6 +79,7 @@ class LessParser(object):
         self.stash = {}
         self.result = None
         self.target = None
+        self.fail_with_exc = fail_with_exc
 
     def parse(self, filename=None, file=None, debuglevel=0):
         """ Parse file.
@@ -99,7 +103,7 @@ class LessParser(object):
                 filename = '(stream)'
 
         self.target = filename
-        if self.verbose:
+        if self.verbose and not self.fail_with_exc:
             print('Compiling target: %s' % filename, file=sys.stderr)
         self.result = self.parser.parse(
             file, lexer=self.lex, debug=debuglevel)
@@ -972,8 +976,11 @@ class LessParser(object):
             t (Lex token): Error token
         """
         if t:
-            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
-                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
+            error_msg = "E: %s line: %d, Syntax Error, token: `%s`, `%s`" % \
+                      (self.target, t.lineno, t.type, t.value)
+            if self.fail_with_exc:
+                raise SyntaxError(error_msg)
+            print("\x1b[31m%s\x1b[0m" % error_msg, file=sys.stderr)
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -990,7 +997,10 @@ class LessParser(object):
             line (int): line number
             t(str): Error type
         """
-#        print(e.trace())
-        color = '\x1b[31m' if t == 'E' else '\x1b[33m'
-        print("%s%s: line: %d: %s\n" %
-              (color, t, line, e), end='\x1b[0m', file=sys.stderr)
+        if self.fail_with_exc:
+            raise e
+        else:
+            #print(e.trace())
+            color = '\x1b[31m' if t == 'E' else '\x1b[33m'
+            print("%s%s: line: %d: %s\n" %
+                  (color, t, line, e), end='\x1b[0m', file=sys.stderr)
