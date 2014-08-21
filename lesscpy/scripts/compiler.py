@@ -62,7 +62,7 @@ def ldirectory(inpath, outpath, args, scope):
                                   tabfile=yacctab,
                                   verbose=args.verbose)
             p.parse(filename=lf, debuglevel=0)
-            css = f.format(p)
+            css = f.format(p.result)
             if not args.dry_run:
                 with open(outf, 'w') as outfile:
                     outfile.write(css)
@@ -179,7 +179,7 @@ def run():
                 args.no_css = True
                 p.scopemap()
             if not args.no_css and p:
-                out = f.format(p)
+                out = f.format(p.result)
                 print(out)
     except (KeyboardInterrupt, SystemExit, IOError):
         sys.exit('\nAborting...')

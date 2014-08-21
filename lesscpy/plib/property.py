@@ -8,6 +8,7 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 import re
+from lesscpy.lessc import utility
 from .node import Node
 
 
@@ -25,18 +26,22 @@ class Property(Node):
         returns:
             self
         """
-        if not self.parsed:
-            if len(self.tokens) > 2:
-                property, style, _ = self.tokens
-                self.important = True
-            else:
-                property, style = self.tokens
-                self.important = False
-            self.property = ''.join(property)
-            self.parsed = []
-            if style:
-                style = self.preprocess(style)
-                self.parsed = self.process(style, scope)
+        if self.parsed:
+            return self
+
+        if len(self.tokens) > 2:
+            property, style, _ = self.tokens
+            self.important = True
+        else:
+            property, style = self.tokens
+            self.important = False
+
+        self.property = utility.resolve_variables(scope, property)
+        self.parsed = []
+        if style:
+            style = self.preprocess(style)
+            self.parsed = self.process(style, scope)
+
         return self
 
     def preprocess(self, style):
