@@ -142,6 +142,24 @@ Compiler script Usage
       -N, --no-css          No css output
 
 
+Python usage
+------------
+
+If you want to use the compiler from within Python, you can do it like this:
+
+.. code-block:: python
+
+    import lesscpy
+    from six import StringIO
+
+    print(lesscpy.compile(StringIO(u"a { border-width: 2px * 3; }"), minify=True))
+
+The output will be:
+
+.. code-block:: css
+
+    a{border-width:6px;}
+
 License
 -------
 
