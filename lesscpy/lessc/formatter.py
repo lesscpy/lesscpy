@@ -9,15 +9,30 @@
 """
 
 
-class Formatter(object):
+class _DefaultArguments(object):
+    """
+    Default arguments for the formatter.
+    """
+    def __init__(self):
+        self.xminify = False
+        self.minify = False
+        self.tabs = False
+        self.spaces = 2
 
-    def __init__(self, args):
+class Formatter(object):
+    """
+    See _DefaultArguments for available configuration options.
+    """
+
+    def __init__(self, args=None):
+        if args is None:
+            args = _DefaultArguments()
         self.args = args
 
-    def format(self, parse):
+    def format(self, results):
         """
         """
-        if not parse.result:
+        if not results:
             return ''
         eb = '\n'
         if self.args.xminify:
@@ -40,6 +55,6 @@ class Formatter(object):
                 'eb': eb
             })
         self.out = [u.fmt(self.items)
-                    for u in parse.result
+                    for u in results
                     if u]
         return ''.join(self.out).strip()

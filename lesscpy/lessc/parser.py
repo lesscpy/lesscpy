@@ -39,7 +39,8 @@ class LessParser(object):
                  scope=None,
                  outputdir='/tmp',
                  importlvl=0,
-                 verbose=False
+                 verbose=False,
+                 error_reporter=None,
                  ):
         """ Parser object
 
@@ -76,6 +77,10 @@ class LessParser(object):
         self.stash = {}
         self.result = None
         self.target = None
+
+        if error_reporter is None:
+            error_reporter = _DefaultErrorReporter()
+        self.error_reporter = error_reporter
 
     def parse(self, filename=None, file=None, debuglevel=0):
         """ Parse file.
@@ -117,7 +122,12 @@ class LessParser(object):
                 try:
                     out.append(pu.parse(self.scope))
                 except SyntaxError as e:
-                    self.handle_error(e, 0)
+                    value = 'SyntaxError %s' % (e)
+                    self.error_reporter.error(
+                        filename=self.target,
+                        line_no=p.lineno(1),
+                        value=value,
+                        )
             self.result = list(utility.flatten(out))
 
     def scopemap(self):
@@ -204,11 +214,19 @@ class LessParser(object):
                     recurse.parse(filename=filename, debuglevel=0)
                     p[0] = recurse.result
                 else:
-                    err = "Cannot import '%s', file not found" % filename
-                    self.handle_error(err, p.lineno(1), 'W')
+                    error = "Cannot import '%s', file not found" % path
+                    self.error_reporter.warning(
+                        filename=self.target,
+                        line_no=line_no,
+                        value=error,
+                        )
                     p[0] = None
             except ImportError as e:
-                self.handle_error(e, p)
+                self.error_reporter.error(
+                    filename=self.target,
+                    line_no=line_no,
+                    value=e,
+                    )
         else:
             p[0] = Statement(list(p)[1:], p.lineno(1))
             p[0].parse(None)
@@ -822,8 +840,13 @@ class LessParser(object):
             if len(p) > 2:
                 p[0] = [p[0], p[2]]
         except ValueError:
-            self.handle_error(
-                'Illegal color value `%s`' % p[1], p.lineno(1), 'W')
+            value = 'Illegal color value `%s`' % p[1]
+            self.error_reporter.warning(
+                filename=self.target,
+                line_no=p.lineno(1),
+                value=value,
+                )
+
             p[0] = p[1]
 
     def p_number(self, p):
@@ -972,8 +995,13 @@ class LessParser(object):
             t (Lex token): Error token
         """
         if t:
-            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
-                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
+            value = 'Syntax Error, token: `%s`, `%s`' % (t.type, t.value)
+            self.error_reporter.error(
+                filename=self.target,
+                line_no=t.lineno,
+                value=value,
+                )
+
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -983,14 +1011,16 @@ class LessParser(object):
         self.parser.restart()
         return t
 
-    def handle_error(self, e, line, t='E'):
-        """ Custom error handler
-        args:
-            e (Mixed): Exception or str
-            line (int): line number
-            t(str): Error type
-        """
-#        print(e.trace())
-        color = '\x1b[31m' if t == 'E' else '\x1b[33m'
-        print("%s%s: line: %d: %s\n" %
-              (color, t, line, e), end='\x1b[0m', file=sys.stderr)
+
+class _DefaultErrorReporter(object):
+    """
+    A simple reporter which reports to standard error.
+    """
+
+    def error(self, filename, line_no, type, value):
+        print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
+              % (filename, line_no, type, value), file=sys.stderr)
+
+    def warning(self, filename, line_no, value):
+        print("\x1b[33mw: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
+              % (filename, line_no, value), file=sys.stderr)
