@@ -39,7 +39,8 @@ class LessParser(object):
                  scope=None,
                  outputdir='/tmp',
                  importlvl=0,
-                 verbose=False
+                 verbose=False,
+                 error_reporter=None,
                  ):
         """ Parser object
 
@@ -76,6 +77,10 @@ class LessParser(object):
         self.stash = {}
         self.result = None
         self.target = None
+
+        if error_reporter is None:
+            error_reporter = _DefaultErrorReporter()
+        self.error_reporter = error_reporter
 
     def parse(self, filename=None, file=None, debuglevel=0):
         """ Parse file.
@@ -117,7 +122,12 @@ class LessParser(object):
                 try:
                     out.append(pu.parse(self.scope))
                 except SyntaxError as e:
-                    self.handle_error(e, 0)
+                    value = 'SyntaxError %s' % (e)
+                    self.error_reporter.error(
+                        filename=self.target,
+                        line_no=p.lineno(1),
+                        value=value,
+                        )
             self.result = list(utility.flatten(out))
 
     def scopemap(self):
@@ -176,43 +186,90 @@ class LessParser(object):
         p[0].parse(None)
 
     def p_statement_import(self, p):
-        """ import_statement     : css_import t_ws css_string t_semicolon
+        """ import_statement     : css_import t_ws string t_semicolon
                                  | css_import t_ws css_string media_query_list t_semicolon
                                  | css_import t_ws fcall t_semicolon
                                  | css_import t_ws fcall media_query_list t_semicolon
+
+        """
+        """
+        @import statements may be treated differently by Less depending on
+        the file extension:
+
+        - If the file has a .css extension it will be treated as CSS and the
+          @import statement left as-is (see the inline option below).
+        - If it has any other extension it will be treated as Less and
+          imported.
+        - If it does not have an extension, .less will be appended and it
+          will be included as a imported Less file.
+
+        Reference:
+        http://lesscss.org/features/#import-directives-feature-file-extensions
         """
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
+
+        import_path = None
         if isinstance(p[3], str):
-            ipath = utility.destring(p[3])
+            # css_string
+            import_path = utility.destring(p[3])
+        if isinstance(p[3], list):
+            # string
+            import_path = utility.resolve_variables(self.scope, p[3][1])
         elif isinstance(p[3], Call):
+            # fcall
             # NOTE(saschpe): Always in the form of 'url("...");', so parse it
             # and retrieve the inner css_string. This whole func is messy.
             p[3] = p[3].parse(self.scope)  # Store it as string, Statement.fmt expects it.
-            ipath = utility.destring(p[3][4:-1])
-        fn, fe = os.path.splitext(ipath)
-        if not fe or fe.lower() == '.less':
-            try:
-                cpath = os.path.dirname(os.path.abspath(self.target))
-                if not fe:
-                    ipath += '.less'
-                filename = "%s%s%s" % (cpath, os.sep, ipath)
-                if os.path.exists(filename):
-                    recurse = LessParser(importlvl=self.importlvl + 1,
-                                         verbose=self.verbose, scope=self.scope)
-                    recurse.parse(filename=filename, debuglevel=0)
-                    p[0] = recurse.result
-                else:
-                    err = "Cannot import '%s', file not found" % filename
-                    self.handle_error(err, p.lineno(1), 'W')
-                    p[0] = None
-            except ImportError as e:
-                self.handle_error(e, p)
-        else:
-            p[0] = Statement(list(p)[1:], p.lineno(1))
+            import_path = utility.destring(p[3][4:-1])
+
+        name, extension = os.path.splitext(import_path)
+        if extension and extension.lower() == '.css':
+            p[0] =  Statement(list(p)[1:], p.lineno(1))
             p[0].parse(None)
-        sys.stdout.flush()
+        else:
+            p[0] = self._import(import_path, line_no=p.lineno(1))
+
+    def _import(self, import_path, line_no):
+        """
+        Import file at `path`.
+
+        Returned parsed tokens or None if file could not be parsed.
+        """
+        name, extension = os.path.splitext(import_path)
+        try:
+            base_path = os.path.dirname(os.path.abspath(self.target))
+            if not extension:
+                import_path += '.less'
+            full_path = os.path.join(base_path, import_path)
+            return self._parseImport(full_path, line_no=line_no)
+
+        except ImportError as e:
+            self.error_reporter.error(
+                filename=self.target,
+                line_no=line_no,
+                value=e,
+                )
+            return None
+
+    def _parseImport(self, path, line_no):
+        """
+        Parse imported file at `path`.
+        """
+        if not os.path.exists(path):
+            error = "Cannot import '%s', file not found" % path
+            self.error_reporter.warning(
+                filename=self.target,
+                line_no=line_no,
+                value=error,
+                )
+            return None
+
+        recurse = LessParser(importlvl=self.importlvl + 1,
+                             verbose=self.verbose, scope=self.scope)
+        recurse.parse(filename=path, debuglevel=0)
+        return recurse.result
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -766,7 +823,7 @@ class LessParser(object):
 #
 
     def p_string_part(self, p):
-        """ string_part             : variable
+        """ string_part             : variable_interpolated
                                     | css_string
         """
         p[0] = p[1]
@@ -813,6 +870,12 @@ class LessParser(object):
 #        p[0] = p[1]
         p[0] = tuple(list(p)[1:])
 
+    def p_variable_interpolated(self, p):
+        """ variable_interpolated  : less_variable_interpolated
+                                   | less_variable_interpolated t_ws
+        """
+        p[0] = p[1]
+
     def p_color(self, p):
         """ color                   : css_color
                                     | css_color t_ws
@@ -822,8 +885,13 @@ class LessParser(object):
             if len(p) > 2:
                 p[0] = [p[0], p[2]]
         except ValueError:
-            self.handle_error(
-                'Illegal color value `%s`' % p[1], p.lineno(1), 'W')
+            value = 'Illegal color value `%s`' % p[1]
+            self.error_reporter.warning(
+                filename=self.target,
+                line_no=p.lineno(1),
+                value=value,
+                )
+
             p[0] = p[1]
 
     def p_number(self, p):
@@ -972,8 +1040,13 @@ class LessParser(object):
             t (Lex token): Error token
         """
         if t:
-            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
-                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
+            value = 'Syntax Error, token: `%s`, `%s`' % (t.type, t.value)
+            self.error_reporter.error(
+                filename=self.target,
+                line_no=t.lineno,
+                value=value,
+                )
+
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -983,14 +1056,16 @@ class LessParser(object):
         self.parser.restart()
         return t
 
-    def handle_error(self, e, line, t='E'):
-        """ Custom error handler
-        args:
-            e (Mixed): Exception or str
-            line (int): line number
-            t(str): Error type
-        """
-#        print(e.trace())
-        color = '\x1b[31m' if t == 'E' else '\x1b[33m'
-        print("%s%s: line: %d: %s\n" %
-              (color, t, line, e), end='\x1b[0m', file=sys.stderr)
+
+class _DefaultErrorReporter(object):
+    """
+    A simple reporter which reports to standard error.
+    """
+
+    def error(self, filename, line_no, type, value):
+        print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
+              % (filename, line_no, type, value), file=sys.stderr)
+
+    def warning(self, filename, line_no, value):
+        print("\x1b[33mw: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
+              % (filename, line_no, value), file=sys.stderr)

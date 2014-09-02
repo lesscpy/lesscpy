@@ -65,6 +65,15 @@ Differences from less.js
 - Does not preserve CSS comments
 
 
+Not supported yet
+-----------------
+
+- Interpolation in imports.
+- Interpolation in property names when variable is an expression.
+- Interpolation in property names when merged with '+'.
+- Variable name can not be a single '-' (dash) character.
+
+
 Not supported
 -------------
 
@@ -140,6 +149,22 @@ Compiler script Usage
       -S, --scopemap        Scopemap
       -L, --lex-only        Run lexer on target
       -N, --no-css          No css output
+
+
+Development
+-----------
+
+You can create a virtual environment in '.venv' directory.
+
+Tests are copied from original Less project as less and css files and places
+in `test` directory.
+
+You can run the test for a single file using the following command.
+For file `test/less/lazy-eval.less` you will run::
+
+  nosetests test.test_less:LessTestCase.test_less_lazy-eval
+
+There are also normal unit tests in `test` directory.
 
 
 License
