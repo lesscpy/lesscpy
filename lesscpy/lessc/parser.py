@@ -22,7 +22,45 @@ from . import lexer
 from . import utility
 from .scope import Scope
 from .color import Color
+from lesscpy.exceptions import CompilationError
 from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable
+
+class ErrorRegister(object):
+    """
+
+    Raises CompilationError when an error occurs.
+
+    """
+    def __init__(self):
+        self.errors = []
+
+    def register(self, error):
+        self.errors.append(error)  # we could store them or just raise here.
+
+    def __close__(self):
+        if self.errors:
+            raise CompilationError("\n".join(self.errors))
+
+    close = __close__
+
+class PrintErrorRegister(object):
+    """
+
+    Colored error output to stderr.
+
+    """
+    def __init__(self):
+        self.has_errored = False
+
+    def register(self, error):
+        self.has_errored = True
+        color = '\x1b[31m' if error[0] == 'E' else '\x1b[33m'
+        print("%s%s\x1b[0m" % (color, error), end='\x1b[0m', file=sys.stderr)
+
+    def __close__(self):
+        pass
+
+    close = __close__
 
 
 class LessParser(object):
@@ -39,7 +77,8 @@ class LessParser(object):
                  scope=None,
                  outputdir='/tmp',
                  importlvl=0,
-                 verbose=False
+                 verbose=False,
+                 fail_with_exc=False
                  ):
         """ Parser object
 
@@ -52,6 +91,8 @@ class LessParser(object):
                 outputdir (str): Output (debugging)
                 importlvl (int): Import depth
                 verbose (bool): Verbose mode
+                fail_with_exc (bool): Throw exception on syntax error instead
+                                      of printing to stderr
         """
         self.verbose = verbose
         self.importlvl = importlvl
@@ -76,6 +117,12 @@ class LessParser(object):
         self.stash = {}
         self.result = None
         self.target = None
+        self.fail_with_exc = fail_with_exc
+        if fail_with_exc:
+            self.register = ErrorRegister()
+        else:
+            self.register = PrintErrorRegister()
+
 
     def parse(self, filename=None, file=None, debuglevel=0):
         """ Parse file.
@@ -99,12 +146,13 @@ class LessParser(object):
                 filename = '(stream)'
 
         self.target = filename
-        if self.verbose:
+        if self.verbose and not self.fail_with_exc:
             print('Compiling target: %s' % filename, file=sys.stderr)
         self.result = self.parser.parse(
             file, lexer=self.lex, debug=debuglevel)
 
         self.post_parse()
+        self.register.close()
 
     def post_parse(self):
         """ Post parse cycle. nodejs version allows calls to mixins
@@ -972,8 +1020,9 @@ class LessParser(object):
             t (Lex token): Error token
         """
         if t:
-            print("\x1b[31mE: %s line: %d, Syntax Error, token: `%s`, `%s`\x1b[0m"
-                  % (self.target, t.lineno, t.type, t.value), file=sys.stderr)
+            error_msg = "E: %s line: %d, Syntax Error, token: `%s`, `%s`" % \
+                      (self.target, t.lineno, t.type, t.value)
+            self.register.register(error_msg)
         while True:
             t = self.lex.token()
             if not t or t.value == '}':
@@ -990,7 +1039,5 @@ class LessParser(object):
             line (int): line number
             t(str): Error type
         """
-#        print(e.trace())
-        color = '\x1b[31m' if t == 'E' else '\x1b[33m'
-        print("%s%s: line: %d: %s\n" %
-              (color, t, line, e), end='\x1b[0m', file=sys.stderr)
+        self.register.register("%s: line: %d: %s\n" % (t, line, e))
+
