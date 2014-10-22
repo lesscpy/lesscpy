@@ -13,6 +13,7 @@ try:
     from urllib.parse import quote as urlquote
 except ImportError:
     from urllib import quote as urlquote
+import six
 from .node import Node
 import lesscpy.lessc.utility as utility
 import lesscpy.lessc.color as Color
@@ -45,7 +46,7 @@ class Call(Node):
             name = 'escape'
         color = Color.Color()
         args = [t for t in parsed
-                if not isinstance(t, str) or t not in '(),']
+                if not isinstance(t, six.string_types) or t not in '(),']
         if hasattr(self, name):
             try:
                 return getattr(self, name)(*args)

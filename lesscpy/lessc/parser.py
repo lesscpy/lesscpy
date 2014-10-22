@@ -18,6 +18,7 @@ import os
 import tempfile
 import sys
 import ply.yacc
+import six
 
 from . import lexer
 from . import utility
@@ -235,7 +236,7 @@ class LessParser(object):
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
-        if isinstance(p[3], str):
+        if isinstance(p[3], six.string_types):
             ipath = utility.destring(p[3])
         elif isinstance(p[3], list):
             p[3] = Import(p[3], p.lineno(4)).parse(self.scope)

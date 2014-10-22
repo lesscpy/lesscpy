@@ -12,6 +12,7 @@ import operator
 
 import colorsys
 import re
+import six
 from . import utility
 from lesscpy.lib import colors
 
@@ -303,7 +304,7 @@ class Color():
             str
         """
         if color and degree:
-            if isinstance(degree, str):
+            if isinstance(degree, six.string_types):
                 degree = float(degree.strip('%'))
             h, l, s = self._hextohls(color)
             h = ((h * 360.0) + degree) % 360.0
@@ -347,7 +348,7 @@ class Color():
             str
         """
         if color1 and color2:
-            if isinstance(weight, str):
+            if isinstance(weight, six.string_types):
                 weight = float(weight.strip('%'))
             weight = ((weight / 100.0) * 2) - 1
             rgb1 = self._hextorgb(color1)
@@ -418,7 +419,7 @@ class Color():
         return colorsys.rgb_to_hls(*[c / 255.0 for c in rgb])
 
     def _ophsl(self, color, diff, idx, operation):
-        if isinstance(diff, str):
+        if isinstance(diff, six.string_types):
             diff = float(diff.strip('%'))
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(operation(hls[idx], diff / 100.0))
