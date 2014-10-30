@@ -408,7 +408,10 @@ class Color():
             else:
                 hex = [hex[i:i + 2] for i in range(0, len(hex), 2)]
             return tuple(int(c, 16) for c in hex)
-        return [int(hex, 16)] * 3
+        try:
+            return [int(hex, 16)] * 3
+        except:
+            return [float(hex)] * 3
 
     def _hextohls(self, hex):
         rgb = self._hextorgb(hex)
