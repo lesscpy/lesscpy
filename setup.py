@@ -32,7 +32,11 @@ setup(
     url='https://github.com/lesscpy/lesscpy',
     packages=find_packages(exclude=['*test*']),
     package_data={'': ['LICENSE']},
-    scripts=['scripts/lesscpy'],
+    entry_points = {
+        'console_scripts' : [
+            'lesscpy = lesscpy.scripts.compiler:run'
+        ]
+    },
     install_requires=install_requires,
     tests_require=test_requires,
     test_suite='nose.collector',

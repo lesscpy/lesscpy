@@ -15,6 +15,7 @@
 from __future__ import print_function
 
 import os
+import tempfile
 import sys
 import ply.yacc
 
@@ -75,7 +76,7 @@ class LessParser(object):
                  tabfile='yacctab',
                  yacc_debug=False,
                  scope=None,
-                 outputdir='/tmp',
+                 outputdir=tempfile.gettempdir(),
                  importlvl=0,
                  verbose=False,
                  fail_with_exc=False
