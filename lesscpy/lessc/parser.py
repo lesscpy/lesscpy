@@ -23,7 +23,7 @@ from . import utility
 from .scope import Scope
 from .color import Color
 from lesscpy.exceptions import CompilationError
-from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable
+from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable, Import
 
 class ErrorRegister(object):
     """
@@ -224,15 +224,20 @@ class LessParser(object):
         p[0].parse(None)
 
     def p_statement_import(self, p):
-        """ import_statement     : css_import t_ws css_string t_semicolon
+        """ import_statement     : css_import t_ws string t_semicolon
+                                 | css_import t_ws css_string t_semicolon
                                  | css_import t_ws css_string media_query_list t_semicolon
                                  | css_import t_ws fcall t_semicolon
                                  | css_import t_ws fcall media_query_list t_semicolon
         """
+        #import pdb; pdb.set_trace()
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
         if isinstance(p[3], str):
+            ipath = utility.destring(p[3])
+        elif isinstance(p[3], list):
+            p[3] = Import(p[3], p.lineno(4)).parse(self.scope)
             ipath = utility.destring(p[3])
         elif isinstance(p[3], Call):
             # NOTE(saschpe): Always in the form of 'url("...");', so parse it
