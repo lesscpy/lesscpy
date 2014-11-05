@@ -29,6 +29,8 @@
 	.mixin1(11);
 	.mixin1(-11);
 }
+.eq (@a, @b) when (@a < @b) and (@b = @a) {
+}
 .max (@a, @b) when (@a > @b) { 
 	width: @a 
 }

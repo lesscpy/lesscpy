@@ -108,7 +108,7 @@ class LessLexer:
     def t_css_filter(self, t):
         (r'\[[^\]]*\]'
          '|(not|lang|nth-[a-z\-]+)\(.+\)'
-         '|and[ \t]\([^><\{]+\)')
+         '|and[ \t]\([^><=\{]+\)')
         return t
 
     def t_css_ms_filter(self, t):
