@@ -4,6 +4,7 @@
 .div .nest.deep .deeper{color:angry;}
 .div .nest.deep .deeper .deepest{color:purple;}
 h1 a:hover,h2 a:hover,h3 a:hover,h1 p:hover,h2 p:hover,h3 p:hover{color:red;}
+a.btn-small span{font-size:10px;}
 a{color:red;}
 a:hover{color:blue;}
 div a{color:green;}

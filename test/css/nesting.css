@@ -21,6 +21,9 @@ h2 p:hover,
 h3 p:hover {
 	color: red;
 }
+a.btn-small span {
+	font-size: 10px;
+}
 a {
 	color: red;
 }
