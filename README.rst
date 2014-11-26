@@ -166,4 +166,4 @@ License
 See the LICENSE file
 
 
-.. _`Python Package Index`: https://pypi.python.org/pypi/rapport
+.. _`Python Package Index`: https://pypi.python.org/pypi/lesscpy
