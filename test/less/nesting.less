@@ -28,6 +28,15 @@ h1, h2, h3 {
   	}
 }
 a {
+    &.btn {
+        &-small {
+            span {
+                font-size: 10px;
+            }
+        }
+    }
+}
+a {
   	color: red;
   	&:hover { color: blue; }
   	div & { color: green; }

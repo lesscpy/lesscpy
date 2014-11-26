@@ -117,6 +117,7 @@ class LessLexer:
 
     def t_t_bopen(self, t):
         r'\{'
+        t.lexer.in_property_decl = False
         return t
 
     def t_t_bclose(self, t):
