@@ -18,6 +18,7 @@ __all__ = [
     'Property',
     'Statement',
     'Variable'
+    'Import',
 ]
 from .block import Block
 from .call import Call
@@ -29,3 +30,4 @@ from .node import Node
 from .property import Property
 from .statement import Statement
 from .variable import Variable
+from .import_ import Import

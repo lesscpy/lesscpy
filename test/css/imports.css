@@ -2,6 +2,9 @@
 @import 'some/other.css.file.CSS';
 @import 'some.css' all;
 @import "some.print.css" print;
+.foo {
+	color: blue;
+}
 .mixin {
 	color: red;
 }
