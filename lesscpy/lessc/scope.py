@@ -7,6 +7,8 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+import six
+
 from . import utility
 
 
