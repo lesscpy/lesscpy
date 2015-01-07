@@ -121,7 +121,7 @@ def run():
     group.add_argument('-N', '--no-css', action="store_true",
                        default=False, help="No css output")
     aparse.add_argument('target', help="less file or directory")
-    aparse.add_argument('output', help="output file path")
+    aparse.add_argument('output', nargs='?', help="output file path")
     args = aparse.parse_args()
     try:
         #
