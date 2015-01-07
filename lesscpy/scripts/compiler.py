@@ -121,6 +121,7 @@ def run():
     group.add_argument('-N', '--no-css', action="store_true",
                        default=False, help="No css output")
     aparse.add_argument('target', help="less file or directory")
+    aparse.add_argument('output', help="output file path")
     args = aparse.parse_args()
     try:
         #
@@ -180,6 +181,10 @@ def run():
                 p.scopemap()
             if not args.no_css and p:
                 out = f.format(p)
-                print(out)
+                if args.output:
+                    with open(args.output, "w") as f:
+                        f.write(out)
+                else:
+                    print(out)
     except (KeyboardInterrupt, SystemExit, IOError):
         sys.exit('\nAborting...')
