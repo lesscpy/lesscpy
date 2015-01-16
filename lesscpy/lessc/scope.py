@@ -7,6 +7,8 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+import six
+
 from . import utility
 
 
@@ -193,12 +195,8 @@ class Scope(list):
             var = self.variables('@' + name[2:-1])
             if var is False:
                 raise SyntaxError('Unknown escaped variable %s' % name)
-            try:
-                if isinstance(var.value[0], basestring):  # py3
-                    var.value[0] = utility.destring(var.value[0])
-            except NameError:
-                if isinstance(var.value[0], str):  # py2
-                    var.value[0] = utility.destring(var.value[0])
+            if isinstance(var.value[0], six.string_types):
+                var.value[0] = utility.destring(var.value[0])
         else:
             var = self.variables(name)
             if var is False:

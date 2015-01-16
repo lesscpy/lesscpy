@@ -9,6 +9,7 @@
 """
 
 import operator
+import six
 
 from .node import Node
 from lesscpy.lessc import utility
@@ -69,7 +70,7 @@ class Expression(Node):
             val = value[1]
             if len(value) > 1 and hasattr(value[1], 'parse'):
                 val = value[1].parse(scope)
-            if isinstance(val, str):
+            if isinstance(val, six.string_types):
                 return '-' + val
             return -val
         return value
