@@ -30,7 +30,7 @@ evaluation). This program uses PLY (Python Lex-Yacc) to tokenize / parse the
 input and is considerably slower than the NodeJS compiler. The plan is to
 utilize this to build in proper syntax checking and perhaps YUI compressing.
 
-This is an early version, so you are likly to find bugs.
+This is an early version, so you are likely to find bugs.
 
 For more information on LESS:
   http://lesscss.org/ or https://github.com/cloudhead/less.js
