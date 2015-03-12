@@ -55,7 +55,6 @@ Supported features
 - Color functions (lighten, darken, saturate, desaturate, spin, hue, mix,
                    saturation, lightness)
 - Other functions (round, increment, decrement, format '%(', ...)
-- Keyframe blocks
 
 
 Differences from less.js
