@@ -9,7 +9,6 @@
 """
 
 import operator
-import six
 
 from .node import Node
 from lesscpy.lessc import utility
@@ -19,7 +18,8 @@ from lesscpy.lessc import color
 class Expression(Node):
 
     """Expression node. Parses all expression except
-    color expressions, (handled in the color class)
+    color expressions (handled in the color class)
+    and unary negation (handled in the NegatedExpression class).
     """
 
     def parse(self, scope):
@@ -33,7 +33,6 @@ class Expression(Node):
         """
         assert(len(self.tokens) == 3)
         expr = self.process(self.tokens, scope)
-        expr = [self.neg(t, scope) for t in expr]
         A, O, B = [e[0]
                    if isinstance(e, tuple)
                    else e
@@ -55,25 +54,6 @@ class Expression(Node):
         if isinstance(out, bool):
             return out
         return self.with_units(out, ua, ub)
-
-    def neg(self, value, scope):
-        """Apply negativity.
-        args:
-            value (mixed): test value
-            scope (Scope): Current scope
-        raises:
-            SyntaxError
-        returns:
-            str
-        """
-        if value and isinstance(value, list) and value[0] == '-':
-            val = value[1]
-            if len(value) > 1 and hasattr(value[1], 'parse'):
-                val = value[1].parse(scope)
-            if isinstance(val, six.string_types):
-                return '-' + val
-            return -val
-        return value
 
     def with_units(self, val, ua, ub):
         """Return value with unit.
