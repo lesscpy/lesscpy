@@ -13,6 +13,7 @@ __all__ = [
     'Deferred',
     'Expression',
     'Identifier',
+    'KeyframeSelector',
     'Mixin',
     'Node',
     'Property',
@@ -25,6 +26,7 @@ from .call import Call
 from .deferred import Deferred
 from .expression import Expression
 from .identifier import Identifier
+from .keyframe_selector import KeyframeSelector
 from .mixin import Mixin
 from .node import Node
 from .property import Property

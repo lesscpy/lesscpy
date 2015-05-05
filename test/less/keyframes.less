@@ -15,3 +15,20 @@
   from  { background-position: 0 0; }
   to    { background-position: 40px 0; }
 }
+
+// using percentages
+@keyframes using-percentages {
+  0% { top: 0; }
+  50% { top: 1px; }
+  100% { top: 2px; }
+}
+
+// in a mix-in
+.keyframe-mixin() {
+  from { left: 0; }
+  50% { left: 1px; }
+  to { left: 2px; }
+}
+@keyframes mixed-in {
+  .keyframe-mixin();
+}

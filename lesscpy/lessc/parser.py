@@ -25,7 +25,7 @@ from . import utility
 from .scope import Scope
 from .color import Color
 from lesscpy.exceptions import CompilationError
-from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable, Import
+from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable, Import, KeyframeSelector
 
 class ErrorRegister(object):
     """
@@ -310,6 +310,12 @@ class LessParser(object):
         """ block_open                : css_font_face t_ws brace_open
         """
         p[0] = Identifier([p[1], p[2]]).parse(self.scope)
+
+    def p_keyframe_open(self, p):
+        """block_open                 : css_keyframe_selector brace_open
+                                      | number brace_open
+        """
+        p[0] = KeyframeSelector([p[1]]).parse(self.scope)
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
