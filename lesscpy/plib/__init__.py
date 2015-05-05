@@ -14,6 +14,7 @@ __all__ = [
     'Expression',
     'Identifier',
     'Mixin',
+    'NegatedExpression',
     'Node',
     'Property',
     'Statement',
@@ -26,6 +27,7 @@ from .deferred import Deferred
 from .expression import Expression
 from .identifier import Identifier
 from .mixin import Mixin
+from .negated_expression import NegatedExpression
 from .node import Node
 from .property import Property
 from .statement import Statement

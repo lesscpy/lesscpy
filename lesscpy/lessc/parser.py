@@ -25,7 +25,7 @@ from . import utility
 from .scope import Scope
 from .color import Color
 from lesscpy.exceptions import CompilationError
-from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, Property, Statement, Variable, Import
+from lesscpy.plib import Block, Call, Deferred, Expression, NegatedExpression, Identifier, Mixin, Property, Statement, Variable, Import
 
 class ErrorRegister(object):
     """
@@ -785,7 +785,7 @@ class LessParser(object):
     def p_expression_p_neg(self, p):
         """ expression             : '-' t_popen expression t_pclose
         """
-        p[0] = [p[1], p[3]]
+        p[0] = NegatedExpression([p[3]], 0)
 
     def p_expression_p(self, p):
         """ expression             : t_popen expression t_pclose
