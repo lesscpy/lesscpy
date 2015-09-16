@@ -46,6 +46,7 @@ class LessLexer:
         'css_vendor_hack',
         'css_uri',
         'css_ms_filter',
+        'css_keyframe_selector',
 
         'css_media_type',
         'css_media_feature',
@@ -173,6 +174,8 @@ class LessLexer:
             t.type = 'less_and'
         elif v == 'not':
             t.type = 'less_not'
+        elif v in ('from', 'to'):
+            t.type = 'css_keyframe_selector'
         elif v in css.propertys:
             t.type = 'css_property'
             t.lexer.in_property_decl = True

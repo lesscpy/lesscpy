@@ -158,15 +158,6 @@ svg = [
     'tspan',
 ]
 
-# Check http://www.w3.org/TR/css3-animations/#keyframes
-# Treating them as DOM elements isn't entirely accurate
-# but sufficent for our purposes.
-css3_animation_keyframe_selectors = [
-    'from',
-    'to'
-]
-
 elements = html4
 elements.extend(html5)
 elements.extend(svg)
-elements.extend(css3_animation_keyframe_selectors)
