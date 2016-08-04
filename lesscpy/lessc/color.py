@@ -36,7 +36,7 @@ class Color():
                 v = 0xff
             if v < 0:
                 v = 0
-            r.append("%02x" % v)
+            r.append("%02x" % int(v))
         return ''.join(r)
 
     def operate(self, left, right, operation):
@@ -384,14 +384,12 @@ class Color():
         raise ValueError('Cannot format non-color')
 
     def _rgbatohex_raw(self, rgba):
-        values = ["%x" % v for v in [0xff
-                                     if h > 0xff else
-                                     0 if h < 0 else h
-                                     for h in rgba]]
+        values = ["%x" % int(v) for v in
+                  [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]]
         return values
 
     def _rgbatohex(self, rgba):
-        return '#%s' % ''.join(["%02x" % v for v in
+        return '#%s' % ''.join(["%02x" % int(v) for v in
                                 [0xff
                                  if h > 0xff else
                                  0 if h < 0 else h
