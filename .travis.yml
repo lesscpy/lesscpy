@@ -8,7 +8,7 @@ python:
 install:
   # setup.py test (script) fetches all test_require files, thus no pip needed
   #- pip install --use-mirrors -r test-requirements.txt
-  - pip install --use-mirrors coveralls
+  - pip install coveralls
 script:
   #nosetests -v
   coverage run --source=lesscpy setup.py test

@@ -91,6 +91,8 @@ def run():
                         help="Included less-files (comma separated)")
     aparse.add_argument('-V', '--verbose', action="store_true",
                         default=False, help="Verbose mode")
+    aparse.add_argument('-C', '--dont_create_dirs', action="store_true",
+                        default=False, help="Creates directories when outputing files (lessc non-compatible)")
     fgroup = aparse.add_argument_group('Formatting options')
     fgroup.add_argument('-x', '--minify', action="store_true",
                         default=False, help="Minify output")
@@ -182,6 +184,12 @@ def run():
             if not args.no_css and p:
                 out = f.format(p)
                 if args.output:
+                    if not args.dont_create_dirs and not os.path.exists(os.path.dirname(args.output)):
+                        try:
+                            os.makedirs(os.path.dirname(args.output))
+                        except OSError as exc: # Guard against race condition
+                            if exc.errno != errno.EEXIST:
+                                raise
                     with open(args.output, "w") as f:
                         f.write(out)
                 else:
