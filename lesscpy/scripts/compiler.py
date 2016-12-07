@@ -196,3 +196,6 @@ def run():
                     print(out)
     except (KeyboardInterrupt, SystemExit, IOError):
         sys.exit('\nAborting...')
+        
+if __name__ == '__main__':
+    run()
