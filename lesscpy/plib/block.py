@@ -139,13 +139,15 @@ class Block(Node):
         except (AttributeError, TypeError):
             pass
 
-    def fmt(self, fills):
+    def fmt(self, fills=None):
         """Format block (CSS)
         args:
             fills (dict): Fill elements
         returns:
             str (CSS)
         """
+        if fills is None:
+            fills = self.DEFAULT_FILLS
         f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
         name = self.name.fmt(fills)
