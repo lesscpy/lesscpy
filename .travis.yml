@@ -1,10 +1,8 @@
 language: python
 python:
-# - "2.6"
   - 2.7
   - 3.3
-  - 3.4
-  - 3.5
+  - 3.6
 install:
   # setup.py test (script) fetches all test_require files, thus no pip needed
   #- pip install --use-mirrors -r test-requirements.txt
