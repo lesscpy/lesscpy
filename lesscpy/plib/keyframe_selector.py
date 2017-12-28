@@ -11,9 +11,8 @@ from .node import Node
 
 
 class KeyframeSelector(Node):
-
-    """Keyframe selector node. Represents the keyframe selector in an animation 
-    sequence. Keyframes can be identified by the keywords "from" or "to", or by 
+    """Keyframe selector node. Represents the keyframe selector in an animation
+    sequence. Keyframes can be identified by the keywords "from" or "to", or by
     percentage.
 
     http://www.w3.org/TR/css3-animations/#keyframes
@@ -29,7 +28,7 @@ class KeyframeSelector(Node):
             self
         """
         self.keyframe, = [e[0] if isinstance(e, tuple) else e
-                for e in self.tokens if str(e).strip()]
+                          for e in self.tokens if str(e).strip()]
         self.subparse = False
         return self
 

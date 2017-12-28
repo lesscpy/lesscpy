@@ -17,7 +17,6 @@ class TestLessLexer(unittest.TestCase):
     def setUp(self):
         self.lexer = LessLexer()
 
-
     def test_input_stream(self):
         """
         It can load content from a string.

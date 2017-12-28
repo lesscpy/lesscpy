@@ -72,12 +72,8 @@ def ldirectory(inpath, outpath, args, scope):
     if args.recurse:
         [ldirectory(os.path.join(inpath, name), os.path.join(outpath, name), args, scope)
          for name in os.listdir(inpath)
-         if os.path.isdir(os.path.join(inpath, name))
-         and not name.startswith('.')
-         and not name == outpath]
-#
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
+            if os.path.isdir(os.path.join(inpath, name)) and
+            not name.startswith('.') and not name == outpath]
 
 
 def run():
@@ -187,7 +183,7 @@ def run():
                     if not args.dont_create_dirs and not os.path.exists(os.path.dirname(args.output)):
                         try:
                             os.makedirs(os.path.dirname(args.output))
-                        except OSError as exc: # Guard against race condition
+                        except OSError as exc:  # Guard against race condition
                             if exc.errno != errno.EEXIST:
                                 raise
                     with open(args.output, "w") as f:

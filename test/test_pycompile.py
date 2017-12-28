@@ -20,7 +20,7 @@ class TestCompileFunction(unittest.TestCase):
         """
 
         output = compile(StringIO("a { border-width: 2px * 3; }"), minify=True)
-        self.assertEqual(output, "a{border-width:6px;}");
+        self.assertEqual(output, "a{border-width:6px;}")
 
     def test_compile_from_file(self):
         """
@@ -32,7 +32,7 @@ class TestCompileFunction(unittest.TestCase):
         in_file.write("a { border-width: 2px * 3; }")
         in_file.seek(0)
         output = compile(in_file, minify=True)
-        self.assertEqual(output, "a{border-width:6px;}");
+        self.assertEqual(output, "a{border-width:6px;}")
 
     def test_raises_exception(self):
         """
@@ -40,5 +40,6 @@ class TestCompileFunction(unittest.TestCase):
         """
         from lesscpy.exceptions import CompilationError
 
-        fail_func = lambda: compile(StringIO("a }"), minify=True)
+        def fail_func():
+            compile(StringIO("a }"), minify=True)
         self.assertRaises(CompilationError, fail_func)
