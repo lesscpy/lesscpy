@@ -471,7 +471,7 @@ class LessLexer:
         like object.
         """
         if isinstance(file, string_types):
-            with open(file) as f:
+            with open(file, encoding="utf8", errors='ignore') as f:
                 self.lexer.input(f.read())
         else:
             self.lexer.input(file.read())
