@@ -24,7 +24,7 @@ def find_and_load_cases(cls, less_dir, css_dir, less_files=None, css_minimized=T
     else:
         LESS = glob.glob(os.path.join(_less_path, '*.less'))
     for less in LESS:
-        lessf = less.split('.')[0].split('/')[-1]
+        lessf = less.rpartition('.')[0].split('/')[-1]
         css = os.path.join(_css_path, lessf + '.css')
         if css_minimized:
             mincss = os.path.join(_css_path, lessf + '.min.css')
