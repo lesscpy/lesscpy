@@ -133,7 +133,6 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#174533'),
             ('#29332f', '60%', '#0d4f35'),
             ('#29332f', '100%', '#005c37'),
-
         ]:
             self.assertEqual(test(c, p), v, v)
 
@@ -156,7 +155,6 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#2e2e2e'),
             ('#29332f', '60%', '#2e2e2e'),
             ('#29332f', '100%', '#2e2e2e'),
-
         ]:
             self.assertEqual(test(c, p), v, v)
 
@@ -179,6 +177,5 @@ class TestLessColor(unittest.TestCase):
             ('#29332f', '40%', '#293033'),
             ('#29332f', '60%', '#292d33'),
             ('#29332f', '100%', '#2c2933'),
-
         ]:
             self.assertEqual(test(c, p), v, v)

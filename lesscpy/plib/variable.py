@@ -11,7 +11,6 @@ from .node import Node
 
 
 class Variable(Node):
-
     def parse(self, scope):
         """ Parse function
         args:

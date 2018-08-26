@@ -11,7 +11,6 @@ from .node import Node
 
 
 class Deferred(Node):
-
     def __init__(self, mixin, args, lineno=0):
         """This node represents mixin calls. The calls
         to these mixins are deferred until the second
@@ -91,8 +90,8 @@ class Deferred(Node):
                     break
 
         if res:
-            store = [t for t in scope.deferred.parsed[
-                -1]] if scope.deferred else False
+            store = [t for t in scope.deferred.parsed[-1]
+                     ] if scope.deferred else False
             tmp_res = []
             for p in res:
                 if p:
@@ -102,7 +101,7 @@ class Deferred(Node):
                         tmp_res.append(p.parse(scope))
             res = tmp_res
             #res = [p.parse(scope, depth=depth+1) for p in res if p]
-            while(any(t for t in res if isinstance(t, Deferred))):
+            while (any(t for t in res if isinstance(t, Deferred))):
                 res = [p.parse(scope) for p in res if p]
             if store:
                 scope.deferred.parsed[-1] = store

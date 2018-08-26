@@ -374,7 +374,6 @@ css3_media_features = [
     'min-aspect-ratio',
     'max-aspect-ratio',
     'device-aspect-ratio',
-
     'min-device-aspect-ratio',
     'max-device-aspect-ratio',
     'color',

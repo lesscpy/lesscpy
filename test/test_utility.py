@@ -88,7 +88,7 @@ class TestUtility(unittest.TestCase):
         self.assertEqual('0.6px', test(.6, 'px'))
         self.assertEqual('1', test(1))
         self.assertEqual('1', test(1, None))
-        self.assertEqual('1', test(1,))
+        self.assertEqual('1', test(1, ))
 
     def test_convergent_round(self):
         test = utility.convergent_round

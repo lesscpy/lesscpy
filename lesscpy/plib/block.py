@@ -13,7 +13,6 @@ from lesscpy.plib.identifier import Identifier
 
 
 class Block(Node):
-
     """ Block node. Represents one parse-block.
     Can contain property nodes or other block nodes.
     identifier {
@@ -75,7 +74,8 @@ class Block(Node):
                             append_list = []
                             reparse_p = False
                             for child in p.tokens[1]:
-                                if isinstance(child, Block) and child.name.raw().startswith("@media"):
+                                if isinstance(child, Block) and child.name.raw(
+                                ).startswith("@media"):
                                     # Remove child from the nested media query, it will be re-added to
                                     # the parent with 'merged' media query (see above example).
                                     p.tokens[1].remove(child)
@@ -85,9 +85,15 @@ class Block(Node):
                                         reparse_p = True
                                         part_a = p.name.tokens[2:][0][0][0]
                                         part_b = child.name.tokens[2:][0][0]
-                                        new_ident_tokens = ['@media', ' ', [part_a, (' ', 'and', ' '), part_b]]
+                                        new_ident_tokens = [
+                                            '@media', ' ', [
+                                                part_a, (' ', 'and', ' '),
+                                                part_b
+                                            ]
+                                        ]
                                         # Parse child again with new @media $BLA {} part
-                                        child.tokens[0] = Identifier(new_ident_tokens)
+                                        child.tokens[0] = Identifier(
+                                            new_ident_tokens)
                                         child.parsed = None
                                         child = child.parse(scope)
                                     else:
@@ -99,9 +105,12 @@ class Block(Node):
                             if not p_is_mediaquery and not append_list:
                                 self.inner.append(p)
                             else:
-                                append_list.insert(0, p)  # This media query should occur before it's children
+                                append_list.insert(
+                                    0, p
+                                )  # This media query should occur before it's children
                                 for media_query in append_list:
-                                    self.inner_media_queries.append(media_query)
+                                    self.inner_media_queries.append(
+                                        media_query)
                             # NOTE(saschpe): The code is not recursive but we hope that people
                             # wont use triple-nested media queries.
                         else:
@@ -149,17 +158,22 @@ class Block(Node):
         f = "%(identifier)s%(ws)s{%(nl)s%(proplist)s}%(eb)s"
         out = []
         name = self.name.fmt(fills)
-        if self.parsed and any(p for p in self.parsed if str(type(p)) != "<class 'lesscpy.plib.variable.Variable'>"):
+        if self.parsed and any(
+                p for p in self.parsed
+                if str(type(p)) != "<class 'lesscpy.plib.variable.Variable'>"):
             fills.update({
-                'identifier': name,
-                'proplist': ''.join([p.fmt(fills) for p in self.parsed if p]),
+                'identifier':
+                name,
+                'proplist':
+                ''.join([p.fmt(fills) for p in self.parsed if p]),
             })
             out.append(f % fills)
         if hasattr(self, 'inner'):
             if self.name.subparse and len(self.inner) > 0:  # @media
                 inner = ''.join([p.fmt(fills) for p in self.inner])
                 inner = inner.replace(fills['nl'],
-                                      fills['nl'] + fills['tab']).rstrip(fills['tab'])
+                                      fills['nl'] + fills['tab']).rstrip(
+                                          fills['tab'])
                 if not fills['nl']:
                     inner = inner.strip()
                 fills.update({
@@ -177,8 +191,7 @@ class Block(Node):
         """
         name, inner = self.tokens
         if inner:
-            inner = [u.copy() if u else u
-                     for u in inner]
+            inner = [u.copy() if u else u for u in inner]
         if name:
             name = name.copy()
         return Block([name, inner], 0)
@@ -193,8 +206,7 @@ class Block(Node):
             list (block contents)
         """
         if self.tokens[1]:
-            tokens = [u.copy() if u else u
-                      for u in self.tokens[1]]
+            tokens = [u.copy() if u else u for u in self.tokens[1]]
             out = [p for p in tokens if p]
             utility.rename(out, scope, Block)
             return out

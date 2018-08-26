@@ -17,6 +17,7 @@ import re
 import sys
 from six import string_types
 
+
 def flatten(lst):
     """Flatten list.
     Args:
@@ -25,7 +26,8 @@ def flatten(lst):
         generator
     """
     for elm in lst:
-        if isinstance(elm, collections.Iterable) and not isinstance(elm, string_types):
+        if isinstance(elm, collections.Iterable) and not isinstance(
+                elm, string_types):
             for sub in flatten(elm):
                 yield sub
         else:
@@ -74,8 +76,8 @@ def blocksearch(block, name):
     """
     if hasattr(block, 'tokens'):
         for b in block.tokens[1]:
-            b = (b if hasattr(b, 'raw') and b.raw() == name
-                 else blocksearch(b, name))
+            b = (b if hasattr(b, 'raw') and b.raw() == name else blocksearch(
+                b, name))
             if b:
                 return b
     return False
@@ -89,12 +91,7 @@ def reverse_guard(lst):
     returns:
         list
     """
-    rev = {
-        '<': '>=',
-        '>': '=<',
-        '>=': '<',
-        '=<': '>'
-    }
+    rev = {'<': '>=', '>': '=<', '>=': '<', '=<': '>'}
     return [rev[l] if l in rev else l for l in lst]
 
 
@@ -252,7 +249,7 @@ def away_from_zero_round(value, ndigits=0):
     Python2's round() method.
     """
     if sys.version_info[0] >= 3:
-        p = 10 ** ndigits
+        p = 10**ndigits
         return float(math.floor((value * p) + math.copysign(0.5, value))) / p
     else:
         return round(value, ndigits)
@@ -278,6 +275,7 @@ def convergent_round(value, ndigits=0):
                 return math.ceil(nearest_even)
     return round(value, ndigits)
 
+
 def pc_or_float(s):
     """ Utility function to process strings that contain either percentiles or floats
     args:
@@ -288,6 +286,7 @@ def pc_or_float(s):
     if isinstance(s, string_types) and '%' in s:
         return float(s.strip('%')) / 100.0
     return float(s)
+
 
 def permutations_with_replacement(iterable, r=None):
     """Return successive r length permutations of elements in the iterable.

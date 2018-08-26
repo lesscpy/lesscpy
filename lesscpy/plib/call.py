@@ -21,7 +21,6 @@ from lesscpy.lib.colors import lessColors
 
 
 class Call(Node):
-
     """Call node. Node represents a function call.
     All builtin none-color functions are in this node.
     This node attempts calls on built-ins and lets non-builtins
@@ -45,8 +44,10 @@ class Call(Node):
         elif name in ('~', 'e'):
             name = 'escape'
         color = Color.Color()
-        args = [t for t in parsed
-                if not isinstance(t, string_types) or t not in '(),']
+        args = [
+            t for t in parsed
+            if not isinstance(t, string_types) or t not in '(),'
+        ]
         if hasattr(self, name):
             try:
                 return getattr(self, name)(*args)
@@ -128,15 +129,17 @@ class Call(Node):
             bool
         """
         arg = utility.destring(string)
-        regex = re.compile(r'^(?:http|ftp)s?://'                    # http:// or https://
-                           r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
-                           r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
-                           # localhost...
-                           r'localhost|'
-                           r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # ...or ip
-                           # optional port
-                           r'(?::\d+)?'
-                           r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        regex = re.compile(
+            r'^(?:http|ftp)s?://'  # http:// or https://
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
+            r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+            # localhost...
+            r'localhost|'
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+            # optional port
+            r'(?::\d+)?'
+            r'(?:/?|[/?]\S+)$',
+            re.IGNORECASE)
         return regex.match(arg)
 
     def isstring(self, string, *args):
@@ -185,7 +188,7 @@ class Call(Node):
         returns:
             str
         """
-        if(len(args) <= 1):
+        if (len(args) <= 1):
             return 0
         return sum([int(v) for v in args])
 
@@ -197,7 +200,8 @@ class Call(Node):
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(int(utility.away_from_zero_round(float(n))), u)
+        return utility.with_unit(
+            int(utility.away_from_zero_round(float(n))), u)
 
     def ceil(self, value, *args):
         """ Ceil number

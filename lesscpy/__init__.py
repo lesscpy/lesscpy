@@ -18,4 +18,3 @@ def compile(file, minify=False, xminify=False, tabs=False, spaces=True):
     p.parse(file=file)
     f = formatter.Formatter(opt)
     return f.format(p)
-

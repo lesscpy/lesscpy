@@ -10,7 +10,6 @@
 
 
 class Formatter(object):
-
     def __init__(self, args):
         self.args = args
 
@@ -25,21 +24,9 @@ class Formatter(object):
             self.args.minify = True
         self.items = {}
         if self.args.minify:
-            self.items.update({
-                'nl': '',
-                'tab': '',
-                'ws': '',
-                'eb': eb
-            })
+            self.items.update({'nl': '', 'tab': '', 'ws': '', 'eb': eb})
         else:
             tab = '\t' if self.args.tabs else ' ' * int(self.args.spaces)
-            self.items.update({
-                'nl': '\n',
-                'tab': tab,
-                'ws': ' ',
-                'eb': eb
-            })
-        self.out = [u.fmt(self.items)
-                    for u in parse.result
-                    if u]
+            self.items.update({'nl': '\n', 'tab': tab, 'ws': ' ', 'eb': eb})
+        self.out = [u.fmt(self.items) for u in parse.result if u]
         return ''.join(self.out).strip()

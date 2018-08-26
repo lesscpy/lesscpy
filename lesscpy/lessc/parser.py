@@ -27,12 +27,14 @@ from .color import Color
 from lesscpy.exceptions import CompilationError
 from lesscpy.plib import Block, Call, Deferred, Expression, Identifier, Mixin, NegatedExpression, Property, Statement, Variable, Import, KeyframeSelector
 
+
 class ErrorRegister(object):
     """
 
     Raises CompilationError when an error occurs.
 
     """
+
     def __init__(self):
         self.errors = []
 
@@ -45,12 +47,14 @@ class ErrorRegister(object):
 
     close = __close__
 
+
 class PrintErrorRegister(object):
     """
 
     Colored error output to stderr.
 
     """
+
     def __init__(self):
         self.has_errored = False
 
@@ -80,8 +84,7 @@ class LessParser(object):
                  outputdir=tempfile.gettempdir(),
                  importlvl=0,
                  verbose=False,
-                 fail_with_exc=False
-                 ):
+                 fail_with_exc=False):
         """ Parser object
 
             Kwargs:
@@ -102,19 +105,16 @@ class LessParser(object):
         if not tabfile:
             tabfile = 'yacctab'
 
-        self.ignored = ('css_comment', 'less_comment',
-                        'css_vendor_hack')
+        self.ignored = ('css_comment', 'less_comment', 'css_vendor_hack')
 
-        self.tokens = [t for t in self.lex.tokens
-                       if t not in self.ignored]
+        self.tokens = [t for t in self.lex.tokens if t not in self.ignored]
         self.parser = ply.yacc.yacc(
             module=self,
             start='tunit',
             debug=yacc_debug,
             optimize=yacc_optimize,
             tabmodule=tabfile,
-            outputdir=outputdir
-        )
+            outputdir=outputdir)
         self.scope = scope if scope else Scope()
         self.stash = {}
         self.result = None
@@ -124,7 +124,6 @@ class LessParser(object):
             self.register = ErrorRegister()
         else:
             self.register = PrintErrorRegister()
-
 
     def parse(self, filename=None, file=None, debuglevel=0):
         """ Parse file.
@@ -150,8 +149,7 @@ class LessParser(object):
         self.target = filename
         if self.verbose and not self.fail_with_exc:
             print('Compiling target: %s' % filename, file=sys.stderr)
-        self.result = self.parser.parse(
-            file, lexer=self.lex, debug=debuglevel)
+        self.result = self.parser.parse(file, lexer=self.lex, debug=debuglevel)
 
         self.post_parse()
         self.register.close()
@@ -244,7 +242,8 @@ class LessParser(object):
         elif isinstance(p[3], Call):
             # NOTE(saschpe): Always in the form of 'url("...");', so parse it
             # and retrieve the inner css_string. This whole func is messy.
-            p[3] = p[3].parse(self.scope)  # Store it as string, Statement.fmt expects it.
+            p[3] = p[3].parse(
+                self.scope)  # Store it as string, Statement.fmt expects it.
             ipath = utility.destring(p[3][4:-1])
         fn, fe = os.path.splitext(ipath)
         if not fe or fe.lower() == '.less':
@@ -254,8 +253,10 @@ class LessParser(object):
                     ipath += '.less'
                 filename = "%s%s%s" % (cpath, os.sep, ipath)
                 if os.path.exists(filename):
-                    recurse = LessParser(importlvl=self.importlvl + 1,
-                                         verbose=self.verbose, scope=self.scope)
+                    recurse = LessParser(
+                        importlvl=self.importlvl + 1,
+                        verbose=self.verbose,
+                        scope=self.scope)
                     recurse.parse(filename=filename, debuglevel=0)
                     p[0] = recurse.result
                 else:
@@ -871,7 +872,7 @@ class LessParser(object):
         """ variable                : less_variable
                                     | less_variable t_ws
         """
-#        p[0] = p[1]
+        #        p[0] = p[1]
         p[0] = tuple(list(p)[1:])
 
     def p_color(self, p):
@@ -883,8 +884,8 @@ class LessParser(object):
             if len(p) > 2:
                 p[0] = [p[0], p[2]]
         except ValueError:
-            self.handle_error(
-                'Illegal color value `%s`' % p[1], p.lineno(1), 'W')
+            self.handle_error('Illegal color value `%s`' % p[1], p.lineno(1),
+                              'W')
             p[0] = p[1]
 
     def p_number(self, p):
@@ -1022,6 +1023,7 @@ class LessParser(object):
     def p_empty(self, p):
         'empty                        :'
         pass
+
 
 #
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

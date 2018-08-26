@@ -8,12 +8,13 @@ import codecs
 
 import lesscpy
 
-
 with codecs.open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 with open("requirements.txt", "r") as f:
-    install_requires = [str(req) for req in pkg_resources.parse_requirements(f)]
+    install_requires = [
+        str(req) for req in pkg_resources.parse_requirements(f)
+    ]
 with open("test-requirements.txt", "r") as f:
     test_requires = []
     for line in f.readlines():
@@ -32,10 +33,8 @@ setup(
     url='https://github.com/lesscpy/lesscpy',
     packages=find_packages(exclude=['*test*']),
     package_data={'': ['LICENSE']},
-    entry_points = {
-        'console_scripts' : [
-            'lesscpy = lesscpy.scripts.compiler:run'
-        ]
+    entry_points={
+        'console_scripts': ['lesscpy = lesscpy.scripts.compiler:run']
     },
     install_requires=install_requires,
     tests_require=test_requires,

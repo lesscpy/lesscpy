@@ -5,7 +5,6 @@ from lesscpy.plib.identifier import Identifier
 
 
 class TestIdentifier(unittest.TestCase):
-
     def test_basic(self):
         fl = {'ws': ' ', 'nl': '\n'}
         for i in [
@@ -77,21 +76,23 @@ class TestIdentifier(unittest.TestCase):
         sc.push()
         sc.current = Identifier(['.c', ',', '.d'], 0).parse(sc)
         id = Identifier(['.deep'], 0)
-        self.assertEqual(id.parse(sc).fmt(fl), '.a .next .c .deep,\n'
-                         '.b .next .c .deep,\n'
-                         '.a .next .d .deep,\n'
-                         '.b .next .d .deep')
-        self.assertEqual(id.raw(), '.a% %.next% %.c% %.deep%'
-                                   '.b% %.next% %.c% %.deep%'
-                                   '.a% %.next% %.d% %.deep%'
-                                   '.b% %.next% %.d% %.deep')
+        self.assertEqual(
+            id.parse(sc).fmt(fl), '.a .next .c .deep,\n'
+            '.b .next .c .deep,\n'
+            '.a .next .d .deep,\n'
+            '.b .next .d .deep')
+        self.assertEqual(
+            id.raw(), '.a% %.next% %.c% %.deep%'
+            '.b% %.next% %.c% %.deep%'
+            '.a% %.next% %.d% %.deep%'
+            '.b% %.next% %.d% %.deep')
 
     def test_media(self):
         fl = {'ws': ' ', 'nl': '\n'}
         sc = Scope()
         sc.push()
-        sc.current = Identifier(
-            ['@media', ' ', 'screen', ',', 'projection'], 0).parse(sc)
+        sc.current = Identifier(['@media', ' ', 'screen', ',', 'projection'],
+                                0).parse(sc)
         self.assertEqual(sc.current.fmt(fl), '@media screen,projection')
         for i in [
             (['html'], 'html'),

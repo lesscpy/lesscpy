@@ -12,7 +12,6 @@ from lesscpy.lessc import utility
 
 
 class Statement(Node):
-
     """Represents CSS statement (@import, @charset...)
     """
 

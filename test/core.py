@@ -15,7 +15,11 @@ class Opt(object):
         self.tabs = True
 
 
-def find_and_load_cases(cls, less_dir, css_dir, less_files=None, css_minimized=True):
+def find_and_load_cases(cls,
+                        less_dir,
+                        css_dir,
+                        less_files=None,
+                        css_minimized=True):
     _less_path = os.path.join(os.path.dirname(__file__), less_dir)
     _css_path = os.path.join(os.path.dirname(__file__), css_dir)
 
@@ -31,7 +35,8 @@ def find_and_load_cases(cls, less_dir, css_dir, less_files=None, css_minimized=T
             test_method = create_case((less, css, mincss))
         else:
             test_method = create_case((less, css, None))
-        test_method.__name__ = 'test_%s' % "_".join(reversed(os.path.basename(less).split('.')))
+        test_method.__name__ = 'test_%s' % "_".join(
+            reversed(os.path.basename(less).split('.')))
         setattr(cls, test_method.__name__, test_method)
 
 
@@ -48,13 +53,13 @@ def create_case(args):
             with open(cssf) as cssf:
                 for line in cssf.readlines():
                     if i >= pl:
-                        self.fail(
-                            "%s: result has less lines (%d < %d)" % (cssf, i, pl))
+                        self.fail("%s: result has less lines (%d < %d)" %
+                                  (cssf, i, pl))
                     line = line.rstrip()
                     if not line:
                         continue
-                    self.assertEqual(
-                        line, pout[i], '%s: Line %d' % (cssf, i + 1))
+                    self.assertEqual(line, pout[i],
+                                     '%s: Line %d' % (cssf, i + 1))
                     i += 1
             if pl > i and i:
                 self.fail(
@@ -74,14 +79,15 @@ def create_case(args):
                 with open(minf) as cssf:
                     for line in cssf.readlines():
                         if i >= ml:
-                            self.fail(
-                                "%s: result has less lines (%d < %d)" % (minf, i, ml))
-                        self.assertEqual(
-                            line.rstrip(), mout[i], '%s: Line %d' % (minf, i + 1))
+                            self.fail("%s: result has less lines (%d < %d)" %
+                                      (minf, i, ml))
+                        self.assertEqual(line.rstrip(), mout[i],
+                                         '%s: Line %d' % (minf, i + 1))
                         i += 1
                 if ml > i and i:
                     self.fail(
                         "%s: result has more lines (%d > %d)" % (minf, i, ml))
             else:
                 self.fail("%s not found..." % minf)
+
     return do_case_expected

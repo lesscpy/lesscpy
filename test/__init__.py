@@ -6,7 +6,6 @@ import re
 import sys
 import unittest
 
-
 here = os.path.dirname(__file__)
 path = os.path.abspath(here)
 while os.path.dirname(path) != path:

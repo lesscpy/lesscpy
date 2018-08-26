@@ -13,7 +13,6 @@ from . import utility
 
 
 class Scope(list):
-
     """ Scope class. A stack implementation.
     """
 
@@ -53,9 +52,7 @@ class Scope(list):
         Returns:
             list
         """
-        return [r['__current__']
-                for r in self
-                if r['__current__']]
+        return [r['__current__'] for r in self if r['__current__']]
 
     def add_block(self, block):
         """Add block element to scope
@@ -125,9 +122,7 @@ class Scope(list):
     def _smixins(self, name):
         """Inner wrapper to search for mixins by name.
         """
-        return (self._mixins[name]
-                if name in self._mixins
-                else False)
+        return (self._mixins[name] if name in self._mixins else False)
 
     def blocks(self, name):
         """

@@ -15,12 +15,14 @@ class Bootstrap3ThemeTestCase(unittest.TestCase):
     pass
 
 
-find_and_load_cases(Bootstrap3TestCase,
-                    less_dir='bootstrap3/less',
-                    less_files=['bootstrap'],
-                    css_dir='bootstrap3/css')
+find_and_load_cases(
+    Bootstrap3TestCase,
+    less_dir='bootstrap3/less',
+    less_files=['bootstrap'],
+    css_dir='bootstrap3/css')
 
-find_and_load_cases(Bootstrap3ThemeTestCase,
-                    less_dir='bootstrap3/less',
-                    less_files=['theme'],
-                    css_dir='bootstrap3/css')
+find_and_load_cases(
+    Bootstrap3ThemeTestCase,
+    less_dir='bootstrap3/less',
+    less_files=['theme'],
+    css_dir='bootstrap3/css')

@@ -135,7 +135,6 @@ html5 = [
     'track',
     'video',
     'wbr',
-
     'only',  # TODO/FIXME: What is this?!?
 ]
 

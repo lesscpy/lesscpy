@@ -31,53 +31,15 @@ class LessLexer:
     )
     literals = '<>=%!/*-+&'
     tokens = [
-        'css_ident',
-        'css_dom',
-        'css_class',
-        'css_id',
-        'css_property',
-        'css_vendor_property',
-        'css_comment',
-        'css_string',
-        'css_color',
-        'css_filter',
-        'css_number',
-        'css_important',
-        'css_vendor_hack',
-        'css_uri',
-        'css_ms_filter',
-        'css_keyframe_selector',
-
-        'css_media_type',
-        'css_media_feature',
-
-        't_and',
-        't_not',
-        't_only',
-
-        'less_variable',
-        'less_comment',
-        'less_open_format',
-        'less_when',
-        'less_and',
-        'less_not',
-
-        't_ws',
-        't_popen',
-        't_pclose',
-        't_semicolon',
-        't_tilde',
-        't_colon',
-        't_comma',
-
-        't_eopen',
-        't_eclose',
-
-        't_isopen',
-        't_isclose',
-
-        't_bopen',
-        't_bclose'
+        'css_ident', 'css_dom', 'css_class', 'css_id', 'css_property',
+        'css_vendor_property', 'css_comment', 'css_string', 'css_color',
+        'css_filter', 'css_number', 'css_important', 'css_vendor_hack',
+        'css_uri', 'css_ms_filter', 'css_keyframe_selector', 'css_media_type',
+        'css_media_feature', 't_and', 't_not', 't_only', 'less_variable',
+        'less_comment', 'less_open_format', 'less_when', 'less_and',
+        'less_not', 't_ws', 't_popen', 't_pclose', 't_semicolon', 't_tilde',
+        't_colon', 't_comma', 't_eopen', 't_eclose', 't_isopen', 't_isclose',
+        't_bopen', 't_bclose'
     ]
     tokens += list(set(reserved.tokens.values()))
     # Tokens with significant following whitespace
@@ -179,7 +141,8 @@ class LessLexer:
         elif v in css.propertys:
             t.type = 'css_property'
             t.lexer.in_property_decl = True
-        elif (v in dom.elements or v.lower() in dom.elements) and not t.lexer.in_property_decl:
+        elif (v in dom.elements
+              or v.lower() in dom.elements) and not t.lexer.in_property_decl:
             # DOM elements can't be part of property declarations, avoids ambiguity between 'rect' DOM
             # element and rect() CSS function.
             t.type = 'css_dom'
@@ -447,8 +410,8 @@ class LessLexer:
 
     # Error handling rule
     def t_error(self, t):
-        raise SyntaxError("Illegal character '%s' line %d" %
-                          (t.value[0], t.lexer.lineno))
+        raise SyntaxError(
+            "Illegal character '%s' line %d" % (t.value[0], t.lexer.lineno))
         t.lexer.skip(1)
 
     # Build the lexer
@@ -493,8 +456,8 @@ class LessLexer:
             if not t:
                 return t
             if t.type == 't_ws' and (
-                self.pretok or (self.last
-                                and self.last.type not in self.significant_ws)):
+                    self.pretok or
+                (self.last and self.last.type not in self.significant_ws)):
                 continue
             self.pretok = False
             if t.type == 't_bclose' and self.last and self.last.type not in ['t_bopen', 't_bclose'] and self.last.type != 't_semicolon' \

@@ -42,4 +42,5 @@ class TestCompileFunction(unittest.TestCase):
 
         def fail_func():
             compile(StringIO("a }"), minify=True)
+
         self.assertRaises(CompilationError, fail_func)

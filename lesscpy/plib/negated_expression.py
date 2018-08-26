@@ -13,7 +13,6 @@ from .node import Node
 
 
 class NegatedExpression(Node):
-
     """Expressions preceded by unary negation."""
 
     def parse(self, scope):

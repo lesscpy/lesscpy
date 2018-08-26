@@ -11,7 +11,6 @@ from .node import Node
 
 
 class Import(Node):
-
     """Represents CSS property declaration.
     """
 

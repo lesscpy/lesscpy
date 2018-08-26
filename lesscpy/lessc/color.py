@@ -18,7 +18,6 @@ from lesscpy.lib import colors
 
 
 class Color():
-
     def process(self, expression):
         """ Process color expression
         args:
@@ -70,10 +69,9 @@ class Color():
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
-                        if a[-1] == '%'
-                        and 100 >= int(a[:-1]) >= 0)):
-                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0
-                                            for a in args])
+                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
+                    return self._rgbatohex(
+                        [int(a[:-1]) * 255 / 100.0 for a in args])
         raise ValueError('Illegal color values')
 
     def rgba(self, *args):
@@ -94,15 +92,14 @@ class Color():
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all((a for a in args
-                        if a[-1] == '%'
-                        and 100 >= int(a[:-1]) >= 0)):
+                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
                     alpha = list(args)[3]
                     if alpha[-1] == '%' and float(alpha[:-1]) == 0:
-                        values = self._rgbatohex_raw([int(a[:-1]) * 255 / 100.0
-                                                     for a in args])
+                        values = self._rgbatohex_raw(
+                            [int(a[:-1]) * 255 / 100.0 for a in args])
                         return "rgba(%s)" % ','.join([str(a) for a in values])
-                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0
-                                            for a in args])
+                    return self._rgbatohex(
+                        [int(a[:-1]) * 255 / 100.0 for a in args])
         raise ValueError('Illegal color values')
 
     def argb(self, *args):
@@ -135,16 +132,17 @@ class Color():
                 if fval > 1:
                     rgb = [255] + rgb[1:]  # Clip invalid integer/float values
                 elif 1 >= fval >= 0:
-                    rgb = [fval * 256] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
+                    rgb = [
+                        fval * 256
+                    ] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
                 else:
                     rgb = [0] + rgb[1:]  # Clip lower bound
                 return self._rgbatohex(list(map(int, rgb)))
             except ValueError:
                 if all((a for a in rgb
-                        if a[-1] == '%'
-                        and 100 >= int(a[:-1]) >= 0)):
-                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0
-                                            for a in rgb])
+                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
+                    return self._rgbatohex(
+                        [int(a[:-1]) * 255 / 100.0 for a in rgb])
         raise ValueError('Illegal color values')
 
     def hsl(self, *args):
@@ -158,7 +156,8 @@ class Color():
             return self.hsla(*args)
         elif len(args) == 3:
             h, s, l = args
-            rgb = colorsys.hls_to_rgb(int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
+            rgb = colorsys.hls_to_rgb(
+                int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
             color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
         raise ValueError('Illegal color values')
@@ -172,7 +171,8 @@ class Color():
         """
         if len(args) == 4:
             h, s, l, a = args
-            rgb = colorsys.hls_to_rgb(int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
+            rgb = colorsys.hls_to_rgb(
+                int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
             color = [float(utility.convergent_round(c * 255)) for c in rgb]
             color.append(utility.pc_or_float(a))
             return "rgba(%s,%s,%s,%s)" % tuple(color)
@@ -354,8 +354,8 @@ class Color():
             rgb1 = self._hextorgb(color1)
             rgb2 = self._hextorgb(color2)
             alpha = 0
-            w1 = (((weight if weight * alpha == -1
-                    else weight + alpha) / (1 + weight * alpha)) + 1)
+            w1 = (((weight if weight * alpha == -1 else weight + alpha) /
+                   (1 + weight * alpha)) + 1)
             w1 = w1 / 2.0
             w2 = 1 - w1
             rgb = [
@@ -384,17 +384,17 @@ class Color():
         raise ValueError('Cannot format non-color')
 
     def _rgbatohex_raw(self, rgba):
-        values = ["%x" % int(v) for v in
-                  [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]]
+        values = [
+            "%x" % int(v)
+            for v in [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]
+        ]
         return values
 
     def _rgbatohex(self, rgba):
-        return '#%s' % ''.join(["%02x" % int(v) for v in
-                                [0xff
-                                 if h > 0xff else
-                                 0 if h < 0 else h
-                                 for h in rgba]
-                                ])
+        return '#%s' % ''.join([
+            "%02x" % int(v)
+            for v in [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]
+        ])
 
     def _hextorgb(self, hex):
         if hex.lower() in colors.lessColors:

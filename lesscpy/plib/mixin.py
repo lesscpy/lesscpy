@@ -18,7 +18,6 @@ from lesscpy.lessc import utility
 
 
 class Mixin(Node):
-
     """ Mixin Node. Represents callable mixin types.
     """
 
@@ -34,9 +33,10 @@ class Mixin(Node):
         self.name, args, self.guards = self.tokens[0]
         self.args = [a for a in utility.flatten(args) if a]
         self.body = Block([None, self.tokens[1]], 0)
-        self.vars = list(utility.flatten([list(v.values())
-                                          for v in [s['__variables__']
-                                                    for s in scope]]))
+        self.vars = list(
+            utility.flatten([
+                list(v.values()) for v in [s['__variables__'] for s in scope]
+            ]))
         return self
 
     def raw(self):
@@ -56,15 +56,19 @@ class Mixin(Node):
         raises:
             SyntaxError
         """
-        arguments = list(zip(args, [' '] * len(args))) if args and args[0] else None
+        arguments = list(zip(args,
+                             [' '] * len(args))) if args and args[0] else None
         zl = itertools.zip_longest if sys.version_info[
             0] == 3 else itertools.izip_longest
         if self.args:
-            parsed = [v if hasattr(v, 'parse') else v
-                      for v in copy.copy(self.args)]
+            parsed = [
+                v if hasattr(v, 'parse') else v for v in copy.copy(self.args)
+            ]
             args = args if isinstance(args, list) else [args]
-            vars = [self._parse_arg(var, arg, scope)
-                    for arg, var in zl([a for a in args], parsed)]
+            vars = [
+                self._parse_arg(var, arg, scope)
+                for arg, var in zl([a for a in args], parsed)
+            ]
             for var in vars:
                 if var:
                     var.parse(scope)
@@ -125,8 +129,7 @@ class Mixin(Node):
             for g in self.guards:
                 if isinstance(g, list):
                     res = (g[0].parse(scope)
-                           if len(g) == 1
-                           else Expression(g).parse(scope))
+                           if len(g) == 1 else Expression(g).parse(scope))
                     if cor:
                         if res:
                             return True
@@ -147,11 +150,9 @@ class Mixin(Node):
         """
         ret = False
         if args:
-            args = [[a.parse(scope)
-                    if isinstance(a, Expression)
-                    else a for a in arg]
-                    if arg else arg
-                    for arg in args]
+            args = [[
+                a.parse(scope) if isinstance(a, Expression) else a for a in arg
+            ] if arg else arg for arg in args]
         try:
             self.parse_args(args, scope)
         except SyntaxError:
