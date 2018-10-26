@@ -7,17 +7,17 @@ LESSCPY
 .. image:: https://coveralls.io/repos/lesscpy/lesscpy/badge.png
         :target: https://coveralls.io/r/lesscpy/lesscpy
 
-.. image:: https://pypip.in/d/lesscpy/badge.png
+.. image:: https://img.shields.io/pypi/dm/lesscpy.svg
         :target: https://pypi.python.org/pypi/lesscpy
 
-.. image:: https://pypip.in/v/lesscpy/badge.png
+.. image:: https://img.shields.io/pypi/v/lesscpy.svg
         :target: https://pypi.python.org/pypi/lesscpy
 
-.. image:: https://pypip.in/wheel/lesscpy/badge.png
+.. image:: https://img.shields.io/pypi/wheel/lesscpy.svg
         :target: https://pypi.python.org/pypi/lesscpy
         :alt: Wheel Status
 
-.. image:: https://pypip.in/license/lesscpy/badge.png
+.. image:: https://img.shields.io/pypi/l/lesscpy.svg
         :target: https://pypi.python.org/pypi/lesscpy
         :alt: License
 
