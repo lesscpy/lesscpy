@@ -101,14 +101,15 @@ Compiler script Usage
  
 .. code-block:: text
 
-    usage: lesscpy [-h] [-v] [-I INCLUDE] [-V] [-x] [-X] [-t] [-s SPACES] [-o OUT]
-                   [-r] [-f] [-m] [-D] [-g] [-S] [-L] [-N]
-                   target
+    usage: lesscpy [-h] [-v] [-I INCLUDE] [-V] [-C] [-x] [-X] [-t] [-s SPACES]
+                   [-o OUT] [-r] [-f] [-m] [-D] [-g] [-S] [-L] [-N]
+                   target [output]
 
     LessCss Compiler
 
     positional arguments:
       target                less file or directory
+      output                output file path
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -116,6 +117,9 @@ Compiler script Usage
       -I INCLUDE, --include INCLUDE
                             Included less-files (comma separated)
       -V, --verbose         Verbose mode
+      -C, --dont_create_dirs
+                            Creates directories when outputing files (lessc non-
+                            compatible)
 
     Formatting options:
       -x, --minify          Minify output
@@ -125,7 +129,7 @@ Compiler script Usage
                             Number of startline spaces (default 2)
 
     Directory options:
-      Compiles all \*.less files in directory that have a newer timestamp than
+      Compiles all *.less files in directory that have a newer timestamp than
       it's css file.
 
       -o OUT, --out OUT     Output directory
@@ -140,6 +144,7 @@ Compiler script Usage
       -L, --lex-only        Run lexer on target
       -N, --no-css          No css output
 
+    << jtm@robot.is @_o >>
 
 Python usage
 ------------
