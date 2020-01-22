@@ -10,13 +10,16 @@
 
 from __future__ import print_function
 
-import collections
 import itertools
 import math
 import re
 import sys
 from six import string_types
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 def flatten(lst):
     """Flatten list.
@@ -26,7 +29,7 @@ def flatten(lst):
         generator
     """
     for elm in lst:
-        if isinstance(elm, collections.Iterable) and not isinstance(
+        if isinstance(elm, Iterable) and not isinstance(
                 elm, string_types):
             for sub in flatten(elm):
                 yield sub
