@@ -17,7 +17,7 @@ from . import utility
 from lesscpy.lib import colors
 
 
-class Color():
+class Color:
     def process(self, expression):
         """ Process color expression
         args:
@@ -133,8 +133,8 @@ class Color():
                     rgb = [255] + rgb[1:]  # Clip invalid integer/float values
                 elif 1 >= fval >= 0:
                     rgb = [
-                        fval * 256
-                    ] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
+                              fval * 256
+                          ] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
                 else:
                     rgb = [0] + rgb[1:]  # Clip lower bound
                 return self._rgbatohex(list(map(int, rgb)))

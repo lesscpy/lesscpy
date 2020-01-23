@@ -21,6 +21,7 @@ try:
 except ImportError:
     from collections import Iterable
 
+
 def flatten(lst):
     """Flatten list.
     Args:
@@ -138,16 +139,16 @@ def analyze_number(var, err=''):
     """
     n, u = split_unit(var)
     if not isinstance(var, string_types):
-        return (var, u)
+        return var, u
     if is_color(var):
-        return (var, 'color')
+        return var, 'color'
     if is_int(n):
         n = int(n)
     elif is_float(n):
         n = float(n)
     else:
         raise SyntaxError('%s ´%s´' % (err, var))
-    return (n, u)
+    return n, u
 
 
 def with_unit(number, unit=None):
@@ -196,10 +197,10 @@ def is_variable(value):
         bool
     """
     if isinstance(value, string_types):
-        return (value.startswith('@') or value.startswith('-@'))
+        return value.startswith('@') or value.startswith('-@')
     elif isinstance(value, tuple):
         value = ''.join(value)
-        return (value.startswith('@') or value.startswith('-@'))
+        return value.startswith('@') or value.startswith('-@')
     return False
 
 
@@ -252,7 +253,7 @@ def away_from_zero_round(value, ndigits=0):
     Python2's round() method.
     """
     if sys.version_info[0] >= 3:
-        p = 10**ndigits
+        p = 10 ** ndigits
         return float(math.floor((value * p) + math.copysign(0.5, value))) / p
     else:
         return round(value, ndigits)
