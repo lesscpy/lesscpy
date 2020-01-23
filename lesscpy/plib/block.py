@@ -47,7 +47,7 @@ class Block(Node):
             for p in inner:
                 if p is not None:
                     if isinstance(p, Block):
-                        if (len(scope) == 2 and p.tokens[1] is not None):
+                        if len(scope) == 2 and p.tokens[1] is not None:
                             p_is_mediaquery = p.name.tokens[0] == '@media'
                             # Inner block @media ... { ... } is a nested media
                             # query. But double-nested media queries have to be

@@ -119,7 +119,7 @@ class Call(Node):
         returns:
             bool
         """
-        return (string in lessColors)
+        return string in lessColors
 
     def isurl(self, string, *args):
         """Is url
@@ -159,7 +159,7 @@ class Call(Node):
         returns:
             bool
         """
-        return (string in ('when', 'and', 'not'))
+        return string in ('when', 'and', 'not')
 
     def increment(self, value, *args):
         """ Increment function
@@ -188,7 +188,7 @@ class Call(Node):
         returns:
             str
         """
-        if (len(args) <= 1):
+        if len(args) <= 1:
             return 0
         return sum([int(v) for v in args])
 

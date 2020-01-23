@@ -3,7 +3,8 @@
     Lesscpy run script
     <jtm@robot.is>
 """
-import sys, os
+import os
+import sys
 
 path = os.path.abspath(sys.argv[0])
 while os.path.dirname(path) != path:
@@ -13,4 +14,5 @@ while os.path.dirname(path) != path:
     path = os.path.dirname(path)
 
 from lesscpy.scripts import compiler
+
 compiler.run()

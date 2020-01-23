@@ -334,7 +334,7 @@ vendor_ugly = [
     'behavior',
     'zoom',
 ]
-propertys = css2 + css3 + svg + vendor_ugly
+properties = css2 + css3 + svg + vendor_ugly
 
 # CSS-2(.1) media types: http://www.w3.org/TR/CSS2/media.html#media-types
 # Include media types as defined in HTML4: http://www.w3.org/TR/1999/REC-html401-19991224/types.html#h-6.13

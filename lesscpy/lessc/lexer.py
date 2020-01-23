@@ -43,23 +43,9 @@ class LessLexer:
     ]
     tokens += list(set(reserved.tokens.values()))
     # Tokens with significant following whitespace
-    significant_ws = set([
-        'css_class',
-        'css_id',
-        'css_dom',
-        'css_property',
-        'css_vendor_property',
-        'css_ident',
-        'css_number',
-        'css_color',
-        'css_media_type',
-        'css_filter',
-        'less_variable',
-        't_and',
-        't_not',
-        't_only',
-        '&',
-    ])
+    significant_ws = {'css_class', 'css_id', 'css_dom', 'css_property', 'css_vendor_property', 'css_ident',
+                      'css_number', 'css_color', 'css_media_type', 'css_filter', 'less_variable', 't_and', 't_not',
+                      't_only', '&'}
     significant_ws.update(reserved.tokens.values())
 
     def __init__(self):
@@ -138,7 +124,7 @@ class LessLexer:
             t.type = 'less_not'
         elif v in ('from', 'to'):
             t.type = 'css_keyframe_selector'
-        elif v in css.propertys:
+        elif v in css.properties:
             t.type = 'css_property'
             t.lexer.in_property_decl = True
         elif (v in dom.elements
