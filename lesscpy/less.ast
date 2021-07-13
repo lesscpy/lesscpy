@@ -75,6 +75,7 @@
         
  property    			: css_property
                         | css_vendor_property
+                        | css_user_property
                         | css_ident
         
  style_list        		: style_group
@@ -89,6 +90,7 @@
                         | css_string
                         | istring
                         | css_vendor_property
+                        | css_user_property
                         | css_property
                         | css_ident
         				| '~' istring
@@ -136,6 +138,7 @@ factor           		: color
                         | css_ident
                         | css_id
                         | css_uri
+                        | css_user_property
                         | '='
         
  istring         		: less_string

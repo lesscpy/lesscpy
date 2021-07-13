@@ -494,6 +494,7 @@ class LessParser(object):
     def p_prop_open(self, p):
         """ prop_open               : property t_colon
                                     | vendor_property t_colon
+                                    | user_property t_colon
                                     | word t_colon
         """
         p[0] = (p[1][0], '')
@@ -771,6 +772,7 @@ class LessParser(object):
                             | word
                             | id
                             | css_uri
+                            | css_user_property
                             | '='
                             | fcall
         """
@@ -964,6 +966,12 @@ class LessParser(object):
     def p_vendor_property(self, p):
         """ vendor_property           : css_vendor_property
                                       | css_vendor_property t_ws
+        """
+        p[0] = tuple(list(p)[1:])
+
+    def p_user_property(self, p):
+        """ user_property             : css_user_property
+                                      | css_user_property t_ws
         """
         p[0] = tuple(list(p)[1:])
 
