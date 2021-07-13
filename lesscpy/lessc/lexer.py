@@ -32,18 +32,18 @@ class LessLexer:
     literals = '<>=%!/*-+&'
     tokens = [
         'css_ident', 'css_dom', 'css_class', 'css_id', 'css_property',
-        'css_vendor_property', 'css_comment', 'css_string', 'css_color',
-        'css_filter', 'css_number', 'css_important', 'css_vendor_hack',
-        'css_uri', 'css_ms_filter', 'css_keyframe_selector', 'css_media_type',
-        'css_media_feature', 't_and', 't_not', 't_only', 'less_variable',
-        'less_comment', 'less_open_format', 'less_when', 'less_and',
-        'less_not', 't_ws', 't_popen', 't_pclose', 't_semicolon', 't_tilde',
-        't_colon', 't_comma', 't_eopen', 't_eclose', 't_isopen', 't_isclose',
-        't_bopen', 't_bclose'
+        'css_vendor_property', 'css_user_property', 'css_comment',
+        'css_string', 'css_color', 'css_filter', 'css_number', 'css_important',
+        'css_vendor_hack', 'css_uri', 'css_ms_filter', 'css_keyframe_selector',
+        'css_media_type', 'css_media_feature', 't_and', 't_not', 't_only',
+        'less_variable', 'less_comment', 'less_open_format', 'less_when',
+        'less_and', 'less_not', 't_ws', 't_popen', 't_pclose', 't_semicolon',
+        't_tilde', 't_colon', 't_comma', 't_eopen', 't_eclose', 't_isopen',
+        't_isclose', 't_bopen', 't_bclose'
     ]
     tokens += list(set(reserved.tokens.values()))
     # Tokens with significant following whitespace
-    significant_ws = {'css_class', 'css_id', 'css_dom', 'css_property', 'css_vendor_property', 'css_ident',
+    significant_ws = {'css_class', 'css_id', 'css_dom', 'css_property', 'css_vendor_property', 'css_user_property', 'css_ident',
                       'css_number', 'css_color', 'css_media_type', 'css_filter', 'less_variable', 't_and', 't_not',
                       't_only', '&'}
     significant_ws.update(reserved.tokens.values())
@@ -87,7 +87,7 @@ class LessLexer:
         return t
 
     def t_css_ident(self, t):
-        (r'([\-\.\#]?'
+        (r'((\-|\.|\#|\-\-)?'
          '([_a-z]'
          '|[\200-\377]'
          '|\\\[0-9a-f]{1,6}'
@@ -132,6 +132,9 @@ class LessLexer:
             # DOM elements can't be part of property declarations, avoids ambiguity between 'rect' DOM
             # element and rect() CSS function.
             t.type = 'css_dom'
+        elif v.startswith("--"):
+            t.type = 'css_user_property'
+            t.lexer.in_property_decl = True
         elif c == '-':
             t.type = 'css_vendor_property'
             t.lexer.in_property_decl = True

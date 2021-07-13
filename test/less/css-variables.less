@@ -1,0 +1,21 @@
+:root {
+  --bg: #e0e0e0;
+}
+
+p {
+  --bg: white;
+}
+
+* {
+  background: var(--bg);
+  color: var(--fg, var(--text-fg, black));
+}
+
+div {
+  --bg: red;
+
+  span {
+    --bg: purple;
+    background: var(--bg);
+  }
+}
