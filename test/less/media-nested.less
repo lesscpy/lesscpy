@@ -1,0 +1,42 @@
+/*
+    Nested media queries
+*/
+.lead {
+  @media (width: 768px) {
+    font-size: 21px;
+  }
+}
+.one {
+  @media (width: 400px){
+    font-size: 1.2em;
+    @media print and (color) {
+      color: blue;
+    }
+  }
+}
+.two {
+  @media (width: 400px){
+    font-size: 1.2em;
+  }
+  @media print and (color) {
+    color: blue;
+  }
+  width: 100px;
+}
+.visible {
+  @media print {
+    color: green;
+  }
+  &.visible-sm {
+    @media screen {
+      color: green;
+    }
+  }
+}
+.navbar {
+  .form {
+    @media (max-width: 10px) {
+      margin-bottom: 5px;
+    }
+  }
+}

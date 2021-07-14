@@ -1,0 +1,43 @@
+@media (width:768px) {
+	.lead {
+		font-size: 21px;
+	}
+}
+@media (width:400px) {
+	.one {
+		font-size: 1.2em;
+	}
+}
+@media (width:400px) and print and (color) {
+	.one {
+		color: blue;
+	}
+}
+.two {
+	width: 100px;
+}
+@media (width:400px) {
+	.two {
+		font-size: 1.2em;
+	}
+}
+@media print and (color) {
+	.two {
+		color: blue;
+	}
+}
+@media print {
+	.visible {
+		color: green;
+	}
+}
+@media screen {
+	.visible.visible-sm {
+		color: green;
+	}
+}
+@media (max-width:10px) {
+	.navbar .form {
+		margin-bottom: 5px;
+	}
+}

@@ -1,0 +1,5 @@
+@media screen{div span p{color:auto;}}
+@media screen and (max-width:100px) and (min-width:50px) and print{p{color:auto;}}
+@media (width:400px){.one{font-size:1.2em;}
+.one .sub{background:red;}}
+@media (width:400px) and print and (color){.one{color:blue;}}

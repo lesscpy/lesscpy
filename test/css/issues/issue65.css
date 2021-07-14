@@ -1,0 +1,10 @@
+@media (max-width:400px) {
+	body {
+		color: green;
+	}
+}
+@media (max-width:30px) {
+	body h3 .before {
+		color: red;
+	}
+}
