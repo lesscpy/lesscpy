@@ -1,0 +1,35 @@
+/* Media queries nested deep in the tree */
+div {
+  span {
+    p {
+      @media screen {
+        color: auto;
+      }
+    }
+  }
+}
+/* Streak of media queries to be merged */
+@media screen {
+  @media (max-width: 100px) {
+    @media (min-width: 50px) {
+      @media print {
+        p {
+          color: auto;
+        }
+      }
+    }
+  }
+}
+/* Interaction of media queries with properties, smaller blocks, and other
+   media queries at once */
+.one {
+  @media (width: 400px){
+    font-size: 1.2em;
+    .sub {
+      background: red;
+    }
+    @media print and (color) {
+      color: blue;
+    }
+  }
+}

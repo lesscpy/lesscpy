@@ -1,0 +1,10 @@
+@media screen and (max-width:460px) {
+	h1.title {
+		background: url("image_460.jpg");
+	}
+}
+@media screen and (min-width:461px) {
+	h1.title {
+		background: url("image_740.jpg");
+	}
+}

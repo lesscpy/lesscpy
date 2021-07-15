@@ -28,7 +28,7 @@ class Block(Node):
         raises:
             SyntaxError
         returns:
-            self
+            self, or a list of new blocks if media queries need to be rotated
         """
         if not self.parsed:
             scope.push()
@@ -42,99 +42,81 @@ class Block(Node):
             inner = list(utility.flatten([p.parse(scope) for p in inner if p]))
             self.parsed = []
             self.inner = []
-            if not hasattr(self, "inner_media_queries"):
-                self.inner_media_queries = []
+            # Because media queries need to be at the root in CSS, we rotate them
+            # up the parse tree. More specifically, in a situation like this where
+            # the current node is .foo:
+            #
+            #   .foo {
+            #       @media print {
+            #           /* ... */
+            #       }
+            #       .bar {
+            #           /* ... */
+            #       }
+            #   }
+            #
+            # The media query is rotated out after splitting the node, resulting in
+            # this tree:
+            #
+            #   @media print {
+            #       .foo {
+            #           /* ... */
+            #       }
+            #   }
+            #   .foo {
+            #       .bar {
+            #           /* ... */
+            #       }
+            #   }
+            #
+            # New media queries are returned as siblings of self. If .foo is a
+            # media query itself, conditions are merged. This process is recursive
+            # so that media queries bubble up and split nodes along the way.
+            inner_media_queries = []
+            sibling_media_queries = []
             for p in inner:
-                if p is not None:
-                    if isinstance(p, Block):
-                        if len(scope) == 2 and p.tokens[1] is not None:
-                            p_is_mediaquery = p.name.tokens[0] == '@media'
-                            # Inner block @media ... { ... } is a nested media
-                            # query. But double-nested media queries have to be
-                            # removed and marked as well. While parsing ".foo",
-                            # both nested "@media print" and double-nested
-                            # "@media all" will be handled as we have to
-                            # re-arrange the scope and block layout quite a bit:
-                            #
-                            #   .foo {
-                            #       @media print {
-                            #           color: blue;
-                            #           @media screen { font-size: 12em; }
-                            #       }
-                            #   }
-                            #
-                            # Expected result:
-                            #
-                            #   @media print {
-                            #       .foo { color: blue; }
-                            #   }
-                            #   @media print and screen {
-                            #       .foo { font-size: 12 em; }
-                            #   }
-                            append_list = []
-                            reparse_p = False
-                            for child in p.tokens[1]:
-                                if isinstance(child, Block) and child.name.raw(
-                                ).startswith("@media"):
-                                    # Remove child from the nested media query, it will be re-added to
-                                    # the parent with 'merged' media query (see above example).
-                                    p.tokens[1].remove(child)
-                                    if p_is_mediaquery:  # Media query inside a & block
-                                        # Double-nested media query found. We remove it from 'p' and add
-                                        # it to this block with a new 'name'.
-                                        reparse_p = True
-                                        part_a = p.name.tokens[2:][0][0][0]
-                                        part_b = child.name.tokens[2:][0][0]
-                                        new_ident_tokens = [
-                                            '@media', ' ', [
-                                                part_a, (' ', 'and', ' '),
-                                                part_b
-                                            ]
-                                        ]
-                                        # Parse child again with new @media $BLA {} part
-                                        child.tokens[0] = Identifier(
-                                            new_ident_tokens)
-                                        child.parsed = None
-                                        child = child.parse(scope)
-                                    else:
-                                        child.block_name = p.name
-                                    append_list.append(child)
-                                if reparse_p:
-                                    p.parsed = None
-                                    p = p.parse(scope)
-                            if not p_is_mediaquery and not append_list:
-                                self.inner.append(p)
-                            else:
-                                append_list.insert(
-                                    0, p
-                                )  # This media query should occur before it's children
-                                for media_query in append_list:
-                                    self.inner_media_queries.append(
-                                        media_query)
-                            # NOTE(saschpe): The code is not recursive but we hope that people
-                            # wont use triple-nested media queries.
-                        else:
-                            self.inner.append(p)
-                    else:
-                        self.parsed.append(p)
-            if self.inner_media_queries:
-                # Nested media queries, we have to remove self from scope and
-                # push all nested @media ... {} blocks.
-                scope.remove_block(self, index=-2)
-                for mb in self.inner_media_queries:
-                    # New inner block with current name and media block contents
-                    if hasattr(mb, 'block_name'):
-                        cb_name = mb.block_name
-                    else:
-                        cb_name = self.tokens[0]
-                    cb = Block([cb_name, mb.tokens[1]]).parse(scope)
-                    # Replace inner block contents with new block
-                    new_mb = Block([mb.tokens[0], [cb]]).parse(scope)
-                    self.inner.append(new_mb)
-                    scope.add_block(new_mb)
+                if not isinstance(p, Block):
+                    self.parsed.append(p)
+                # TODO: By separating in two lists (inner and inner_media_queries),
+                # we change the final order of declarations.
+                elif p.tokens[1] is not None and p.name.tokens[0] == '@media':
+                    inner_media_queries.append(p)
+                else:
+                    self.inner.append(p)
+            for mb in inner_media_queries:
+                # If the current node is also a media query, create a merged media
+                # query for each inner media query.
+                if self.name.tokens[0] == '@media':
+                    part_a = self.name.tokens[2:][0][0][0]
+                    part_b = mb.name.tokens[2:][0]
+                    cond = [
+                        '@media', ' ', [
+                            part_a, (' ', 'and', ' '),
+                            part_b
+                        ]
+                    ]
+                    # TODO: mb.parsed + mb.inner reorders things again
+                    mb = Block([Identifier(cond), mb.parsed + mb.inner]).parse(scope)
+                    sibling_media_queries += mb
+                    for block in mb:
+                        scope.add_block(block)
+                # Otherwise, rotate inner media queries out of self.
+                else:
+                    cbs = Block([self.tokens[0], mb.parsed + mb.inner]).parse(scope)
+                    for cb in cbs:
+                        # Replace inner block contents with new block
+                        new_mb = Block([mb.tokens[0], [cb]]).parse(scope)
+                        sibling_media_queries += new_mb
+                        for block in new_mb:
+                            scope.add_block(block)
             scope.real.pop()
             scope.pop()
-        return self
+            if self.inner or self.parsed:
+                return [self] + sibling_media_queries
+            else:
+                return sibling_media_queries
+        else:
+            return [self]
 
     def raw(self, clean=False):
         """Raw block name
