@@ -73,7 +73,7 @@ Not supported
 Requirements
 ------------
 
-- Python 3.4 - 3.9,
+- Python 3.7 - 3.11,
 - ply (Python Lex-Yacc) (check requirements.txt)
 - six
 
