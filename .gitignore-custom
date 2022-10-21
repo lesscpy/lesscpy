@@ -1,4 +1,4 @@
 # Custom ignore rules, update with:
-# { cat .gitignore-custom ; gibo dump JetBrains Python Vim } > .gitignore
+# { cat .gitignore-custom ; gibo dump macOS JetBrains Python Vim } > .gitignore
 parser.out
 
