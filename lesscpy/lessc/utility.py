@@ -8,13 +8,10 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 
-from __future__ import print_function
-
 import itertools
 import math
 import re
 import sys
-from six import string_types
 
 try:
     from collections.abc import Iterable
@@ -30,8 +27,7 @@ def flatten(lst):
         generator
     """
     for elm in lst:
-        if isinstance(elm, Iterable) and not isinstance(
-                elm, string_types):
+        if isinstance(elm, Iterable) and not isinstance(elm, str):
             for sub in flatten(elm):
                 yield sub
         else:
@@ -138,7 +134,7 @@ def analyze_number(var, err=''):
         tuple
     """
     n, u = split_unit(var)
-    if not isinstance(var, string_types):
+    if not isinstance(var, str):
         return var, u
     if is_color(var):
         return var, 'color'
@@ -168,7 +164,7 @@ def with_unit(number, unit=None):
         if number.startswith('.'):
             number = '0' + number
         return "%s%s" % (number, unit)
-    return number if isinstance(number, string_types) else str(number)
+    return number if isinstance(number, str) else str(number)
 
 
 def is_color(value):
@@ -178,7 +174,7 @@ def is_color(value):
     returns:
         bool
     """
-    if not value or not isinstance(value, string_types):
+    if not value or not isinstance(value, str):
         return False
     if value[0] == '#' and len(value) in [4, 5, 7, 9]:
         try:
@@ -196,7 +192,7 @@ def is_variable(value):
     returns:
         bool
     """
-    if isinstance(value, string_types):
+    if isinstance(value, str):
         return value.startswith('@') or value.startswith('-@')
     elif isinstance(value, tuple):
         value = ''.join(value)
@@ -287,7 +283,7 @@ def pc_or_float(s):
     returns:
        float
     """
-    if isinstance(s, string_types) and '%' in s:
+    if isinstance(s, str) and '%' in s:
         return float(s.strip('%')) / 100.0
     return float(s)
 
