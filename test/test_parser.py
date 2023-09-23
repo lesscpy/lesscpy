@@ -2,8 +2,7 @@
 Unit test for the parser.
 """
 import unittest
-
-from six import StringIO
+from io import StringIO
 
 from lesscpy.lessc.parser import LessParser
 
