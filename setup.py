@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import find_packages, setup
-import pkg_resources
 
 import codecs
 
@@ -13,14 +12,18 @@ with codecs.open('README.rst', encoding='utf-8') as f:
 
 with open("requirements.txt", "r") as f:
     install_requires = [
-        str(req) for req in pkg_resources.parse_requirements(f)
+        line.strip()
+        for line in f
+        if line.strip() and not line.startswith('#')
     ]
 with open("test-requirements.txt", "r") as f:
-    test_requires = []
-    for line in f.readlines():
-        # Skip '-r ...' includes which pkg_resources doesn't understand:
-        if not line.startswith('-r '):
-            test_requires.append(str(pkg_resources.Requirement.parse(line)))
+    test_requires = [
+        line.strip()
+        for line in f
+        if line.strip()
+           and not line.startswith('#')
+           and not line.strip().startswith('-r ')
+    ]
 
 setup(
     name='lesscpy',
