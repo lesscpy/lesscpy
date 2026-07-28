@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.lessc.color
     :synopsis: Lesscpy Color functions
@@ -8,17 +7,18 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 
+import colorsys
 import operator
 import re
 
-import colorsys
-from . import utility
 from lesscpy.lib import colors
+
+from . import utility
 
 
 class Color:
     def process(self, expression):
-        """ Process color expression
+        """Process color expression
         args:
             expression (tuple): color expression
         returns:
@@ -27,18 +27,16 @@ class Color:
         a, o, b = expression
         c1 = self._hextorgb(a)
         c2 = self._hextorgb(b)
-        r = ['#']
+        r = ["#"]
         for i in range(3):
             v = self.operate(c1[i], c2[i], o)
-            if v > 0xff:
-                v = 0xff
-            if v < 0:
-                v = 0
+            v = min(v, 0xFF)
+            v = max(v, 0)
             r.append("%02x" % int(v))
-        return ''.join(r)
+        return "".join(r)
 
     def operate(self, left, right, operation):
-        """ Do operation on colors
+        """Do operation on colors
         args:
             left (str): left side
             right (str): right side
@@ -47,15 +45,15 @@ class Color:
             str
         """
         operation = {
-            '+': operator.add,
-            '-': operator.sub,
-            '*': operator.mul,
-            '/': operator.truediv
+            "+": operator.add,
+            "-": operator.sub,
+            "*": operator.mul,
+            "/": operator.truediv,
         }.get(operation)
         return operation(left, right)
 
     def rgb(self, *args):
-        """ Translate rgb(...) to color string
+        """Translate rgb(...) to color string
         raises:
             ValueError
         returns:
@@ -67,14 +65,12 @@ class Color:
             try:
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
-                if all((a for a in args
-                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
-                    return self._rgbatohex(
-                        [int(a[:-1]) * 255 / 100.0 for a in args])
-        raise ValueError('Illegal color values')
+                if all(a for a in args if a[-1] == "%" and 100 >= int(a[:-1]) >= 0):
+                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0 for a in args])
+        raise ValueError("Illegal color values")
 
     def rgba(self, *args):
-        """ Translate rgba(...) to color string
+        """Translate rgba(...) to color string
         raises:
             ValueError
         returns:
@@ -87,22 +83,21 @@ class Color:
                     args = args[:3]
                 if falpha == 0:
                     values = self._rgbatohex_raw(list(map(int, args)))
-                    return "rgba(%s)" % ','.join([str(a) for a in values])
+                    return "rgba(%s)" % ",".join([str(a) for a in values])
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
-                if all((a for a in args
-                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
+                if all(a for a in args if a[-1] == "%" and 100 >= int(a[:-1]) >= 0):
                     alpha = list(args)[3]
-                    if alpha[-1] == '%' and float(alpha[:-1]) == 0:
+                    if alpha[-1] == "%" and float(alpha[:-1]) == 0:
                         values = self._rgbatohex_raw(
-                            [int(a[:-1]) * 255 / 100.0 for a in args])
-                        return "rgba(%s)" % ','.join([str(a) for a in values])
-                    return self._rgbatohex(
-                        [int(a[:-1]) * 255 / 100.0 for a in args])
-        raise ValueError('Illegal color values')
+                            [int(a[:-1]) * 255 / 100.0 for a in args]
+                        )
+                        return "rgba(%s)" % ",".join([str(a) for a in values])
+                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0 for a in args])
+        raise ValueError("Illegal color values")
 
     def argb(self, *args):
-        """ Translate argb(...) to color string
+        """Translate argb(...) to color string
 
         Creates a hex representation of a color in #AARRGGBB format (NOT
         #RRGGBBAA!). This format is used in Internet Explorer, and .NET
@@ -114,10 +109,10 @@ class Color:
             str
         """
         if len(args) == 1 and type(args[0]) is str:
-            match = re.match(r'rgba\((.*)\)', args[0])
+            match = re.match(r"rgba\((.*)\)", args[0])
             if match:
                 # NOTE(saschpe): Evil hack to cope with rgba(.., .., .., 0.5) passed through untransformed
-                rgb = re.sub(r'\s+', '', match.group(1)).split(',')
+                rgb = re.sub(r"\s+", "", match.group(1)).split(",")
             else:
                 rgb = list(self._hextorgb(args[0]))
         else:
@@ -131,21 +126,19 @@ class Color:
                 if fval > 1:
                     rgb = [255] + rgb[1:]  # Clip invalid integer/float values
                 elif 1 >= fval >= 0:
-                    rgb = [
-                              fval * 256
-                          ] + rgb[1:]  # Convert 0-1 to 0-255 range for _rgbatohex
+                    rgb = [fval * 256] + rgb[
+                        1:
+                    ]  # Convert 0-1 to 0-255 range for _rgbatohex
                 else:
                     rgb = [0] + rgb[1:]  # Clip lower bound
                 return self._rgbatohex(list(map(int, rgb)))
             except ValueError:
-                if all((a for a in rgb
-                        if a[-1] == '%' and 100 >= int(a[:-1]) >= 0)):
-                    return self._rgbatohex(
-                        [int(a[:-1]) * 255 / 100.0 for a in rgb])
-        raise ValueError('Illegal color values')
+                if all(a for a in rgb if a[-1] == "%" and 100 >= int(a[:-1]) >= 0):
+                    return self._rgbatohex([int(a[:-1]) * 255 / 100.0 for a in rgb])
+        raise ValueError("Illegal color values")
 
     def hsl(self, *args):
-        """ Translate hsl(...) to color string
+        """Translate hsl(...) to color string
         raises:
             ValueError
         returns:
@@ -154,15 +147,16 @@ class Color:
         if len(args) == 4:
             return self.hsla(*args)
         elif len(args) == 3:
-            h, s, l = args
+            hue, saturation, lightness = args
             rgb = colorsys.hls_to_rgb(
-                int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
+                int(hue) / 360.0, utility.pc_or_float(lightness), utility.pc_or_float(saturation)
+            )
             color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def hsla(self, *args):
-        """ Translate hsla(...) to color string
+        """Translate hsla(...) to color string
         raises:
             ValueError
         returns:
@@ -171,14 +165,15 @@ class Color:
         if len(args) == 4:
             h, s, l, a = args
             rgb = colorsys.hls_to_rgb(
-                int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s))
+                int(h) / 360.0, utility.pc_or_float(l), utility.pc_or_float(s)
+            )
             color = [float(utility.convergent_round(c * 255)) for c in rgb]
             color.append(utility.pc_or_float(a))
             return "rgba(%s,%s,%s,%s)" % tuple(color)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def hue(self, color, *args):
-        """ Return the hue value of a color
+        """Return the hue value of a color
         args:
             color (str): color
         raises:
@@ -189,10 +184,10 @@ class Color:
         if color:
             h, l, s = self._hextohls(color)
             return utility.convergent_round(h * 360.0, 3)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def saturation(self, color, *args):
-        """ Return the saturation value of a color
+        """Return the saturation value of a color
         args:
             color (str): color
         raises:
@@ -203,10 +198,10 @@ class Color:
         if color:
             h, l, s = self._hextohls(color)
             return s * 100.0
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def lightness(self, color, *args):
-        """ Return the lightness value of a color
+        """Return the lightness value of a color
         args:
             color (str): color
         raises:
@@ -217,15 +212,13 @@ class Color:
         if color:
             h, l, s = self._hextohls(color)
             return l * 100.0
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def opacity(self, *args):
-        """
-        """
-        pass
+        """ """
 
     def lighten(self, color, diff, *args):
-        """ Lighten a color
+        """Lighten a color
         args:
             color (str): color
             diff (str): percentage
@@ -234,10 +227,10 @@ class Color:
         """
         if color and diff:
             return self._ophsl(color, diff, 1, operator.add)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def darken(self, color, diff, *args):
-        """ Darken a color
+        """Darken a color
         args:
             color (str): color
             diff (str): percentage
@@ -246,10 +239,10 @@ class Color:
         """
         if color and diff:
             return self._ophsl(color, diff, 1, operator.sub)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def saturate(self, color, diff, *args):
-        """ Saturate a color
+        """Saturate a color
         args:
             color (str): color
             diff (str): percentage
@@ -258,10 +251,10 @@ class Color:
         """
         if color and diff:
             return self._ophsl(color, diff, 2, operator.add)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def desaturate(self, color, diff, *args):
-        """ Desaturate a color
+        """Desaturate a color
         args:
             color (str): color
             diff (str): percentage
@@ -270,14 +263,14 @@ class Color:
         """
         if color and diff:
             return self._ophsl(color, diff, 2, operator.sub)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def _clamp(self, value):
         # Clamp value
         return min(1, max(0, value))
 
     def greyscale(self, color, *args):
-        """ Simply 100% desaturate.
+        """Simply 100% desaturate.
         args:
             color (str): color
         returns:
@@ -285,15 +278,14 @@ class Color:
         """
         if color:
             return self.desaturate(color, 100.0)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def grayscale(self, color, *args):
-        """Wrapper for greyscale, other spelling
-        """
+        """Wrapper for greyscale, other spelling"""
         return self.greyscale(color, *args)
 
     def spin(self, color, degree, *args):
-        """ Spin color by degree. (Increase / decrease hue)
+        """Spin color by degree. (Increase / decrease hue)
         args:
             color (str): color
             degree (str): percentage
@@ -304,14 +296,14 @@ class Color:
         """
         if color and degree:
             if isinstance(degree, str):
-                degree = float(degree.strip('%'))
+                degree = float(degree.strip("%"))
             h, l, s = self._hextohls(color)
             h = ((h * 360.0) + degree) % 360.0
             h = 360.0 + h if h < 0 else h
             rgb = colorsys.hls_to_rgb(h / 360.0, l, s)
             color = (utility.convergent_round(c * 255) for c in rgb)
             return self._rgbatohex(color)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def mix(self, color1, color2, weight=50, *args):
         """This algorithm factors in both the user-provided weight
@@ -348,13 +340,12 @@ class Color:
         """
         if color1 and color2:
             if isinstance(weight, str):
-                weight = float(weight.strip('%'))
+                weight = float(weight.strip("%"))
             weight = ((weight / 100.0) * 2) - 1
             rgb1 = self._hextorgb(color1)
             rgb2 = self._hextorgb(color2)
             alpha = 0
-            w1 = (((weight if weight * alpha == -1 else weight + alpha) /
-                   (1 + weight * alpha)) + 1)
+            w1 = ((weight if weight * alpha == -1 else weight + alpha) / (1 + weight * alpha)) + 1
             w1 = w1 / 2.0
             w2 = 1 - w1
             rgb = [
@@ -363,10 +354,10 @@ class Color:
                 rgb1[2] * w1 + rgb2[2] * w2,
             ]
             return self._rgbatohex(rgb)
-        raise ValueError('Illegal color values')
+        raise ValueError("Illegal color values")
 
     def fmt(self, color):
-        """ Format CSS Hex color code.
+        """Format CSS Hex color code.
         uppercase becomes lowercase, 3 digit codes expand to 6 digit.
         args:
             color (str): color
@@ -376,39 +367,41 @@ class Color:
             str
         """
         if utility.is_color(color):
-            color = color.lower().strip('#')
+            color = color.lower().strip("#")
             if len(color) in [3, 4]:
-                color = ''.join([c * 2 for c in color])
-            return '#%s' % color
-        raise ValueError('Cannot format non-color')
+                color = "".join([c * 2 for c in color])
+            return "#%s" % color
+        raise ValueError("Cannot format non-color")
 
     def _rgbatohex_raw(self, rgba):
         values = [
             "%x" % int(v)
-            for v in [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]
+            for v in [0xFF if h > 0xFF else max(h, 0) for h in rgba]
         ]
         return values
 
     def _rgbatohex(self, rgba):
-        return '#%s' % ''.join([
-            "%02x" % int(v)
-            for v in [0xff if h > 0xff else 0 if h < 0 else h for h in rgba]
-        ])
+        return "#%s" % "".join(
+            [
+                "%02x" % int(v)
+                for v in [0xFF if h > 0xFF else max(h, 0) for h in rgba]
+            ]
+        )
 
     def _hextorgb(self, hex):
         if hex.lower() in colors.lessColors:
             hex = colors.lessColors[hex.lower()]
         hex = hex.strip()
-        if hex[0] == '#':
-            hex = hex.strip('#').strip(';')
+        if hex[0] == "#":
+            hex = hex.strip("#").strip(";")
             if len(hex) == 3:
                 hex = [c * 2 for c in hex]
             else:
-                hex = [hex[i:i + 2] for i in range(0, len(hex), 2)]
+                hex = [hex[i: i + 2] for i in range(0, len(hex), 2)]
             return tuple(int(c, 16) for c in hex)
         try:
             return [int(hex, 16)] * 3
-        except:
+        except (ValueError, TypeError):
             return [float(hex)] * 3
 
     def _hextohls(self, hex):
@@ -417,7 +410,7 @@ class Color:
 
     def _ophsl(self, color, diff, idx, operation):
         if isinstance(diff, str):
-            diff = float(diff.strip('%'))
+            diff = float(diff.strip("%"))
         hls = list(self._hextohls(color))
         hls[idx] = self._clamp(operation(hls[idx], diff / 100.0))
         rgb = colorsys.hls_to_rgb(*hls)

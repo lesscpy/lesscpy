@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.identifier
     :synopsis: Identifier node.
@@ -7,15 +6,17 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
 import re
-from .node import Node
+
 from lesscpy.lessc import utility
 from lesscpy.lib import reserved
 
+from .node import Node
+
 
 class Identifier(Node):
-    """Identifier node. Represents block identifier.
-    """
+    """Identifier node. Represents block identifier."""
 
     def parse(self, scope):
         """Parse node. Block identifiers are stored as
@@ -29,19 +30,24 @@ class Identifier(Node):
         """
         names = []
         name = []
-        self._subp = ('@media', '@keyframes', '@-moz-keyframes',
-                      '@-webkit-keyframes', '@-ms-keyframes')
-        if self.tokens and hasattr(self.tokens, 'parse'):
+        self._subp = (
+            "@media",
+            "@keyframes",
+            "@-moz-keyframes",
+            "@-webkit-keyframes",
+            "@-ms-keyframes",
+        )
+        if self.tokens and hasattr(self.tokens, "parse"):
             self.tokens = list(
-                utility.flatten([
-                    id.split() + [',']
-                    for id in self.tokens.parse(scope).split(',')
-                ]))
+                utility.flatten(
+                    [id.split() + [","] for id in self.tokens.parse(scope).split(",")]
+                )
+            )
             self.tokens.pop()
-        if self.tokens and any(hasattr(t, 'parse') for t in self.tokens):
+        if self.tokens and any(hasattr(t, "parse") for t in self.tokens):
             tmp_tokens = []
             for t in self.tokens:
-                if hasattr(t, 'parse'):
+                if hasattr(t, "parse"):
                     tmp_tokens.append(t.parse(scope))
                 else:
                     tmp_tokens.append(t)
@@ -52,13 +58,13 @@ class Identifier(Node):
         else:
             self.subparse = False
             for n in utility.flatten(self.tokens):
-                if n == '*':
-                    name.append('* ')
-                elif n in '>+~':
-                    if name and name[-1] == ' ':
+                if n == "*":
+                    name.append("* ")
+                elif n in ">+~":
+                    if name and name[-1] == " ":
                         name.pop()
-                    name.append('?%s?' % n)
-                elif n == ',':
+                    name.append("?%s?" % n)
+                elif n == ",":
                     names.append(name)
                     name = []
                 else:
@@ -74,19 +80,19 @@ class Identifier(Node):
         def replace_variables(tokens, scope):
             return [
                 scope.swap(t)
-                if (utility.is_variable(t) and not t in reserved.tokens) else t
+                if (utility.is_variable(t) and t not in reserved.tokens)
+                else t
                 for t in tokens
             ]
 
         parsed = [
-            list(utility.flatten(replace_variables(part, scope)))
-            for part in parsed
+            list(utility.flatten(replace_variables(part, scope))) for part in parsed
         ]
 
-        self.parsed = [[
-            i for i, j in utility.pairwise(part)
-            if i != ' ' or (j and '?' not in j)
-        ] for part in parsed]
+        self.parsed = [
+            [i for i, j in utility.pairwise(part) if i != " " or (j and "?" not in j)]
+            for part in parsed
+        ]
         return self
 
     def root(self, scope, names):
@@ -103,7 +109,7 @@ class Identifier(Node):
             if parent.parsed:
                 parsed_names = []
                 for name in names:
-                    ampersand_count = name.count('&')
+                    ampersand_count = name.count("&")
                     if ampersand_count:
                         filtered_parts = []
                         for part in parent.parsed:
@@ -111,15 +117,17 @@ class Identifier(Node):
                                 filtered_parts.append(part)
                         permutations = list(
                             utility.permutations_with_replacement(
-                                filtered_parts, ampersand_count))
+                                filtered_parts, ampersand_count
+                            )
+                        )
                         for permutation in permutations:
                             parsed = []
                             for name_part in name:
                                 if name_part == "&":
                                     parent_part = permutation.pop(0)
-                                    if parsed and parsed[-1].endswith(']'):
-                                        parsed.extend(' ')
-                                    if parent_part[-1] == ' ':
+                                    if parsed and parsed[-1].endswith("]"):
+                                        parsed.extend(" ")
+                                    if parent_part[-1] == " ":
                                         parent_part.pop()
                                     parsed.extend(parent_part)
                                 else:
@@ -134,8 +142,8 @@ class Identifier(Node):
                                     parsed.extend(name)
                                 else:
                                     parsed.extend(part)
-                                    if part[-1] != ' ':
-                                        parsed.append(' ')
+                                    if part[-1] != " ":
+                                        parsed.append(" ")
                                     parsed.extend(name)
                                 parsed_names.append(parsed)
                             else:
@@ -151,16 +159,17 @@ class Identifier(Node):
             str
         """
         if clean:
-            return ''.join(''.join(p) for p in self.parsed).replace('?', ' ')
-        return '%'.join('%'.join(p) for p in self.parsed).strip().strip('%')
+            return "".join("".join(p) for p in self.parsed).replace("?", " ")
+        return "%".join("%".join(p) for p in self.parsed).strip().strip("%")
 
     def copy(self):
-        """ Return copy of self
+        """Return copy of self
         Returns:
             Identifier object
         """
-        tokens = ([t for t in self.tokens]
-                  if isinstance(self.tokens, list) else self.tokens)
+        tokens = (
+            [t for t in self.tokens] if isinstance(self.tokens, list) else self.tokens
+        )
         return Identifier(tokens, 0)
 
     def fmt(self, fills):
@@ -170,6 +179,6 @@ class Identifier(Node):
         returns:
             str (CSS)
         """
-        name = ',$$'.join(''.join(p).strip() for p in self.parsed)
-        name = re.sub('\?(.)\?', '%(ws)s\\1%(ws)s', name) % fills
-        return name.replace('$$', fills['nl']).replace('  ', ' ')
+        name = ",$$".join("".join(p).strip() for p in self.parsed)
+        name = re.sub(r"\?(.)\?", "%(ws)s\\1%(ws)s", name) % fills
+        return name.replace("$$", fills["nl"]).replace("  ", " ")

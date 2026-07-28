@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.expression
     :synopsis: Expression node.
@@ -10,9 +9,9 @@
 
 import operator
 
+from lesscpy.lessc import color, utility
+
 from .node import Node
-from lesscpy.lessc import utility
-from lesscpy.lessc import color
 
 
 class Expression(Node):
@@ -22,7 +21,7 @@ class Expression(Node):
     """
 
     def parse(self, scope):
-        """ Parse Node
+        """Parse Node
         args:
             scope (Scope): Scope object
         raises:
@@ -30,24 +29,21 @@ class Expression(Node):
         returns:
             str
         """
-        assert (len(self.tokens) == 3)
+        assert len(self.tokens) == 3
         expr = self.process(self.tokens, scope)
-        A, O, B = [
-            e[0] if isinstance(e, tuple) else e for e in expr
-            if str(e).strip()
-        ]
+        A, O, B = [e[0] if isinstance(e, tuple) else e for e in expr if str(e).strip()]
         try:
-            a, ua = utility.analyze_number(A, 'Illegal element in expression')
-            b, ub = utility.analyze_number(B, 'Illegal element in expression')
+            a, ua = utility.analyze_number(A, "Illegal element in expression")
+            b, ub = utility.analyze_number(B, "Illegal element in expression")
         except SyntaxError:
-            return ' '.join([str(A), str(O), str(B)])
-        if (a is False or b is False):
-            return ' '.join([str(A), str(O), str(B)])
-        if ua == 'color' or ub == 'color':
+            return " ".join([str(A), str(O), str(B)])
+        if a is False or b is False:
+            return " ".join([str(A), str(O), str(B)])
+        if ua == "color" or ub == "color":
             return color.Color().process((A, O, B))
-        if a == 0 and O == '/':
+        if a == 0 and O == "/":
             # NOTE(saschpe): The ugliest but valid CSS since sliced bread: 'font: 0/1 a;'
-            return ''.join([str(A), str(O), str(B), ' '])
+            return "".join([str(A), str(O), str(B), " "])
         out = self.operate(a, b, O)
         if isinstance(out, bool):
             return out
@@ -92,20 +88,20 @@ class Expression(Node):
             mixed
         """
         operation = {
-            '+': operator.add,
-            '-': operator.sub,
-            '*': operator.mul,
-            '/': operator.truediv,
-            '=': operator.eq,
-            '>': operator.gt,
-            '<': operator.lt,
-            '>=': operator.ge,
-            '=<': operator.le,
+            "+": operator.add,
+            "-": operator.sub,
+            "*": operator.mul,
+            "/": operator.truediv,
+            "=": operator.eq,
+            ">": operator.gt,
+            "<": operator.lt,
+            ">=": operator.ge,
+            "=<": operator.le,
         }.get(oper)
         if operation is None:
             raise SyntaxError("Unknown operation %s" % oper)
         ret = operation(vala, valb)
-        if oper in '+-*/' and int(ret) == ret:
+        if oper in "+-*/" and int(ret) == ret:
             ret = int(ret)
         return ret
 

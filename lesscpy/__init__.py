@@ -1,12 +1,11 @@
-__version_info__ = ('0', '15', '1')
-__version__ = '.'.join(__version_info__)
+__version_info__ = ("0", "15", "1")
+__version__ = ".".join(__version_info__)
 
 
 def compile(file, minify=False, xminify=False, tabs=False, spaces=True):
-    from .lessc import parser
-    from .lessc import formatter
+    from .lessc import formatter, parser
 
-    class Opt(object):
+    class Opt:
         def __init__(self):
             self.minify = minify
             self.xminify = xminify

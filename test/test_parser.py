@@ -1,6 +1,7 @@
 """
 Unit test for the parser.
 """
+
 import unittest
 from io import StringIO
 
@@ -28,7 +29,7 @@ class TestLessParser(unittest.TestCase):
         # A single object is parser which is the expected variable.
         self.assertEqual(1, len(self.parser.result))
         # This is a stream without a name so it sets default name.
-        self.assertEqual('(stream)', self.parser.target)
+        self.assertEqual("(stream)", self.parser.target)
         variable = self.parser.result[0]
-        self.assertEqual('@nice-blue', variable.name)
-        self.assertEqual(['#5b83ad'], variable.value)
+        self.assertEqual("@nice-blue", variable.name)
+        self.assertEqual(["#5b83ad"], variable.value)

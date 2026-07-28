@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.block
     :synopsis: Block parse node.
@@ -7,13 +6,15 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-from .node import Node
+
 from lesscpy.lessc import utility
 from lesscpy.plib.identifier import Identifier
 
+from .node import Node
+
 
 class Block(Node):
-    """ Block node. Represents one parse-block.
+    """Block node. Represents one parse-block.
     Can contain property nodes or other block nodes.
     identifier {
         propertys
@@ -79,22 +80,17 @@ class Block(Node):
                     self.parsed.append(p)
                 # TODO: By separating in two lists (inner and inner_media_queries),
                 # we change the final order of declarations.
-                elif p.tokens[1] is not None and p.name.tokens[0] == '@media':
+                elif p.tokens[1] is not None and p.name.tokens[0] == "@media":
                     inner_media_queries.append(p)
                 else:
                     self.inner.append(p)
             for mb in inner_media_queries:
                 # If the current node is also a media query, create a merged media
                 # query for each inner media query.
-                if self.name.tokens[0] == '@media':
+                if self.name.tokens[0] == "@media":
                     part_a = self.name.tokens[2:][0][0][0]
                     part_b = mb.name.tokens[2:][0]
-                    cond = [
-                        '@media', ' ', [
-                            part_a, (' ', 'and', ' '),
-                            part_b
-                        ]
-                    ]
+                    cond = ["@media", " ", [part_a, (" ", "and", " "), part_b]]
                     # TODO: mb.parsed + mb.inner reorders things again
                     mb = Block([Identifier(cond), mb.parsed + mb.inner]).parse(scope)
                     sibling_media_queries += mb
@@ -141,34 +137,33 @@ class Block(Node):
         out = []
         name = self.name.fmt(fills)
         if self.parsed and any(
-                p for p in self.parsed
-                if str(type(p)) != "<class 'lesscpy.plib.variable.Variable'>"):
-            fills.update({
-                'identifier':
-                name,
-                'proplist':
-                ''.join([p.fmt(fills) for p in self.parsed if p]),
-            })
+            p
+            for p in self.parsed
+            if str(type(p)) != "<class 'lesscpy.plib.variable.Variable'>"
+        ):
+            fills.update(
+                {
+                    "identifier": name,
+                    "proplist": "".join([p.fmt(fills) for p in self.parsed if p]),
+                }
+            )
             out.append(f % fills)
-        if hasattr(self, 'inner'):
+        if hasattr(self, "inner"):
             if self.name.subparse and len(self.inner) > 0:  # @media
-                inner = ''.join([p.fmt(fills) for p in self.inner])
-                inner = inner.replace(fills['nl'],
-                                      fills['nl'] + fills['tab']).rstrip(
-                                          fills['tab'])
-                if not fills['nl']:
+                inner = "".join([p.fmt(fills) for p in self.inner])
+                inner = inner.replace(fills["nl"], fills["nl"] + fills["tab"]).rstrip(
+                    fills["tab"]
+                )
+                if not fills["nl"]:
                     inner = inner.strip()
-                fills.update({
-                    'identifier': name,
-                    'proplist': fills['tab'] + inner
-                })
+                fills.update({"identifier": name, "proplist": fills["tab"] + inner})
                 out.append(f % fills)
             else:
-                out.append(''.join([p.fmt(fills) for p in self.inner]))
-        return ''.join(out)
+                out.append("".join([p.fmt(fills) for p in self.inner]))
+        return "".join(out)
 
     def copy(self):
-        """ Return a full copy of self
+        """Return a full copy of self
         returns: Block object
         """
         name, inner = self.tokens

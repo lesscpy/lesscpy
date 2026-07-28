@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.deferred
     :synopsis: Deferred mixin call.
@@ -7,6 +6,7 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
 from .node import Node
 
 
@@ -24,7 +24,7 @@ class Deferred(Node):
         self.lineno = lineno
 
     def parse(self, scope, error=False, depth=0):
-        """ Parse function. We search for mixins
+        """Parse function. We search for mixins
         first within current scope then fallback
         to global scope. The special scope.deferred
         is used when local scope mixins are called
@@ -50,7 +50,7 @@ class Deferred(Node):
             mixins = scope.mixins(ident.raw())
 
         if depth > 64:
-            raise SyntaxError('NameError `%s`' % ident.raw(True))
+            raise SyntaxError("NameError `%s`" % ident.raw(True))
 
         if not mixins:
             if scope.deferred:
@@ -90,8 +90,7 @@ class Deferred(Node):
                     break
 
         if res:
-            store = [t for t in scope.deferred.parsed[-1]
-                     ] if scope.deferred else False
+            store = [t for t in scope.deferred.parsed[-1]] if scope.deferred else False
             tmp_res = []
             for p in res:
                 if p:
@@ -100,18 +99,18 @@ class Deferred(Node):
                     else:
                         tmp_res.append(p.parse(scope))
             res = tmp_res
-            #res = [p.parse(scope, depth=depth+1) for p in res if p]
-            while (any(t for t in res if isinstance(t, Deferred))):
+            # res = [p.parse(scope, depth=depth+1) for p in res if p]
+            while any(t for t in res if isinstance(t, Deferred)):
                 res = [p.parse(scope) for p in res if p]
             if store:
                 scope.deferred.parsed[-1] = store
 
         if error and not res:
-            raise SyntaxError('NameError `%s`' % ident.raw(True))
+            raise SyntaxError("NameError `%s`" % ident.raw(True))
         return res
 
     def copy(self):
-        """ Returns self (used when Block objects are copy'd)
+        """Returns self (used when Block objects are copy'd)
         returns:
             self
         """

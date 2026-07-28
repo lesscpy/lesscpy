@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.mixin
     :synopsis: Mixin node.
@@ -7,19 +6,21 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-import sys
+
 import copy
 import itertools
-from .node import Node
+import sys
+
+from lesscpy.lessc import utility
+
 from .block import Block
 from .expression import Expression
+from .node import Node
 from .variable import Variable
-from lesscpy.lessc import utility
 
 
 class Mixin(Node):
-    """ Mixin Node. Represents callable mixin types.
-    """
+    """Mixin Node. Represents callable mixin types."""
 
     def parse(self, scope):
         """Parse node
@@ -34,9 +35,10 @@ class Mixin(Node):
         self.args = [a for a in utility.flatten(args) if a]
         self.body = Block([None, self.tokens[1]], 0)
         self.vars = list(
-            utility.flatten([
-                list(v.values()) for v in [s['__variables__'] for s in scope]
-            ]))
+            utility.flatten(
+                [list(v.values()) for v in [s["__variables__"] for s in scope]]
+            )
+        )
         return self
 
     def raw(self):
@@ -56,14 +58,14 @@ class Mixin(Node):
         raises:
             SyntaxError
         """
-        arguments = list(zip(args,
-                             [' '] * len(args))) if args and args[0] else None
-        zl = itertools.zip_longest if sys.version_info[
-            0] == 3 else itertools.izip_longest
+        arguments = list(zip(args, [" "] * len(args))) if args and args[0] else None
+        zl = (
+            itertools.zip_longest
+            if sys.version_info[0] == 3
+            else itertools.izip_longest
+        )
         if self.args:
-            parsed = [
-                v if hasattr(v, 'parse') else v for v in copy.copy(self.args)
-            ]
+            parsed = [v if hasattr(v, "parse") else v for v in copy.copy(self.args)]
             args = args if isinstance(args, list) else [args]
             vars = [
                 self._parse_arg(var, arg, scope)
@@ -75,11 +77,11 @@ class Mixin(Node):
             if not arguments:
                 arguments = [v.value for v in vars if v]
         if not arguments:
-            arguments = ''
-        Variable(['@arguments', None, arguments]).parse(scope)
+            arguments = ""
+        Variable(["@arguments", None, arguments]).parse(scope)
 
     def _parse_arg(self, var, arg, scope):
-        """ Parse a single argument to mixin.
+        """Parse a single argument to mixin.
         args:
             var (Variable object): variable
             arg (mixed): argument
@@ -102,7 +104,7 @@ class Mixin(Node):
             # arg
             if utility.is_variable(var):
                 if arg is None:
-                    raise SyntaxError('Missing argument to mixin')
+                    raise SyntaxError("Missing argument to mixin")
                 elif utility.is_variable(arg[0]):
                     tmp = scope.variables(arg[0])
                     if not tmp:
@@ -125,11 +127,12 @@ class Mixin(Node):
             bool (passes guards)
         """
         if self.guards:
-            cor = True if ',' in self.guards else False
+            cor = True if "," in self.guards else False
             for g in self.guards:
                 if isinstance(g, list):
-                    res = (g[0].parse(scope)
-                           if len(g) == 1 else Expression(g).parse(scope))
+                    res = (
+                        g[0].parse(scope) if len(g) == 1 else Expression(g).parse(scope)
+                    )
                     if cor:
                         if res:
                             return True
@@ -150,9 +153,12 @@ class Mixin(Node):
         """
         ret = False
         if args:
-            args = [[
-                a.parse(scope) if isinstance(a, Expression) else a for a in arg
-            ] if arg else arg for arg in args]
+            args = [
+                [a.parse(scope) if isinstance(a, Expression) else a for a in arg]
+                if arg
+                else arg
+                for arg in args
+            ]
         try:
             self.parse_args(args, scope)
         except SyntaxError:

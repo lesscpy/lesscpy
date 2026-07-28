@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.property
     :synopsis: Import node.
@@ -7,12 +6,12 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
 from .node import Node
 
 
 class Import(Node):
-    """Represents CSS property declaration.
-    """
+    """Represents CSS property declaration."""
 
     def parse(self, scope):
         """Parse node
@@ -24,14 +23,14 @@ class Import(Node):
             parsed
         """
         if not self.parsed:
-            self.parsed = ''.join(self.process(self.tokens, scope))
+            self.parsed = "".join(self.process(self.tokens, scope))
         return self.parsed
 
     def fmt(self, fills):
-        return ''
+        return ""
 
     def copy(self):
-        """ Return a full copy of self
+        """Return a full copy of self
         Returns:
             Import object
         """
