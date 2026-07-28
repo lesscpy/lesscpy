@@ -12,13 +12,10 @@
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
 
-from __future__ import print_function
-
 import os
 import tempfile
 import sys
 import ply.yacc
-from six import string_types
 
 from . import lexer
 from . import utility
@@ -234,7 +231,7 @@ class LessParser(object):
         if self.importlvl > 8:
             raise ImportError(
                 'Recrusive import level too deep > 8 (circular import ?)')
-        if isinstance(p[3], string_types):
+        if isinstance(p[3], str):
             ipath = utility.destring(p[3])
         elif isinstance(p[3], list):
             p[3] = Import(p[3], p.lineno(4)).parse(self.scope)

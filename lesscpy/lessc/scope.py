@@ -7,8 +7,6 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-from six import string_types
-
 from . import utility
 
 
@@ -190,7 +188,7 @@ class Scope(list):
             var = self.variables('@' + name[2:-1])
             if var is False:
                 raise SyntaxError('Unknown escaped variable %s' % name)
-            if isinstance(var.value[0], string_types):
+            if isinstance(var.value[0], str):
                 var.value[0] = utility.destring(var.value[0])
         else:
             var = self.variables(name)

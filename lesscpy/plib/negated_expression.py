@@ -7,8 +7,6 @@
     See LICENSE for details.
 """
 
-from six import string_types
-
 from .node import Node
 
 
@@ -17,6 +15,6 @@ class NegatedExpression(Node):
 
     def parse(self, scope):
         val, = self.process(self.tokens, scope)
-        if isinstance(val, string_types):
+        if isinstance(val, str):
             return '-' + val
         return -val
