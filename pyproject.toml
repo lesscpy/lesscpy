@@ -34,8 +34,9 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = ["coverage", "flake8", "pytest", "tox"]
+test = ["coverage", "flake8", "pytest"]
 release = ["build", "twine"]
+tox = ["tox"]
 
 [project.scripts]
 lesscpy = "lesscpy.scripts.compiler:run"
