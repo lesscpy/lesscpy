@@ -1,0 +1,112 @@
+name: CI and Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.11", "3.12", "3.13", "3.14" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[test]"
+
+      - name: Run pytest
+        run: pytest -v
+
+      #- name: Run flake8
+      #  run: flake8
+
+  publish:
+    name: Publish to PyPI (version changed)
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Detect version change
+        id: version_check
+        env:
+          PACKAGE_NAME: lesscpy
+        run: |
+          CURRENT_VERSION=$(python -c "import lesscpy; print(lesscpy.__version__)")
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+          CURRENT_VERSION="$CURRENT_VERSION" python - << 'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+
+          package = os.environ["PACKAGE_NAME"]
+          current = os.environ["CURRENT_VERSION"]
+          url = f"https://pypi.org/pypi/{package}/json"
+
+          try:
+              with urllib.request.urlopen(url) as response:
+                  data = json.load(response)
+              latest = data["info"]["version"]
+          except urllib.error.HTTPError as exc:
+              if exc.code == 404:
+                  latest = None
+              else:
+                  raise
+
+          changed = latest != current
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write(f"latest_version={latest or ''}\\n")
+              fh.write(f"version_changed={'true' if changed else 'false'}\\n")
+          PY
+        shell: bash
+
+      - name: Skip publish (no version change)
+        if: steps.version_check.outputs.version_changed != 'true'
+        run: |
+          echo "Current version: ${{ steps.version_check.outputs.current_version }}"
+          echo "Latest on PyPI: ${{ steps.version_check.outputs.latest_version }}"
+          echo "Version unchanged, skipping publish."
+
+      - name: Build distributions
+        if: steps.version_check.outputs.version_changed == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+          python -m build
+
+      - name: Publish to PyPI
+        if: steps.version_check.outputs.version_changed == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
