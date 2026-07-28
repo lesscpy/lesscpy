@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.lessc.utility
     :synopsis: various utility functions
@@ -16,7 +15,7 @@ import sys
 try:
     from collections.abc import Iterable
 except ImportError:
-    from collections import Iterable
+    from collections.abc import Iterable
 
 
 def flatten(lst):
@@ -35,7 +34,7 @@ def flatten(lst):
 
 
 def pairwise(lst):
-    """ yield item i and item i+1 in lst. e.g.
+    """yield item i and item i+1 in lst. e.g.
         (lst[0], lst[1]), (lst[1], lst[2]), ..., (lst[-1], None)
     Args:
         lst (list): List to process
@@ -51,7 +50,7 @@ def pairwise(lst):
 
 
 def rename(blocks, scope, stype):
-    """ Rename all sub-blocks moved under another
+    """Rename all sub-blocks moved under another
         block. (mixins)
     Args:
         lst (list): block list
@@ -68,61 +67,60 @@ def rename(blocks, scope, stype):
 
 
 def blocksearch(block, name):
-    """ Recursive search for name in block (inner blocks)
+    """Recursive search for name in block (inner blocks)
     Args:
         name (str): search term
     Returns:
         Block OR False
     """
-    if hasattr(block, 'tokens'):
+    if hasattr(block, "tokens"):
         for b in block.tokens[1]:
-            b = (b if hasattr(b, 'raw') and b.raw() == name else blocksearch(
-                b, name))
+            b = b if hasattr(b, "raw") and b.raw() == name else blocksearch(b, name)
             if b:
                 return b
     return False
 
 
 def reverse_guard(lst):
-    """ Reverse guard expression. not
+    """Reverse guard expression. not
         (@a > 5) ->  (@a =< 5)
     Args:
         lst (list): Expression
     returns:
         list
     """
-    rev = {'<': '>=', '>': '=<', '>=': '<', '=<': '>'}
-    return [rev[l] if l in rev else l for l in lst]
+    rev = {"<": ">=", ">": "=<", ">=": "<", "=<": ">"}
+    return [rev[i] if i in rev else i for i in lst]
 
 
 def debug_print(lst, lvl=0):
-    """ Print scope tree
+    """Print scope tree
     args:
         lst (list): parse result
         lvl (int): current nesting level
     """
-    pad = ''.join(['\t.'] * lvl)
+    pad = "".join(["\t."] * lvl)
     t = type(lst)
     if t is list:
         for p in lst:
             debug_print(p, lvl)
-    elif hasattr(lst, 'tokens'):
+    elif hasattr(lst, "tokens"):
         print(pad, t)
         debug_print(list(flatten(lst.tokens)), lvl + 1)
 
 
 def destring(value):
-    """ Strip quotes from string
+    """Strip quotes from string
     args:
         value (str)
     returns:
         str
     """
-    return value.strip('"\'')
+    return value.strip("\"'")
 
 
-def analyze_number(var, err=''):
-    """ Analyse number for type and split from unit
+def analyze_number(var, err=""):
+    """Analyse number for type and split from unit
         1px -> (q, 'px')
     args:
         var (str): number string
@@ -137,18 +135,18 @@ def analyze_number(var, err=''):
     if not isinstance(var, str):
         return var, u
     if is_color(var):
-        return var, 'color'
+        return var, "color"
     if is_int(n):
         n = int(n)
     elif is_float(n):
         n = float(n)
     else:
-        raise SyntaxError('%s ´%s´' % (err, var))
+        raise SyntaxError("%s ´%s´" % (err, var))
     return n, u
 
 
 def with_unit(number, unit=None):
-    """ Return number with unit
+    """Return number with unit
     args:
         number (mixed): Number
         unit (str): Unit
@@ -158,17 +156,17 @@ def with_unit(number, unit=None):
     if isinstance(number, tuple):
         number, unit = number
     if number == 0:
-        return '0'
+        return "0"
     if unit:
         number = str(number)
-        if number.startswith('.'):
-            number = '0' + number
+        if number.startswith("."):
+            number = "0" + number
         return "%s%s" % (number, unit)
     return number if isinstance(number, str) else str(number)
 
 
 def is_color(value):
-    """ Is string CSS color
+    """Is string CSS color
     args:
         value (str): string
     returns:
@@ -176,7 +174,7 @@ def is_color(value):
     """
     if not value or not isinstance(value, str):
         return False
-    if value[0] == '#' and len(value) in [4, 5, 7, 9]:
+    if value[0] == "#" and len(value) in [4, 5, 7, 9]:
         try:
             int(value[1:], 16)
             return True
@@ -186,22 +184,22 @@ def is_color(value):
 
 
 def is_variable(value):
-    """ Check if string is LESS variable
+    """Check if string is LESS variable
     args:
         value (str): string
     returns:
         bool
     """
     if isinstance(value, str):
-        return value.startswith('@') or value.startswith('-@')
+        return value.startswith("@") or value.startswith("-@")
     elif isinstance(value, tuple):
-        value = ''.join(value)
-        return value.startswith('@') or value.startswith('-@')
+        value = "".join(value)
+        return value.startswith("@") or value.startswith("-@")
     return False
 
 
 def is_int(value):
-    """ Is value integer
+    """Is value integer
     args:
         value (str): string
     returns:
@@ -216,7 +214,7 @@ def is_int(value):
 
 
 def is_float(value):
-    """ Is value float
+    """Is value float
     args:
         value (str): string
     returns:
@@ -232,15 +230,15 @@ def is_float(value):
 
 
 def split_unit(value):
-    """ Split a number from its unit
+    """Split a number from its unit
         1px -> (q, 'px')
     Args:
         value (str): input
     returns:
         tuple
     """
-    r = re.search('^(\-?[\d\.]+)(.*)$', str(value))
-    return r.groups() if r else ('', '')
+    r = re.search(r"^(\-?[\d\.]+)(.*)$", str(value))
+    return r.groups() if r else ("", "")
 
 
 def away_from_zero_round(value, ndigits=0):
@@ -249,7 +247,7 @@ def away_from_zero_round(value, ndigits=0):
     Python2's round() method.
     """
     if sys.version_info[0] >= 3:
-        p = 10 ** ndigits
+        p = 10**ndigits
         return float(math.floor((value * p) + math.copysign(0.5, value))) / p
     else:
         return round(value, ndigits)
@@ -277,14 +275,14 @@ def convergent_round(value, ndigits=0):
 
 
 def pc_or_float(s):
-    """ Utility function to process strings that contain either percentiles or floats
+    """Utility function to process strings that contain either percentiles or floats
     args:
         str: s
     returns:
        float
     """
-    if isinstance(s, str) and '%' in s:
-        return float(s.strip('%')) / 100.0
+    if isinstance(s, str) and "%" in s:
+        return float(s.strip("%")) / 100.0
     return float(s)
 
 

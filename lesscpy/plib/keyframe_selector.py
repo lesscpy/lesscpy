@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.keyframe_selector
     :synopsis: Keyframe selector node.
@@ -27,15 +26,14 @@ class KeyframeSelector(Node):
         returns:
             self
         """
-        self.keyframe, = [
-            e[0] if isinstance(e, tuple) else e for e in self.tokens
-            if str(e).strip()
+        (self.keyframe,) = [
+            e[0] if isinstance(e, tuple) else e for e in self.tokens if str(e).strip()
         ]
         self.subparse = False
         return self
 
     def copy(self):
-        """ Return copy of self
+        """Return copy of self
         Returns:
             KeyframeSelector object
         """

@@ -1,9 +1,10 @@
 """
 Unit tests for the lexer.
 """
+
+import unittest
 from io import StringIO
 from tempfile import NamedTemporaryFile
-import unittest
 
 from lesscpy.lessc.lexer import LessLexer
 
@@ -27,7 +28,7 @@ class TestLessLexer(unittest.TestCase):
         self.lexer.input(file)
 
         token = self.lexer.token()
-        self.assertEqual('@simple-var', token.value)
+        self.assertEqual("@simple-var", token.value)
 
     def test_input_path(self):
         """
@@ -42,4 +43,4 @@ class TestLessLexer(unittest.TestCase):
         self.lexer.input(file.name)
 
         token = self.lexer.token()
-        self.assertEqual('@simple-var', token.value)
+        self.assertEqual("@simple-var", token.value)

@@ -2,6 +2,7 @@
 Test the high-level compile function
 
 """
+
 import unittest
 from io import StringIO
 
@@ -27,7 +28,8 @@ class TestCompileFunction(unittest.TestCase):
         """
 
         import tempfile
-        in_file = tempfile.NamedTemporaryFile(mode='w+')
+
+        in_file = tempfile.NamedTemporaryFile(mode="w+")
         in_file.write("a { border-width: 2px * 3; }")
         in_file.seek(0)
         output = compile(in_file, minify=True)

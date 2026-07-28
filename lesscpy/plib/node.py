@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.node
     :synopsis: Base Node
@@ -7,12 +6,13 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
 from lesscpy.lessc import utility
 
 
-class Node(object):
+class Node:
     def __init__(self, tokens, lineno=0):
-        """ Base Node
+        """Base Node
         args:
             tokens (list): tokenlist
             lineno (int): Line number of node
@@ -22,7 +22,7 @@ class Node(object):
         self.parsed = False
 
     def parse(self, scope):
-        """ Base parse function
+        """Base parse function
         args:
             scope (Scope): Current scope
         returns:
@@ -31,7 +31,7 @@ class Node(object):
         return self
 
     def process(self, tokens, scope):
-        """ Process tokenslist, flattening and parsing it
+        """Process tokenslist, flattening and parsing it
         args:
             tokens (list): tokenlist
             scope (Scope): Current scope
@@ -41,16 +41,14 @@ class Node(object):
         while True:
             tokens = list(utility.flatten(tokens))
             done = True
-            if any(t for t in tokens if hasattr(t, 'parse')):
-                tokens = [
-                    t.parse(scope) if hasattr(t, 'parse') else t
-                    for t in tokens
-                ]
+            if any(t for t in tokens if hasattr(t, "parse")):
+                tokens = [t.parse(scope) if hasattr(t, "parse") else t for t in tokens]
                 done = False
             if any(
-                    t for t in tokens
-                    if (utility.is_variable(t)) or str(type(t)) ==
-                    "<class 'lesscpy.plib.variable.Variable'>"):
+                    t
+                    for t in tokens
+                    if (utility.is_variable(t)) or str(type(t)) == "<class 'lesscpy.plib.variable.Variable'>"
+            ):
                 tokens = self.replace_variables(tokens, scope)
                 done = False
             if done:
@@ -58,7 +56,7 @@ class Node(object):
         return tokens
 
     def replace_variables(self, tokens, scope):
-        """ Replace variables in tokenlist
+        """Replace variables in tokenlist
         args:
             tokens (list): tokenlist
             scope (Scope): Current scope
@@ -76,10 +74,10 @@ class Node(object):
         return list
 
     def fmt(self, fills):
-        """ Format node
+        """Format node
         args:
             fills (dict): replacements
         returns:
             str
         """
-        raise ValueError('No defined format')
+        raise ValueError("No defined format")

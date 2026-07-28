@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.variable
     :synopsis: Variable declaration
@@ -7,12 +6,13 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
+
 from .node import Node
 
 
 class Variable(Node):
     def parse(self, scope):
-        """ Parse function
+        """Parse function
         args:
             scope (Scope): Scope object
         returns:
@@ -29,11 +29,11 @@ class Variable(Node):
         return self
 
     def copy(self):
-        """ Return a copy of self
+        """Return a copy of self
         Returns:
             Variable object
         """
         return Variable([t for t in self.tokens])
 
     def fmt(self, fills):
-        return ''
+        return ""

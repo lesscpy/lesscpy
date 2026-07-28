@@ -77,6 +77,8 @@ Temporary Items
 # .idea/modules
 # *.iml
 # *.ipr
+.idea/vcs.xml
+.idea/runConfigurations
 
 # CMake
 cmake-build-*/

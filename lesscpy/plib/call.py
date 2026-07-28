@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 """
 .. module:: lesscpy.plib.call
     :synopsis: Call parse node
@@ -7,16 +6,19 @@
     See LICENSE for details.
 .. moduleauthor:: Johann T. Mariusson <jtm@robot.is>
 """
-import re
+
 import math
+import re
+
 try:
     from urllib.parse import quote as urlquote
 except ImportError:
     from urllib import quote as urlquote
-from .node import Node
-import lesscpy.lessc.utility as utility
 import lesscpy.lessc.color as Color
+from lesscpy.lessc import utility
 from lesscpy.lib.colors import lessColors
+
+from .node import Node
 
 
 class Call(Node):
@@ -35,18 +37,15 @@ class Call(Node):
         args:
             scope (Scope): Current scope
         """
-        name = ''.join(self.tokens[0])
+        name = "".join(self.tokens[0])
         parsed = self.process(self.tokens[1:], scope)
 
-        if name == '%(':
-            name = 'sformat'
-        elif name in ('~', 'e'):
-            name = 'escape'
+        if name == "%(":
+            name = "sformat"
+        elif name in ("~", "e"):
+            name = "escape"
         color = Color.Color()
-        args = [
-            t for t in parsed
-            if not isinstance(t, str) or t not in '(),'
-        ]
+        args = [t for t in parsed if not isinstance(t, str) or t not in "(),"]
         if hasattr(self, name):
             try:
                 return getattr(self, name)(*args)
@@ -57,12 +56,12 @@ class Call(Node):
             try:
                 result = getattr(color, name)(*args)
                 try:
-                    return result + ' '
+                    return result + " "
                 except TypeError:
                     return result
             except ValueError:
                 pass
-        return name + ''.join([p for p in parsed])
+        return name + "".join([p for p in parsed])
 
     def escape(self, string, *args):
         """Less Escape.
@@ -71,10 +70,10 @@ class Call(Node):
         returns:
             str
         """
-        return utility.destring(string.strip('~'))
+        return utility.destring(string.strip("~"))
 
     def sformat(self, string, *args):
-        """ String format.
+        """String format.
         args:
             string (str): string to format
             args (list): format options
@@ -83,19 +82,19 @@ class Call(Node):
         """
         format = string
         items = []
-        m = re.findall('(%[asdA])', format)
+        m = re.findall("(%[asdA])", format)
         if m and not args:
-            raise SyntaxError('Not enough arguments...')
+            raise SyntaxError("Not enough arguments...")
         i = 0
         for n in m:
             v = {
-                '%A': urlquote,
-                '%s': utility.destring,
+                "%A": urlquote,
+                "%s": utility.destring,
             }.get(n, str)(args[i])
             items.append(v)
             i += 1
-        format = format.replace('%A', '%s')
-        format = format.replace('%d', '%s')
+        format = format.replace("%A", "%s")
+        format = format.replace("%d", "%s")
         return format % tuple(items)
 
     def isnumber(self, string, *args):
@@ -129,16 +128,17 @@ class Call(Node):
         """
         arg = utility.destring(string)
         regex = re.compile(
-            r'^(?:http|ftp)s?://'  # http:// or https://
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
-            r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+            r"^(?:http|ftp)s?://"  # http:// or https://
+            r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+"
+            r"(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain...
             # localhost...
-            r'localhost|'
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+            r"localhost|"
+            r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
             # optional port
-            r'(?::\d+)?'
-            r'(?:/?|[/?]\S+)$',
-            re.IGNORECASE)
+            r"(?::\d+)?"
+            r"(?:/?|[/?]\S+)$",
+            re.IGNORECASE,
+        )
         return regex.match(arg)
 
     def isstring(self, string, *args):
@@ -158,10 +158,10 @@ class Call(Node):
         returns:
             bool
         """
-        return string in ('when', 'and', 'not')
+        return string in ("when", "and", "not")
 
     def increment(self, value, *args):
-        """ Increment function
+        """Increment function
         args:
             value (str): target
         returns:
@@ -171,7 +171,7 @@ class Call(Node):
         return utility.with_unit(n + 1, u)
 
     def decrement(self, value, *args):
-        """ Decrement function
+        """Decrement function
         args:
             value (str): target
         returns:
@@ -181,7 +181,7 @@ class Call(Node):
         return utility.with_unit(n - 1, u)
 
     def add(self, *args):
-        """ Add integers
+        """Add integers
         args:
             args (list): target
         returns:
@@ -192,18 +192,17 @@ class Call(Node):
         return sum([int(v) for v in args])
 
     def round(self, value, *args):
-        """ Round number
+        """Round number
         args:
             value (str): target
         returns:
             str
         """
         n, u = utility.analyze_number(value)
-        return utility.with_unit(
-            int(utility.away_from_zero_round(float(n))), u)
+        return utility.with_unit(int(utility.away_from_zero_round(float(n))), u)
 
     def ceil(self, value, *args):
-        """ Ceil number
+        """Ceil number
         args:
             value (str): target
         returns:
@@ -213,7 +212,7 @@ class Call(Node):
         return utility.with_unit(int(math.ceil(n)), u)
 
     def floor(self, value, *args):
-        """ Floor number
+        """Floor number
         args:
             value (str): target
         returns:
@@ -223,7 +222,7 @@ class Call(Node):
         return utility.with_unit(int(math.floor(n)), u)
 
     def percentage(self, value, *args):
-        """ Return percentage value
+        """Return percentage value
         args:
             value (str): target
         returns:
@@ -231,5 +230,5 @@ class Call(Node):
         """
         n, u = utility.analyze_number(value)
         n = int(n * 100.0)
-        u = '%'
+        u = "%"
         return utility.with_unit(n, u)
