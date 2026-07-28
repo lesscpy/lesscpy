@@ -1,5 +1,0 @@
--r requirements.txt
-coverage
-flake8
-pytest
-tox

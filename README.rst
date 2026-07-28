@@ -89,7 +89,7 @@ To do a local system-wide install:
 
 .. code-block:: bash
 
-    python setup.py install
+    pip install .
  
 Or simply place the package into your Python path. Or rather use packages
 provided by your distribution (openSUSE has them at least).

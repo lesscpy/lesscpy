@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lesscpy"
+dynamic = ["version"]
+description = "Python LESS compiler"
+readme = "README.rst"
+license = "MIT"
+authors = [{ name = "Jóhann T Maríusson", email = "jtm@robot.is" }]
+urls = { Homepage = "https://github.com/lesscpy/lesscpy" }
+dependencies = ["ply"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Pre-processors",
+]
+
+[project.optional-dependencies]
+test = ["coverage", "flake8", "pytest", "tox"]
+release = ["build", "twine"]
+
+[project.scripts]
+lesscpy = "lesscpy.scripts.compiler:run"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = ["*test*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "lesscpy.__version__" }
+
+[tool.flake8]
+ignore = ["E501"]
+show-source = true
+exclude = [".venv", ".tox", "build", "dist", "doc", "*egg"]
