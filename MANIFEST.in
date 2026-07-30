@@ -1,5 +1,0 @@
-include LICENSE
-include README.rst
-include requirements.txt test-requirements.txt
-include tox.ini
-recursive-include test *

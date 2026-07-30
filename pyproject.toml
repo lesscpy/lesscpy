@@ -41,9 +41,6 @@ tox = ["tox"]
 [project.scripts]
 lesscpy = "lesscpy.scripts.compiler:run"
 
-[tool.setuptools]
-include-package-data = true
-
 [tool.setuptools.packages.find]
 exclude = ["*test*"]
 
