@@ -178,19 +178,19 @@ class Scope(list):
         if name.startswith("@@"):
             var = self.variables(name[1:])
             if var is False:
-                raise SyntaxError("Unknown variable %s" % name)
+                raise SyntaxError(f"Unknown variable {name}")
             name = "@" + utility.destring(var.value[0])
             var = self.variables(name)
             if var is False:
-                raise SyntaxError("Unknown variable %s" % name)
+                raise SyntaxError(f"Unknown variable {name}")
         elif name.startswith("@{"):
             var = self.variables("@" + name[2:-1])
             if var is False:
-                raise SyntaxError("Unknown escaped variable %s" % name)
+                raise SyntaxError(f"Unknown escaped variable {name}")
             if isinstance(var.value[0], str):
                 var.value[0] = utility.destring(var.value[0])
         else:
             var = self.variables(name)
             if var is False:
-                raise SyntaxError("Unknown variable %s" % name)
+                raise SyntaxError(f"Unknown variable {name}")
         return var.value

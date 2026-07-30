@@ -50,7 +50,7 @@ class Deferred(Node):
             mixins = scope.mixins(ident.raw())
 
         if depth > 64:
-            raise SyntaxError("NameError `%s`" % ident.raw(True))
+            raise SyntaxError(f"NameError `{ident.raw(True)}`")
 
         if not mixins:
             if scope.deferred:
@@ -106,7 +106,7 @@ class Deferred(Node):
                 scope.deferred.parsed[-1] = store
 
         if error and not res:
-            raise SyntaxError("NameError `%s`" % ident.raw(True))
+            raise SyntaxError(f"NameError `{ident.raw(True)}`")
         return res
 
     def copy(self):

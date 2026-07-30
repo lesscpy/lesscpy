@@ -99,7 +99,7 @@ class Expression(Node):
             "=<": operator.le,
         }.get(oper)
         if operation is None:
-            raise SyntaxError("Unknown operation %s" % oper)
+            raise SyntaxError(f"Unknown operation {oper}")
         ret = operation(vala, valb)
         if oper in "+-*/" and int(ret) == ret:
             ret = int(ret)
