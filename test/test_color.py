@@ -78,7 +78,6 @@ class TestLessColor(unittest.TestCase):
             self.assertRaises(ValueError, test, args)
 
     def test_hsl(self):
-        """ """
         test = self.color.hsl
         for h, s, l, v in [
             (31, "1%", "4%", "#0a0a0a"),
