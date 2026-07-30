@@ -1,6 +1,6 @@
 # LESSCPY
 
-[![Build Status](https://travis-ci.org/lesscpy/lesscpy.png?branch=master)](https://travis-ci.org/lesscpy/lesscpy)
+[![Build Status](https://github.com/lesscpy/lesscpy/actions/workflows/main.yml/badge.svg)](https://github.com/lesscpy/lesscpy/actions/workflows/main.yml)
 [![Coverage Status](https://coveralls.io/repos/lesscpy/lesscpy/badge.png)](https://coveralls.io/r/lesscpy/lesscpy)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/lesscpy.svg)](https://pypi.python.org/pypi/lesscpy)
 [![PyPI Version](https://img.shields.io/pypi/v/lesscpy.svg)](https://pypi.python.org/pypi/lesscpy)
