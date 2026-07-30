@@ -54,7 +54,7 @@ class Scope(list):
         return [r["__current__"] for r in self if r["__current__"]]
 
     def add_block(self, block):
-        """Add block element to scope
+        """Add the block element to scope
         Args:
             block (Block): Block object
         """
@@ -62,7 +62,7 @@ class Scope(list):
         self[-1]["__names__"].append(block.raw())
 
     def remove_block(self, block, index="-1"):
-        """Remove block element from scope
+        """Remove the block element from scope
         Args:
             block (Block): Block object
         """

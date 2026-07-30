@@ -217,8 +217,8 @@ class LessLexer:
 
     def t_iselector_css_class(self, t):
         r"[_a-z0-9\-]+"
-        # The first part of CSS class was tokenized by t_css_ident() already.
-        # Here we gather up the any LESS variable.
+        # The first part of the CSS class was tokenized by t_css_ident() already.
+        # Here we gather any LESS variable.
         #
         # Example: .span_@{num}_small
         #
@@ -277,7 +277,7 @@ class LessLexer:
         r";"
         # This can happen only as part of a CSS import statement. The
         # "mediaquery" state is reused there. Ordinary media queries always
-        # end at '{', i.e. when a block is opened.
+        # end at '{', i.e., when a block is opened.
         t.lexer.pop_state()  # state mediaquery
         # We have to pop the 'import' state here because we already ate the
         # t_semicolon and won't trigger t_import_t_semicolon.

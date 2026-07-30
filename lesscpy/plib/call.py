@@ -32,7 +32,7 @@ class Call(Node):
 
     def parse(self, scope):
         """Parse Node within scope.
-        the functions ~( and e( map to self.escape
+        The functions ~( and e( map to self.escape
         and %( maps to self.sformat
         args:
             scope (Scope): Current scope

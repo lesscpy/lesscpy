@@ -49,11 +49,11 @@ class Mixin(Node):
         return self.name.raw()
 
     def parse_args(self, args, scope):
-        """Parse arguments to mixin. Add them to scope
+        """Parse arguments to mixin. Add them to the scope
         as variables. Sets upp special variable @arguments
         as well.
         args:
-            args (list): arguments
+            args (list): list of arguments
             scope (Scope): current scope
         raises:
             SyntaxError

@@ -26,9 +26,9 @@ class TestLessParser(unittest.TestCase):
 
         self.parser.parse(file=stream)
 
-        # A single object is parser which is the expected variable.
+        # A single object is parser that is the expected variable.
         self.assertEqual(1, len(self.parser.result))
-        # This is a stream without a name so it sets default name.
+        # This is a stream without a name, so it sets default name.
         self.assertEqual("(stream)", self.parser.target)
         variable = self.parser.result[0]
         self.assertEqual("@nice-blue", variable.name)

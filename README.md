@@ -11,9 +11,9 @@ Python LESS Compiler.
 
 A compiler written in Python for the LESS language. For those of us not willing
 or able to have node.js installed in our environment. Not all features of LESS
-are supported (yet). Some features will probably never be supported (JavaScript
+are supported. Some features will probably never be supported (JavaScript
 evaluation). This program uses PLY (Python Lex-Yacc) to tokenize / parse the
-input and is considerably slower than the NodeJS compiler.
+input and is considerably slower than the Node.js compiler.
 
 For more information on LESS:
 - http://lesscss.org/

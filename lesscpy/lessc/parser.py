@@ -167,9 +167,9 @@ class LessParser:
         self.register.close()
 
     def post_parse(self):
-        """Post parse cycle. nodejs version allows calls to mixins
+        """Post parse cycle. Node.js version allows calls to mixins
         not yet defined or known to the parser. We defer all calls
-        to mixins until after first cycle when all names are known.
+        to mixins until after the first cycle when all names are known.
         """
         if self.result:
             out = []
