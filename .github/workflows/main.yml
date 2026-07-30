@@ -39,6 +39,9 @@ jobs:
       - name: Run flake8
         run: flake8 lesscpy
 
+      - name: Run ruff
+        run: ruff check tests/
+
   publish:
     name: Publish to PyPI (version changed)
     runs-on: ubuntu-latest

@@ -34,13 +34,12 @@ class TestLessLexer(unittest.TestCase):
         """
         It can load content from a path.
         """
-        file = NamedTemporaryFile()
-        file.write(b"""
-            @simple-var: 1;
-            """)
-        file.seek(0)
-
-        self.lexer.input(file.name)
+        with NamedTemporaryFile() as file:
+            file.write(b"""
+                @simple-var: 1;
+                """)
+            file.seek(0)
+            self.lexer.input(file.name)
 
         token = self.lexer.token()
         self.assertEqual("@simple-var", token.value)

@@ -34,7 +34,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = ["coverage", "flake8", "pytest"]
+test = ["coverage", "flake8", "pytest", "ruff"]
 release = ["build", "twine"]
 tox = ["tox"]
 
