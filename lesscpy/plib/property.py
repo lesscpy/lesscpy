@@ -69,7 +69,7 @@ class Property(Node):
         style = "".join(
             [p.fmt(fills) if hasattr(p, "fmt") else str(p) for p in self.parsed]
         )
-        # IE cannot handle no space after url()
+        # IE can handle no space after url()
         style = re.sub(r"(url\([^\)]*\))([^\s,])", "\\1 \\2", style)
         fills.update(
             {"property": self.property, "style": style.strip(), "important": imp}

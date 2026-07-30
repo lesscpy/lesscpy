@@ -19,7 +19,7 @@ except ImportError:
 
 
 def flatten(lst):
-    """Flatten list.
+    """Flatten the list.
     Args:
         lst (list): List to flatten
     Returns:
@@ -82,7 +82,7 @@ def blocksearch(block, name):
 
 
 def reverse_guard(lst):
-    """Reverse guard expression. not
+    """Reverse guard expression. Not
         (@a > 5) ->  (@a =< 5)
     Args:
         lst (list): Expression
@@ -120,12 +120,12 @@ def destring(value):
 
 
 def analyze_number(var, err=""):
-    """Analyse number for type and split from unit
+    """Analyze the number for type and split from unit
         1px -> (q, 'px')
     args:
         var (str): number string
     kwargs:
-        err (str): Error message
+        err (str): An error message
     raises:
         SyntaxError
     returns:

@@ -17,7 +17,7 @@ class Block(Node):
     """Block node. Represents one parse-block.
     Can contain property nodes or other block nodes.
     identifier {
-        propertys
+        properties
         inner blocks
     }
     """
@@ -164,6 +164,7 @@ class Block(Node):
 
     def copy(self):
         """Return a full copy of self
+
         returns: Block object
         """
         name, inner = self.tokens
@@ -175,7 +176,7 @@ class Block(Node):
 
     def copy_inner(self, scope):
         """Copy block contents (properties, inner blocks).
-        Renames inner block from current scope.
+        Renames inner block from the current scope.
         Used for mixins.
         args:
             scope (Scope): Current scope

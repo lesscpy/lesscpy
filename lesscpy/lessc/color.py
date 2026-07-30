@@ -111,7 +111,7 @@ class Color:
         if len(args) == 1 and type(args[0]) is str:
             match = re.match(r"rgba\((.*)\)", args[0])
             if match:
-                # NOTE(saschpe): Evil hack to cope with rgba(.., .., .., 0.5) passed through untransformed
+                # NOTE(saschpe): Evil hack to cope with rgba(..., ..., ..., 0.5) passed through untransformed
                 rgb = re.sub(r"\s+", "", match.group(1)).split(",")
             else:
                 rgb = list(self._hextorgb(args[0]))
@@ -320,15 +320,15 @@ class Color:
         This formula has two especially nice properties:
 
          * When either w or a are -1 or 1, the combined weight is also that number
-           (cases where w * a == -1 are undefined, and handled as a special case).
+           (cases where w * a == -1 are undefined and handled as a special case).
 
          * When a is 0, the combined weight is w, and vice versa
 
-        Finally, the weight of color1 is renormalized to be within [0, 1]
+        Finally, the weight of color1 is renormalized to be within [0, 1],
         and the weight of color2 is given by 1 minus the weight of color1.
 
         Copyright (c) 2006-2009 Hampton Catlin, Nathan Weizenbaum, and Chris Eppstein
-        http://sass-lang.com
+        https://sass-lang.com
         args:
             color1 (str): first color
             color2 (str): second color
@@ -358,7 +358,7 @@ class Color:
 
     def fmt(self, color):
         """Format CSS Hex color code.
-        uppercase becomes lowercase, 3 digit codes expand to 6 digit.
+        Uppercase becomes lowercase, 3-digit codes expand to 6 digits.
         args:
             color (str): color
         raises:

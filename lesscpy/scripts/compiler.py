@@ -23,7 +23,7 @@ VERSION_STR = "Lesscpy compiler 0.9h"
 
 
 def ldirectory(inpath, outpath, args, scope):
-    """Compile all *.less files in directory
+    """Compile all `*.less` files in directory
     Args:
         inpath (str): Path to compile
         outpath (str): Output directory

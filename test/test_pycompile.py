@@ -11,7 +11,7 @@ from lesscpy import compile
 
 class TestCompileFunction(unittest.TestCase):
     """
-    Unit tests for compile
+    Unit tests for the compile function.
     """
 
     def test_compile_from_stream(self):
