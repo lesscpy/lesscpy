@@ -141,7 +141,7 @@ def analyze_number(var, err=""):
     elif is_float(n):
         n = float(n)
     else:
-        raise SyntaxError("%s ´%s´" % (err, var))
+        raise SyntaxError(f"{err} ´{var}´")
     return n, u
 
 
@@ -161,7 +161,7 @@ def with_unit(number, unit=None):
         number = str(number)
         if number.startswith("."):
             number = "0" + number
-        return "%s%s" % (number, unit)
+        return f"{number}{unit}"
     return number if isinstance(number, str) else str(number)
 
 

@@ -32,7 +32,7 @@ class Color:
             v = self.operate(c1[i], c2[i], o)
             v = min(v, 0xFF)
             v = max(v, 0)
-            r.append("%02x" % int(v))
+            r.append(f"{int(v):02x}")
         return "".join(r)
 
     def operate(self, left, right, operation):
@@ -83,7 +83,7 @@ class Color:
                     args = args[:3]
                 if falpha == 0:
                     values = self._rgbatohex_raw(list(map(int, args)))
-                    return "rgba(%s)" % ",".join([str(a) for a in values])
+                    return f"rgba({','.join([str(a) for a in values])})"
                 return self._rgbatohex(list(map(int, args)))
             except ValueError:
                 if all(a for a in args if a[-1] == "%" and 100 >= int(a[:-1]) >= 0):
@@ -92,7 +92,7 @@ class Color:
                         values = self._rgbatohex_raw(
                             [int(a[:-1]) * 255 / 100.0 for a in args]
                         )
-                        return "rgba(%s)" % ",".join([str(a) for a in values])
+                        return f"rgba({','.join([str(a) for a in values])})"
                     return self._rgbatohex([int(a[:-1]) * 255 / 100.0 for a in args])
         raise ValueError("Illegal color values")
 
@@ -169,7 +169,7 @@ class Color:
             )
             color = [float(utility.convergent_round(c * 255)) for c in rgb]
             color.append(utility.pc_or_float(a))
-            return "rgba(%s,%s,%s,%s)" % tuple(color)
+            return f"rgba({color[0]},{color[1]},{color[2]},{color[3]})"
         raise ValueError("Illegal color values")
 
     def hue(self, color, *args):
@@ -370,20 +370,20 @@ class Color:
             color = color.lower().strip("#")
             if len(color) in [3, 4]:
                 color = "".join([c * 2 for c in color])
-            return "#%s" % color
+            return f"#{color}"
         raise ValueError("Cannot format non-color")
 
     def _rgbatohex_raw(self, rgba):
         values = [
-            "%x" % int(v)
+            f"{int(v):x}"
             for v in [0xFF if h > 0xFF else max(h, 0) for h in rgba]
         ]
         return values
 
     def _rgbatohex(self, rgba):
-        return "#%s" % "".join(
+        return "#" + "".join(
             [
-                "%02x" % int(v)
+                f"{int(v):02x}"
                 for v in [0xFF if h > 0xFF else max(h, 0) for h in rgba]
             ]
         )

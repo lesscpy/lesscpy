@@ -454,9 +454,7 @@ class LessLexer:
 
     # Error handling rule
     def t_error(self, t):
-        raise SyntaxError(
-            "Illegal character '%s' line %d" % (t.value[0], t.lexer.lineno)
-        )
+        raise SyntaxError(f"Illegal character '{t.value[0]}' line {t.lexer.lineno}")
         t.lexer.skip(1)
 
     # Build the lexer

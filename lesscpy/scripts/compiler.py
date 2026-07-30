@@ -36,7 +36,7 @@ def ldirectory(inpath, outpath, args, scope):
     else:
         if not os.path.isdir(outpath):
             if args.verbose:
-                print("Creating '%s'" % outpath, file=sys.stderr)
+                print(f"Creating '{outpath}'", file=sys.stderr)
             if not args.dry_run:
                 os.mkdir(outpath)
     less = glob.glob(os.path.join(inpath, "*.less"))
@@ -44,13 +44,13 @@ def ldirectory(inpath, outpath, args, scope):
     for lf in less:
         outf = os.path.splitext(os.path.basename(lf))
         minx = ".min" if args.min_ending else ""
-        outf = "%s/%s%s.css" % (outpath, outf[0], minx)
+        outf = f"{outpath}/{outf[0]}{minx}.css"
         if not args.force and os.path.exists(outf):
             recompile = os.path.getmtime(outf) < os.path.getmtime(lf)
         else:
             recompile = True
         if recompile:
-            print("%s -> %s" % (lf, outf))
+            print(f"{lf} -> {outf}")
             p = parser.LessParser(
                 yacc_debug=(args.debug),
                 lex_optimize=True,
@@ -65,7 +65,7 @@ def ldirectory(inpath, outpath, args, scope):
                 with open(outf, "w") as outfile:
                     outfile.write(css)
         elif args.verbose:
-            print("skipping %s, not modified" % lf, file=sys.stderr)
+            print(f"skipping {lf}, not modified", file=sys.stderr)
         sys.stdout.flush()
     if args.recurse:
         [
@@ -203,12 +203,12 @@ def run():
                     else:
                         scope.update(p.scope)
                 else:
-                    sys.exit("included file `%s` not found ..." % u)
+                    sys.exit(f"included file `{u}` not found ...")
                 sys.stdout.flush()
         p = None
         f = formatter.Formatter(args)
         if not os.path.exists(args.target):
-            sys.exit("Target not found '%s' ..." % args.target)
+            sys.exit(f"Target not found '{args.target}' ...")
         if os.path.isdir(args.target):
             ldirectory(args.target, args.out, args, scope)
             if args.dry_run:

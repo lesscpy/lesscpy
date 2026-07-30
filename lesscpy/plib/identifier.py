@@ -63,7 +63,7 @@ class Identifier(Node):
                 elif n in ">+~":
                     if name and name[-1] == " ":
                         name.pop()
-                    name.append("?%s?" % n)
+                    name.append(f"?{n}?")
                 elif n == ",":
                     names.append(name)
                     name = []

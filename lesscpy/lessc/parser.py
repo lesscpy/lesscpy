@@ -71,7 +71,7 @@ class PrintErrorRegister:
     def register(self, error):
         self.has_errored = True
         color = "\x1b[31m" if error[0] == "E" else "\x1b[33m"
-        print("%s%s\x1b[0m" % (color, error), end="\x1b[0m", file=sys.stderr)
+        print(f"{color}{error}\x1b[0m", end="\x1b[0m", file=sys.stderr)
 
     def __close__(self):
         pass
@@ -160,7 +160,7 @@ class LessParser:
 
         self.target = filename
         if self.verbose and not self.fail_with_exc:
-            print("Compiling target: %s" % filename, file=sys.stderr)
+            print(f"Compiling target: {filename}", file=sys.stderr)
         self.result = self.parser.parse(file, lexer=self.lex, debug=debuglevel)
 
         self.post_parse()
@@ -260,7 +260,7 @@ class LessParser:
                 cpath = os.path.dirname(os.path.abspath(self.target))
                 if not fe:
                     ipath += ".less"
-                filename = "%s%s%s" % (cpath, os.sep, ipath)
+                filename = f"{cpath}{os.sep}{ipath}"
                 if os.path.exists(filename):
                     recurse = LessParser(
                         importlvl=self.importlvl + 1,
@@ -270,7 +270,7 @@ class LessParser:
                     recurse.parse(filename=filename, debuglevel=0)
                     p[0] = recurse.result
                 else:
-                    err = "Cannot import '%s', file not found" % filename
+                    err = f"Cannot import '{filename}', file not found"
                     self.handle_error(err, p.lineno(1), "W")
                     p[0] = None
             except ImportError as e:
@@ -856,7 +856,7 @@ class LessParser:
             if len(p) > 2:
                 p[0] = [p[0], p[2]]
         except ValueError:
-            self.handle_error("Illegal color value `%s`" % p[1], p.lineno(1), "W")
+            self.handle_error(f"Illegal color value `{p[1]}`", p.lineno(1), "W")
             p[0] = p[1]
 
     def p_number(self, p):
@@ -1004,11 +1004,8 @@ class LessParser:
             t (Lex token): Error token
         """
         if t:
-            error_msg = "E: %s line: %d, Syntax Error, token: `%s`, `%s`" % (
-                self.target,
-                t.lineno,
-                t.type,
-                t.value,
+            error_msg = (
+                f"E: {self.target} line: {t.lineno}, Syntax Error, token: `{t.type}`, `{t.value}`"
             )
             self.register.register(error_msg)
         while True:
@@ -1027,4 +1024,4 @@ class LessParser:
             line (int): line number
             t(str): Error type
         """
-        self.register.register("%s: line: %d: %s\n" % (t, line, e))
+        self.register.register(f"{t}: line: {line}: {e}\n")
