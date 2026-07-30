@@ -40,7 +40,7 @@ jobs:
         run: flake8 lesscpy
 
       - name: Run ruff
-        run: ruff check tests/
+        run: ruff check test/
 
   publish:
     name: Publish to PyPI (version changed)
